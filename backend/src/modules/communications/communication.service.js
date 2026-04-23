@@ -9,6 +9,7 @@ const getCommunications = async (filter = {}) => {
     .populate("school", "name")
     .populate("classroom", "name level")
     .populate("author", "fullName")
+    .populate("targetStudent", "fullName matricule")
     .sort({ createdAt: -1 });
 };
 

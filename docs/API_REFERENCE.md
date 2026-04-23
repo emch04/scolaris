@@ -34,9 +34,26 @@ Toutes les requêtes commencent par `/api`. Les routes marquées d'un 🔒 néce
 - `POST /timetable` 🔒: Ajouter un cours (**Admin/Director**).
 - `DELETE /timetable/:id` 🔒: Supprimer un cours (**Admin/Director**).
 
+## 📈 Statistiques
+- `GET /stats/global` 🔒: Statistiques réelles du réseau (**Super Admin uniquement**).
+
+## 📚 Bibliothèque (Resources)
+- `GET /resources` 🔒: Liste des ressources filtrées par niveau/matière.
+- `POST /resources` 🔒: Ajouter un fichier (Livre, Exercice) (**Staff uniquement**).
+- `DELETE /resources/:id` 🔒: Supprimer une ressource (**Admin/Director**).
+
+## 📅 Calendrier (Calendar)
+- `GET /calendar` 🔒: Événements et congés.
+- `POST /calendar` 🔒: Ajouter un événement (**Super Admin/Director**).
+
+## 📖 Plans de Cours (Course Plans)
+- `GET /course-plans/classroom/:classroomId` 🔒: Programme annuel d'une classe.
+- `POST /course-plans` 🔒: Publier un plan de cours (**Teacher uniquement**).
+
 ## 💬 Messagerie (Messages)
-- `GET /messages/my` 🔒: Liste des messages reçus par l'utilisateur connecté.
-- `POST /messages` 🔒: Envoyer un message à un autre utilisateur.
+- `GET /messages/my` 🔒: Liste des messages privés reçus.
+- `GET /messages/classroom/:classroomId` 🔒: Historique du chat de groupe d'une classe.
+- `POST /messages` 🔒: Envoyer un message (Privé ou Groupe).
 - `PATCH /messages/read/:id` 🔒: Marquer un message comme lu.
 
 ## 📝 Résultats & Bulletins

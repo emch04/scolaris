@@ -8,10 +8,16 @@ import StudentsPage from "../pages/StudentsPage";
 import ClassroomsPage from "../pages/ClassroomsPage";
 import SchoolsPage from "../pages/SchoolsPage";
 import ParentsPage from "../pages/ParentsPage";
+import TeachersPage from "../pages/TeachersPage";
 import AssignmentsPage from "../pages/AssignmentsPage";
 import AttendancePage from "../pages/AttendancePage";
 import TimetablePage from "../pages/TimetablePage";
 import MessagesPage from "../pages/MessagesPage";
+import ClassroomChatPage from "../pages/ClassroomChatPage";
+import LibraryPage from "../pages/LibraryPage";
+import CalendarPage from "../pages/CalendarPage";
+import NetworkContactPage from "../pages/NetworkContactPage";
+import CoursePlanPage from "../pages/CoursePlanPage";
 import ViewDevoirPage from "../pages/ViewDevoirPage";
 import AssignmentDetailPage from "../pages/AssignmentDetailPage";
 import CommunicationsPage from "../pages/CommunicationsPage";
@@ -44,8 +50,15 @@ function AppRouter() {
       <Route path="/attendance/student/:studentId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent"]}><AttendancePage /></ProtectedRoute>} />
       <Route path="/timetable" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><TimetablePage /></ProtectedRoute>} />
       <Route path="/timetable/classroom/:classroomId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><TimetablePage /></ProtectedRoute>} />
+      <Route path="/chat/:classroomId" element={<ProtectedRoute allowedRoles={[...STAFF, "student"]}><ClassroomChatPage /></ProtectedRoute>} />
+      <Route path="/library" element={<ProtectedRoute allowedRoles={[...STAFF, "student"]}><LibraryPage /></ProtectedRoute>} />
+      <Route path="/calendar" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><CalendarPage /></ProtectedRoute>} />
+      <Route path="/network-contacts" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><NetworkContactPage /></ProtectedRoute>} />
+      <Route path="/course-plans" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><CoursePlanPage /></ProtectedRoute>} />
+      <Route path="/course-plans/:classroomId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><CoursePlanPage /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><MessagesPage /></ProtectedRoute>} />
       <Route path="/parents" element={<ProtectedRoute allowedRoles={["super_admin", "admin", "director"]}><ParentsPage /></ProtectedRoute>} />
+      <Route path="/teachers" element={<ProtectedRoute allowedRoles={["super_admin", "admin", "director"]}><TeachersPage /></ProtectedRoute>} />
       <Route path="/classrooms" element={<ProtectedRoute allowedRoles={["super_admin", "admin", "director"]}><ClassroomsPage /></ProtectedRoute>} />
       <Route path="/schools" element={<ProtectedRoute allowedRoles={["super_admin"]}><SchoolsPage /></ProtectedRoute>} />
       <Route path="/assignments" element={<ProtectedRoute allowedRoles={STAFF}><AssignmentsPage /></ProtectedRoute>} />

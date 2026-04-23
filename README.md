@@ -10,18 +10,19 @@ Une plateforme de gestion scolaire légère et moderne, conçue pour faciliter l
 - **Gestion des Élèves** : Inscription des élèves avec génération automatique de matricules uniques.
 - **Système de Devoirs** : Publication de leçons et devoirs par les enseignants, avec possibilité de joindre des fichiers (PDF, documents, images).
 - **Gestion des Absences** : Module complet permettant aux enseignants de faire l'appel et aux parents de suivre l'historique des présences en temps réel.
-- **Emploi du Temps** : Planning interactif des cours par classe, géré par l'administration et consultable par tous.
-- **Messagerie Interne** : Espace de discussion sécurisé entre parents, enseignants et administration.
-- **Tableau de Bord Visuel** : Graphiques et statistiques dynamiques pour les administrateurs et suivi de progression pour les parents.
-- **Module Communications** : Diffusion de communiqués officiels et de convocations aux parents et élèves.
-- **Expérience Utilisateur (UX)** :
-  - **Mode Sombre / Clair** : Thème personnalisable avec mémorisation des préférences.
-  - **Système de Notifications (Toasts)** : Alertes élégantes en temps réel pour une navigation fluide.
-- **Espace Parent** : Interface dédiée permettant aux parents de suivre les devoirs, les notes, les absences et l'emploi du temps de leurs enfants.
-- **Contrôle d'Accès (RBAC)** : Permissions différenciées selon les rôles (Admin, Directeur, Enseignant, Parent, Élève).
-- **Signature Numérique Sécurisée** : Validation des devoirs par les parents via un code de sécurité simulation (OTP).
-- **Déconnexion Automatique** : Protection des sessions avec déconnexion après 15 minutes d'inactivité.
-- **Maintenance Automatisée** : Audit de santé et de sécurité hebdomadaire via GitHub Actions.
+- **Emploi du Temps** : Planning interactif des cours par classe, géré par l'administration.
+- **Calendrier Scolaire** : Planification centralisée des événements, congés et examens par le Super Admin et les Directeurs.
+- **Plan de Cours Annuel** : Publication du programme pédagogique par les enseignants, consultable par les parents et élèves.
+- **Messagerie & Collaboration** :
+  - **Messages Privés** : Échanges sécurisés selon une hiérarchie stricte.
+  - **Chat de Classe** : Espace de discussion de groupe pour le travail collaboratif entre élèves et professeurs.
+- **Bibliothèque Numérique** : Ressources (livres, exercices, vidéos) réservées aux élèves, professeurs et directeurs.
+- **Tableau de Bord Visuel** :
+  - **Super Admin** : Vue globale du réseau (écoles, parents, enseignants, classes) et statistiques de croissance.
+  - **Direction** : Gestion locale complète des parents et élèves de l'établissement.
+- **Confidentialité & Sécurité** : 
+  - Accès restreint aux données sensibles (le Super Admin ne voit pas la liste des parents).
+  - Filtrage des communications pour préserver l'autonomie des écoles.
 
 ## 🛠️ Stack Technique
 
@@ -66,9 +67,14 @@ npm install
 npm run dev
 ```
 
+## 🚀 Mise en ligne (Déploiement)
+
+Le projet est entièrement configuré pour être hébergé en ligne. Consultez le **[Guide de Déploiement](./docs/DEPLOYMENT.md)** pour les instructions pas-à-pas (Vercel, Render, MongoDB Atlas).
+
 ## 🔑 Identifiants de test (après seed)
-- **Email** : `
-- **Mot de passe** : ``
+- **Super Admin** : `admin@scolaris.cd` / `superadmin123`
+- **Professeur** : `prof@scolaris.cd` / `prof123`
+- **Parent** : `parent@demo.cd` / `parent123`
 
 ## 📝 Licence
 Ce projet est développé pour le secteur éducatif.

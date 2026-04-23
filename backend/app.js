@@ -1,11 +1,12 @@
-// On importe Express pour créer notre application web
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
+const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
+const path = require("path");
 
 // On importe les routes
 const authRoutes = require("./src/modules/auth/auth.routes");
@@ -21,16 +22,24 @@ const submissionRoutes = require("./src/modules/submissions/submission.routes");
 const attendanceRoutes = require("./src/modules/attendance/attendance.routes");
 const timetableRoutes = require("./src/modules/timetable/timetable.routes");
 const messageRoutes = require("./src/modules/messages/message.routes");
+const statsRoutes = require("./src/modules/stats/stats.routes");
+const resourceRoutes = require("./src/modules/resources/resource.routes");
+const calendarRoutes = require("./src/modules/calendar/calendar.routes");
+const coursePlanRoutes = require("./src/modules/courseplan/courseplan.routes");
 
 // Middlewares
 const notFoundMiddleware = require("./src/middlewares/notFound.middleware");
 const errorMiddleware = require("./src/middlewares/error.middleware");
 
 const app = express();
-const path = require("path");
 
-// Sécurisation des headers HTTP
-app.use(helmet());
+// Optimisation : Compression des réponses
+app.use(compression());
+
+// Sécurisation des headers HTTP (configuré pour permettre l'affichage des uploads)
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
 // Prévention des injections NoSQL
 app.use(mongoSanitize());
@@ -38,16 +47,17 @@ app.use(mongoSanitize());
 // Limitation du taux de requêtes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 200, // Augmenté pour les tests
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Trop de requêtes effectuées depuis cette IP, veuillez réessayer plus tard."
+  message: "Trop de requêtes, veuillez réessayer plus tard."
 });
 app.use("/api", limiter);
 
+// Configuration CORS dynamique
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:5173"] : true,
     credentials: true
   })
 );
@@ -61,7 +71,7 @@ app.use(morgan("dev"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
-  res.json({ success: true, message: "Bienvenue sur l'API Scolaris" });
+  res.json({ success: true, message: "API Scolaris Online" });
 });
 
 // Routes API
@@ -78,6 +88,10 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/timetable", timetableRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/stats", statsRoutes);
+app.use("/api/resources", resourceRoutes);
+app.use("/api/calendar", calendarRoutes);
+app.use("/api/course-plans", coursePlanRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

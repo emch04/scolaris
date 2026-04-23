@@ -58,6 +58,8 @@ function StudentsPage() {
 
   useEffect(() => {
     fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleChange = (e) => {
@@ -115,21 +117,41 @@ function StudentsPage() {
           <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Inscrivez et gérez le suivi des élèves du réseau</p>
         </div>
 
-        {/* Formulaire d'inscription épuré */}
-        <div style={{ 
-          background: "transparent", 
-          padding: "2rem", 
-          borderRadius: "20px", 
-          border: "3px solid rgba(255, 255, 255, 0.1)",
-          marginBottom: "3rem"
-        }}>
-          <h3 style={{ marginBottom: "1.5rem" }}>Inscrire un nouvel élève</h3>
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom complet</label>
-                <input type="text" name="fullName" placeholder="Ex: Jean Mukendi" value={formData.fullName} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} required />
-              </div>
+        {/* Mini Tableau de Bord */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "3rem" }}>
+          <div style={{ 
+            background: "rgba(52, 168, 83, 0.1)", 
+            border: "1px solid #34A853", 
+            padding: "1rem 2rem", 
+            borderRadius: "15px",
+            display: "flex",
+            alignItems: "center",
+            gap: "15px"
+          }}>
+            <div style={{ fontSize: "2rem", fontWeight: "900", color: "#34A853" }}>{students.length}</div>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontSize: "0.8rem", fontWeight: "bold", textTransform: "uppercase", opacity: 0.7 }}>Élèves</div>
+              <div style={{ fontSize: "0.7rem", opacity: 0.5 }}>Effectif total actuel</div>
+            </div>
+          </div>
+        </div>
+{/* Formulaire d'inscription épuré - Masqué pour le Super Admin */}
+{user?.role !== "super_admin" && (
+  <div style={{ 
+    background: "transparent", 
+    padding: "2rem", 
+    borderRadius: "20px", 
+    border: "3px solid rgba(255, 255, 255, 0.1)",
+    marginBottom: "3rem"
+  }}>
+    <h3 style={{ marginBottom: "1.5rem" }}>Inscrire un nouvel élève</h3>
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+          <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom complet</label>
+          <input type="text" name="fullName" placeholder="Ex: Jean Mukendi" value={formData.fullName} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} required />
+        </div>
+...
               <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                 <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Sexe</label>
                 <select name="gender" value={formData.gender} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
@@ -169,6 +191,7 @@ function StudentsPage() {
             </button>
           </form>
         </div>
+      )}
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "1.5rem" }}>Élèves inscrits</h2>
@@ -274,50 +297,80 @@ function StudentsPage() {
 
                     {showScoreForm === s._id && (
                       <form onSubmit={(e) => handleAddScore(e, s._id)} style={{ 
-                        marginTop: "15px", 
-                        background: "rgba(0,0,0,0.3)", 
-                        padding: "15px", 
-                        borderRadius: "10px",
+                        marginTop: "20px", 
+                        background: "rgba(255,255,255,0.05)", 
+                        padding: "20px", 
+                        borderRadius: "15px",
+                        border: "1px solid rgba(255,255,255,0.1)",
                         display: "flex",
                         flexDirection: "column",
-                        gap: "10px"
+                        gap: "12px"
                       }}>
-                        <input 
-                          placeholder="Matière" 
-                          value={scoreData.subject}
-                          onChange={e => setScoreForm({...scoreData, subject: e.target.value})}
-                          style={{ background: "white", color: "#222", border: "2px solid #ccc", padding: "8px", fontSize: "0.8rem", borderRadius: "5px" }}
-                          required
-                        />
-                        <div style={{ display: "flex", gap: "5px" }}>
+                        <div style={{ fontSize: "0.8rem", fontWeight: "bold", marginBottom: "5px", color: "var(--primary)" }}>SAISIE DES NOTES</div>
+                        
+                        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                          <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Matière</label>
                           <input 
-                            type="number"
-                            placeholder="Note" 
-                            value={scoreData.score}
-                            onChange={e => setScoreForm({...scoreData, score: e.target.value})}
-                            style={{ flex: 1, background: "white", color: "#222", border: "2px solid #ccc", padding: "8px", fontSize: "0.8rem", borderRadius: "5px" }}
-                            required
-                          />
-                          <input 
-                            type="number"
-                            placeholder="Max" 
-                            value={scoreData.maxScore}
-                            onChange={e => setScoreForm({...scoreData, maxScore: e.target.value})}
-                            style={{ width: "60px", background: "white", color: "#222", border: "2px solid #ccc", padding: "8px", fontSize: "0.8rem", borderRadius: "5px" }}
+                            placeholder="Ex: Français" 
+                            value={scoreData.subject}
+                            onChange={e => setScoreForm({...scoreData, subject: e.target.value})}
+                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "10px", fontSize: "0.9rem", borderRadius: "8px" }}
                             required
                           />
                         </div>
-                        <select 
-                          value={scoreData.period}
-                          onChange={e => setScoreForm({...scoreData, period: e.target.value})}
-                          style={{ background: "white", color: "#222", border: "2px solid #ccc", padding: "8px", fontSize: "0.8rem", borderRadius: "5px" }}
-                        >
-                          <option value="Trimestre 1">Trimestre 1</option>
-                          <option value="Trimestre 2">Trimestre 2</option>
-                          <option value="Trimestre 3">Trimestre 3</option>
-                          <option value="Examen État">Examen État</option>
-                        </select>
-                        <button type="submit" className="btn btn-primary" style={{ padding: "8px", fontSize: "0.8rem" }}>Enregistrer</button>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                            <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Note obtenue</label>
+                            <input 
+                              type="number"
+                              placeholder="0.0" 
+                              value={scoreData.score}
+                              onChange={e => setScoreForm({...scoreData, score: e.target.value})}
+                              style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "10px", fontSize: "0.9rem", borderRadius: "8px" }}
+                              required
+                            />
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                            <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Total Max</label>
+                            <input 
+                              type="number"
+                              placeholder="20" 
+                              value={scoreData.maxScore}
+                              onChange={e => setScoreForm({...scoreData, maxScore: e.target.value})}
+                              style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "10px", fontSize: "0.9rem", borderRadius: "8px" }}
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                          <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Période d'évaluation</label>
+                          <select 
+                            value={scoreData.period}
+                            onChange={e => setScoreForm({...scoreData, period: e.target.value})}
+                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "10px", fontSize: "0.9rem", borderRadius: "8px" }}
+                          >
+                            <option value="Trimestre 1">Premier Trimestre</option>
+                            <option value="Trimestre 2">Deuxième Trimestre</option>
+                            <option value="Trimestre 3">Troisième Trimestre</option>
+                            <option value="Examen État">Examen d'État / Jury</option>
+                          </select>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                          <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Appréciation (Optionnel)</label>
+                          <input 
+                            placeholder="Ex: Très bon travail" 
+                            value={scoreData.appreciation}
+                            onChange={e => setScoreForm({...scoreData, appreciation: e.target.value})}
+                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "10px", fontSize: "0.9rem", borderRadius: "8px" }}
+                          />
+                        </div>
+
+                        <button type="submit" className="btn btn-primary" style={{ marginTop: "5px", padding: "12px", fontSize: "0.85rem", fontWeight: "bold" }}>
+                          ENREGISTRER LA NOTE
+                        </button>
                       </form>
                     )}
                   </div>

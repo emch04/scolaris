@@ -53,8 +53,17 @@ const loginUser = async (identifier, password) => {
 
   console.log("Connexion réussie pour:", user.fullName);
 
+  const payload = { 
+    id: user._id, 
+    email: user.email || user.matricule, 
+    role: user.role || (user.matricule ? "student" : "teacher"), 
+    school: user.school 
+  };
+
+  if (user.classroom) payload.classroom = user.classroom;
+
   const token = jwt.sign(
-    { id: user._id, email: user.email || user.matricule, role: user.role, school: user.school },
+    payload,
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

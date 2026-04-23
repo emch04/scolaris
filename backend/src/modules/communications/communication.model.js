@@ -23,16 +23,31 @@ const communicationSchema = new mongoose.Schema(
     school: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "School",
-      required: true
+      required: false // Null signifie global (Réseau)
     },
     classroom: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Classroom"
     },
-    author: {
+    targetStudent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: false
+    },
+    targetTeacher: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Teacher",
+      required: false
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: "authorModel",
       required: true
+    },
+    authorModel: {
+      type: String,
+      required: true,
+      enum: ["Teacher", "Admin"] // Admin inclut super_admin
     }
   },
   {

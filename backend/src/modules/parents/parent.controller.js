@@ -11,10 +11,23 @@ const {
  * Récupère la liste de tous les parents (Admin/Directeur)
  */
 const getParents = asyncHandler(async (req, res) => {
+  const userRole = req.user.role;
+  
+  // 1. RÈGLE : Le Super Admin ne voit PAS la liste détaillée (uniquement stats)
+  if (userRole === "super_admin") {
+    return res.status(403).json({ 
+      success: false, 
+      message: "Le Super Admin n'a accès qu'aux statistiques globales, pas au détail des comptes parents." 
+    });
+  }
+
   const filter = {};
-  if (req.user.role !== "super_admin") {
+  if (userRole !== "super_admin") {
+    // On s'assure de ne voir que les parents de son école
+    // (Le service getAllParents utilise déjà le filtre par école via les enfants)
     filter.school = req.user.school;
   }
+
   const parents = await getAllParents(filter);
   return apiResponse(res, 200, "Liste des parents récupérée.", parents);
 });

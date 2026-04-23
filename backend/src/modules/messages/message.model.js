@@ -14,12 +14,17 @@ const messageSchema = new mongoose.Schema({
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
     refPath: "recipientModel",
-    required: true
+    required: false // Optionnel pour le chat de groupe
   },
   recipientModel: {
     type: String,
-    required: true,
+    required: false, // Optionnel pour le chat de groupe
     enum: ["Teacher", "Parent", "Student", "Admin"]
+  },
+  classroom: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Classroom",
+    required: false // Présent uniquement si message de groupe
   },
   content: {
     type: String,

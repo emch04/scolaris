@@ -70,6 +70,25 @@ function SchoolsPage() {
           <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Administration et annuaire des établissements partenaires</p>
         </div>
 
+        {/* Mini Tableau de Bord */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "3rem" }}>
+          <div style={{ 
+            background: "rgba(0, 102, 204, 0.1)", 
+            border: "1px solid #0066cc", 
+            padding: "1rem 2rem", 
+            borderRadius: "15px",
+            display: "flex",
+            alignItems: "center",
+            gap: "15px"
+          }}>
+            <div style={{ fontSize: "2rem", fontWeight: "900", color: "#0066cc" }}>{schools.length}</div>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontSize: "0.8rem", fontWeight: "bold", textTransform: "uppercase", opacity: 0.7 }}>Écoles</div>
+              <div style={{ fontSize: "0.7rem", opacity: 0.5 }}>Partenaires du réseau</div>
+            </div>
+          </div>
+        </div>
+
         {/* Formulaire - Réservé Super Admin uniquement */}
         {user?.role === "super_admin" && (
           <div style={{ 

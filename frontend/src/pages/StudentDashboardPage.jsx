@@ -4,8 +4,10 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getStudentDashboardRequest } from "../services/student.api";
 import formatDate from "../utils/formatDate";
+import useAuth from "../hooks/useAuth";
 
 function StudentDashboardPage() {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,6 +47,16 @@ function StudentDashboardPage() {
         </div>
 
         {/* Section Communications (Nouvelle) */}
+        {/* Actions Rapides */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "3rem" }}>
+          <Link to={`/chat/${user.classroom}`} className="btn" style={{ background: "var(--primary)", padding: "1.5rem", borderRadius: "20px", textAlign: "center", color: "white", fontWeight: "bold" }}>
+             Discussion de Classe
+          </Link>
+          <Link to="/library" className="btn" style={{ background: "rgba(255,255,255,0.1)", padding: "1.5rem", borderRadius: "20px", textAlign: "center", color: "white", fontWeight: "bold", border: "1px solid rgba(255,255,255,0.2)" }}>
+             Bibliothèque
+          </Link>
+        </div>
+
         <section style={{ marginBottom: "3rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "1.5rem" }}>Dernières Communications</h2>

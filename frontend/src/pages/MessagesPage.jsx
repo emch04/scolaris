@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getMyMessagesRequest, sendMessageRequest, markMessageAsReadRequest } from "../services/message.api";
 import { getParentsRequest } from "../services/parent.api";
 import { getTeachersRequest } from "../services/teacher.api";
+import { getParentDashboardRequest } from "../services/parent.api";
 import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
 import formatDate from "../utils/formatDate";
@@ -12,8 +13,10 @@ function MessagesPage() {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [recipients, setRecipients] = useState([]);
+  const [childrenInfo, setChildren] = useState([]);
+  const [selectedChildId, setSelectedChild] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showCompose, setShowAddForm] = useState(false);
+  const [showCompose, setShowCompose] = useState(false);
   const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -31,10 +34,28 @@ function MessagesPage() {
       ]);
       setMessages(resMsg?.data || []);
       
-      // Combiner parents et profs pour la liste des destinataires
+      const role = user.role;
+      const isAdminOrDirector = ["admin", "director"].includes(role);
+      const isTeacher = role === "teacher";
+      const isParent = role === "parent";
+
+      if (isParent) {
+        const resDash = await getParentDashboardRequest();
+        setChildren(resDash.children || []);
+      }
+
       const list = [
-        ...(resTeachers?.data || []).map(t => ({ id: t._id, name: `${t.fullName} (Professeur)`, model: "Teacher" })),
-        ...(resParents?.data || []).map(p => ({ id: p._id, name: `${p.fullName} (Parent)`, model: "Parent" }))
+        ...(resTeachers?.data || []).map(t => ({ 
+          id: t._id, 
+          name: `${t.fullName} (${t.role === 'teacher' ? 'Professeur' : 'Direction'})`, 
+          model: "Teacher",
+          school: t.school?._id || t.school
+        })),
+        ...((isTeacher || isAdminOrDirector) ? (resParents?.data || []).map(p => ({ 
+          id: p._id, 
+          name: `${p.fullName} (Parent)`, 
+          model: "Parent" 
+        })) : [])
       ].filter(r => r.id !== user.id);
       
       setRecipients(list);
@@ -59,7 +80,7 @@ function MessagesPage() {
         content: formData.content
       });
       showToast("Message envoyé !");
-      setShowAddForm(false);
+      setShowCompose(false);
       setFormData({ recipient: "", recipientModel: "Teacher", content: "" });
       fetchData();
     } catch (err) {
@@ -76,6 +97,14 @@ function MessagesPage() {
     }
   };
 
+  const filteredRecipients = user.role === "parent" && selectedChildId 
+    ? recipients.filter(r => {
+        const child = childrenInfo.find(c => c._id === selectedChildId);
+        // On garde le staff de l'école de l'enfant
+        return r.model === "Teacher" && r.school === (child.school?._id || child.school);
+      })
+    : recipients;
+
   return (
     <>
       <Navbar />
@@ -84,11 +113,11 @@ function MessagesPage() {
           <h1 style={{ fontSize: "2.5rem", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             Messagerie Interne
           </h1>
-          <p style={{ opacity: 0.6 }}>Communiquez avec les enseignants et les parents</p>
+          <p style={{ opacity: 0.6 }}>Communiquez avec les enseignants et la direction</p>
         </div>
 
         <div style={{ marginBottom: "2rem", textAlign: "right" }}>
-          <button onClick={() => setShowAddForm(!showCompose)} className="btn btn-primary">
+          <button onClick={() => setShowCompose(!showCompose)} className="btn btn-primary">
             {showCompose ? "Annuler" : "Nouveau Message"}
           </button>
         </div>
@@ -104,15 +133,29 @@ function MessagesPage() {
             flexDirection: "column",
             gap: "1.5rem"
           }}>
+            {user.role === "parent" && (
+              <div>
+                <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>Concerne quel enfant ?</label>
+                <select 
+                  value={selectedChildId} 
+                  onChange={e => setSelectedChild(e.target.value)}
+                  style={{ width: "100%", padding: "12px", borderRadius: "10px", background: "white", color: "#222" }}
+                >
+                  <option value="">Sélectionner votre enfant</option>
+                  {childrenInfo.map(c => <option key={c._id} value={c._id}>{c.fullName} ({c.classroom?.name})</option>)}
+                </select>
+              </div>
+            )}
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>Destinataire</label>
               <select 
                 value={formData.recipient} 
                 onChange={e => setFormData({...formData, recipient: e.target.value})}
                 style={{ width: "100%", padding: "12px", borderRadius: "10px", background: "white", color: "#222" }}
+                disabled={user.role === "parent" && !selectedChildId}
               >
-                <option value="">Sélectionner une personne</option>
-                {recipients.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                <option value="">{user.role === "parent" ? "Choisissez d'abord l'enfant" : "Sélectionner une personne"}</option>
+                {filteredRecipients.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
               </select>
             </div>
             <div>

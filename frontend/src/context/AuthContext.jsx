@@ -25,6 +25,10 @@ export function AuthProvider({ children }) {
         setCurrentToken(receivedToken);
       }
       if (receivedUser) {
+        // Normalisation de la classe pour les élèves
+        if (receivedUser.role === "student" && receivedUser.classroom && typeof receivedUser.classroom === "object") {
+          receivedUser.classroom = receivedUser.classroom._id;
+        }
         setUser(receivedUser);
         setCurrentUser(receivedUser);
       }

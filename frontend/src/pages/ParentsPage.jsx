@@ -25,7 +25,11 @@ function ParentsPage() {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleAddChild = async (parentId) => {
     const studentId = selectedStudent[parentId];
@@ -56,6 +60,25 @@ function ParentsPage() {
             Gestion des Parents
           </h1>
           <p style={{ opacity: 0.6 }}>Gérez les comptes parents et rachetez les élèves à leurs familles</p>
+        </div>
+
+        {/* Mini Tableau de Bord */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "3rem" }}>
+          <div style={{ 
+            background: "rgba(249, 171, 0, 0.1)", 
+            border: "1px solid #F9AB00", 
+            padding: "1rem 2rem", 
+            borderRadius: "15px",
+            display: "flex",
+            alignItems: "center",
+            gap: "15px"
+          }}>
+            <div style={{ fontSize: "2rem", fontWeight: "900", color: "#F9AB00" }}>{parents.length}</div>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontSize: "0.8rem", fontWeight: "bold", textTransform: "uppercase", opacity: 0.7 }}>Parents</div>
+              <div style={{ fontSize: "0.7rem", opacity: 0.5 }}>Inscrits sur la plateforme</div>
+            </div>
+          </div>
         </div>
 
         {loading ? <Loader /> : (

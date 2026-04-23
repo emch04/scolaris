@@ -28,8 +28,26 @@ Bienvenue sur Scolaris. Ce guide vous aide à utiliser les fonctionnalités selo
 - **Messagerie** : Échanger avec les enseignants via l'espace de discussion sécurisé.
 - **Signature Numérique** : Valider les devoirs de son enfant via un code de sécurité SMS.
 
+## 🎖️ Super Administrateur (Global)
+- **Supervision Réseau** : Tableau de bord dynamique avec le nombre total d'écoles, élèves et salles de classe.
+- **Calendrier National** : Publication des congés et événements globaux.
+- **Annuaire du Réseau** : Consultation des contacts officiels de tous les établissements.
+- **Restrictions** : Pas d'accès aux listes détaillées des parents ou aux communications internes des écoles pour garantir la vie privée.
+
+## 👨‍🏫 Enseignant / Directeur
+- **Plan de Cours** : Les enseignants peuvent publier leur programme annuel.
+- **Messagerie de Groupe** : Les professeurs titulaires peuvent modérer et participer au chat de leur classe.
+- **Bibliothèque** : Partage de livres et exercices avec les élèves.
+
+## 👪 Parent
+- **Plan de Cours** : Suivi des objectifs pédagogiques de l'année pour chaque enfant.
+- **Annuaire** : Accès rapide aux contacts de l'établissement.
+
+## 🎓 Élève
+- **Chat de Classe** : Espace de travail collaboratif avec les camarades et le professeur.
+- **Bibliothèque Numérique** : Téléchargement des ressources d'étude.
+
 ## 🌙 Mode Sombre / Clair
-Vous pouvez basculer entre le mode sombre et le mode clair à tout moment via l'icône de **lune/soleil** située dans la barre de navigation. Votre préférence sera automatiquement mémorisée.
 
 ## 🔒 Sécurité de Session
 Pour protéger vos données, notamment si vous utilisez un ordinateur partagé à l'école, Scolaris vous déconnectera automatiquement après **15 minutes d'inactivité**. Pensez à enregistrer votre travail ou à rester actif pour maintenir la session.

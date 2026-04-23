@@ -16,7 +16,15 @@ const getParentChildren = async (parentId) => {
  * Récupère tous les parents (avec leurs enfants)
  */
 const getAllParents = async (filter = {}) => {
-  return await Parent.find(filter).populate("children", "fullName matricule");
+  let query = {};
+  
+  // Si un filtrage par école est demandé
+  if (filter.school) {
+    const studentIdsInSchool = await Student.find({ school: filter.school }).select("_id");
+    query.children = { $in: studentIdsInSchool.map(s => s._id) };
+  }
+
+  return await Parent.find(query).populate("children", "fullName matricule classroom");
 };
 
 /**

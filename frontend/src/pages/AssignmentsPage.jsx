@@ -1,195 +1,244 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import Card from "../components/Card";
 import Loader from "../components/Loader";
 import { getAssignmentsRequest, createAssignmentRequest } from "../services/assignment.api";
 import { getClassroomsRequest } from "../services/classroom.api";
+import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
+import formatDate from "../utils/formatDate";
 
 function AssignmentsPage() {
   const { user } = useAuth();
   const [assignments, setAssignments] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [file, setFile] = useState(null);
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     subject: "",
-    classroom: ""
+    classroom: "",
+    dueDate: ""
   });
-  const [file, setFile] = useState(null);
 
   const fetchData = async () => {
     try {
-      const [resAssignments, resClassrooms] = await Promise.all([
+      const [resAssign, resClass] = await Promise.all([
         getAssignmentsRequest(),
         getClassroomsRequest()
       ]);
-      setAssignments(resAssignments?.data || []);
-      setClassrooms(resClassrooms?.data || []);
+      setAssignments(resAssign?.data || []);
+      setClassrooms(resClass?.data || []);
+    } catch (err) {
+      showToast("Erreur de chargement.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       const data = new FormData();
-      data.append("title", formData.title);
-      data.append("description", formData.description);
-      data.append("subject", formData.subject);
-      data.append("classroom", formData.classroom);
+      Object.keys(formData).forEach(key => data.append(key, formData[key]));
+      if (file) data.append("file", file);
       data.append("teacher", user.id);
-      if (file) {
-        data.append("file", file);
-      }
 
       await createAssignmentRequest(data);
-      setFormData({ title: "", description: "", subject: "", classroom: "" });
+      showToast("Devoir publié avec succès !");
+      setFormData({ title: "", description: "", subject: "", classroom: "", dueDate: "" });
       setFile(null);
       fetchData();
     } catch (err) {
-      alert("Erreur lors de la publication.");
+      showToast("Erreur lors de la publication.", "error");
+    } finally {
+      setSaving(false);
     }
+  };
+
+  const getSubjectColor = (subject) => {
+    const s = subject.toLowerCase();
+    if (s.includes("math")) return "#1A73E8";
+    if (s.includes("français")) return "#E91E63";
+    if (s.includes("science") || s.includes("bio")) return "#34A853";
+    if (s.includes("histoire") || s.includes("géo")) return "#F9AB00";
+    return "var(--primary)";
   };
 
   return (
     <>
       <Navbar />
       <main className="container">
-        <div style={{ textAlign: "center", padding: "2rem 0" }}>
-          <h1 style={{ fontSize: "2.8rem", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", display: "flex", alignItems: "center", justifyContent: "center", gap: "15px" }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--primary)" }}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <div style={{ textAlign: "center", padding: "3rem 0" }}>
+          <h1 style={{ fontSize: "3rem", fontWeight: "900", background: "linear-gradient(to right, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "1rem" }}>
             Gestion des Devoirs
           </h1>
-          <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Publiez des leçons et des exercices pour vos classes</p>
+          <p style={{ opacity: 0.6, fontSize: "1.2rem" }}>Planifiez et diffusez les travaux pédagogiques</p>
         </div>
 
-        {/* Formulaire épuré */}
-        <div style={{ 
-          background: "transparent", 
-          padding: "2rem", 
-          borderRadius: "20px", 
-          border: "3px solid rgba(255, 255, 255, 0.1)",
-          marginBottom: "3rem"
-        }}>
-          <h3 style={{ marginBottom: "1.5rem" }}>Publier un nouveau devoir</h3>
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Titre du devoir</label>
-                <input 
-                  placeholder="Ex: Les fractions" 
-                  value={formData.title} 
-                  onChange={e => setFormData({...formData, title: e.target.value})} 
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+        {user?.role === "teacher" && (
+          <div style={{ 
+            background: "rgba(255, 255, 255, 0.03)", 
+            padding: "2.5rem", 
+            borderRadius: "30px", 
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
+            marginBottom: "4rem"
+          }}>
+            <h2 style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: "15px" }}>
+              <div style={{ background: "var(--primary)", width: "12px", height: "12px", borderRadius: "50%" }}></div>
+              Publier un nouveau travail
+            </h2>
+            
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Titre du devoir</label>
+                  <input 
+                    placeholder="Ex: Analyse de texte - Le Petit Prince" 
+                    value={formData.title} 
+                    onChange={e => setFormData({...formData, title: e.target.value})} 
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", fontSize: "1rem" }}
+                    required 
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Matière</label>
+                  <input 
+                    placeholder="Ex: Français" 
+                    value={formData.subject} 
+                    onChange={e => setFormData({...formData, subject: e.target.value})} 
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", fontSize: "1rem" }}
+                    required 
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Classe destinataire</label>
+                  <select 
+                    value={formData.classroom} 
+                    onChange={e => setFormData({...formData, classroom: e.target.value})} 
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", fontSize: "1rem", cursor: "pointer" }}
+                    required
+                  >
+                    <option value="" style={{ background: "#222" }}>Sélectionner une classe</option>
+                    {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "#222" }}>{c.name} ({c.level})</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Instructions détaillées</label>
+                <textarea 
+                  placeholder="Expliquez ici le contenu du devoir, les pages à lire ou les exercices à faire..." 
+                  value={formData.description} 
+                  onChange={e => setFormData({...formData, description: e.target.value})} 
+                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", minHeight: "150px", fontSize: "1rem", resize: "vertical" }}
                   required 
                 />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Matière</label>
-                <input 
-                  placeholder="Ex: Mathématiques" 
-                  value={formData.subject} 
-                  onChange={e => setFormData({...formData, subject: e.target.value})} 
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
-                  required 
-                />
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Date limite (Optionnel)</label>
+                  <input 
+                    type="date" 
+                    value={formData.dueDate} 
+                    onChange={e => setFormData({...formData, dueDate: e.target.value})} 
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white" }}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Fichier joint</label>
+                  <input 
+                    type="file" 
+                    onChange={e => setFile(e.target.files[0])}
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "12px", color: "white" }}
+                  />
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Classe concernée</label>
-                <select 
-                  value={formData.classroom} 
-                  onChange={e => setFormData({...formData, classroom: e.target.value})} 
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
-                  required
-                >
-                  <option value="" style={{ background: "white", color: "#222" }}>Sélectionner la classe</option>
-                  {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "white", color: "#222" }}>{c.name}</option>)}
-                </select>
-              </div>
-            </div>
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Consignes et contenu</label>
-              <textarea 
-                placeholder="Décrivez le travail à faire..." 
-                value={formData.description} 
-                onChange={e => setFormData({...formData, description: e.target.value})} 
-                style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white", minHeight: "120px", resize: "vertical" }}
-                required 
-              />
-            </div>
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Joindre un fichier (Optionnel)</label>
-              <input 
-                type="file" 
-                onChange={e => setFile(e.target.files[0])}
-                style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
-              />
-            </div>
-            
-            <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }}>
-              Publier le devoir
-            </button>
-          </form>
+
+              <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "1.2rem 4rem", borderRadius: "15px", fontSize: "1.1rem", fontWeight: "bold", boxShadow: "0 10px 20px rgba(26, 115, 232, 0.3)" }} disabled={saving}>
+                {saving ? "Publication..." : "PUBLIER LE DEVOIR"}
+              </button>
+            </form>
+          </div>
+        )}
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+          <h2 style={{ fontSize: "1.8rem", fontWeight: "800" }}>Flux des publications</h2>
+          <div style={{ background: "rgba(255,255,255,0.05)", padding: "8px 20px", borderRadius: "50px", fontSize: "0.9rem", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <strong>{assignments.length}</strong> devoirs actifs
+          </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.5rem" }}>Mes publications</h2>
-          <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>{assignments.length} devoirs publiés</span>
-        </div>
-
-        {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "3rem" }}><Loader /></div>
-        ) : (
-          <div className="grid">
+        {loading ? <Loader /> : (
+          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "2rem" }}>
             {assignments.length === 0 ? (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "3rem", opacity: 0.5 }}>Vous n'avez pas encore publié de devoirs.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "5rem", opacity: 0.4 }}>Aucun devoir publié pour le moment.</p>
             ) : (
               assignments.map(a => (
                 <div key={a._id} style={{ 
-                  background: "transparent", 
-                  padding: "1.5rem", 
-                  borderRadius: "15px", 
-                  border: "3px solid rgba(255, 255, 255, 0.1)"
+                  background: "rgba(255,255,255,0.02)", 
+                  padding: "2rem", 
+                  borderRadius: "25px", 
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  display: "flex",
+                  flexDirection: "column",
+                  transition: "all 0.3s ease",
+                  position: "relative",
+                  overflow: "hidden"
                 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                    <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase" }}>{a.subject}</span>
-                    <span style={{ fontSize: "0.7rem", opacity: 0.5 }}>{a.classroom?.name}</span>
-                  </div>
-                  <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{a.title}</h3>
-                  <p style={{ fontSize: "0.9rem", opacity: 0.8, lineHeight: "1.5", marginBottom: "1rem" }}>
-                    {a.description}
-                  </p>
-                  
-                  {a.fileUrl && (
-                    <div style={{ marginBottom: "1rem" }}>
-                      <a 
-                        href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${a.fileUrl}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ 
-                          color: "var(--primary)", 
-                          fontSize: "0.85rem", 
-                          textDecoration: "underline",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px"
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                        Voir le fichier joint
-                      </a>
-                    </div>
-                  )}
+                  {/* Accent de couleur sur le côté */}
+                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "6px", background: getSubjectColor(a.subject) }}></div>
 
-                  <div style={{ fontSize: "0.75rem", opacity: 0.4, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.8rem" }}>
-                    Publié le {new Date(a.createdAt).toLocaleDateString()}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+                    <div style={{ 
+                      fontSize: "0.7rem", 
+                      padding: "5px 12px", 
+                      borderRadius: "50px", 
+                      background: `${getSubjectColor(a.subject)}20`, 
+                      color: getSubjectColor(a.subject),
+                      fontWeight: "900",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px"
+                    }}>
+                      {a.subject}
+                    </div>
+                    <span style={{ fontSize: "0.75rem", opacity: 0.4 }}>{formatDate(a.createdAt)}</span>
+                  </div>
+
+                  <h3 style={{ marginBottom: "1rem", fontSize: "1.4rem", fontWeight: "800", lineHeight: "1.3" }}>{a.title}</h3>
+                  <p style={{ fontSize: "0.95rem", opacity: 0.6, lineHeight: "1.6", marginBottom: "2rem", flex: 1 }}>
+                    {a.description.length > 150 ? a.description.substring(0, 150) + "..." : a.description}
+                  </p>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ width: "35px", height: "35px", borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "bold" }}>
+                        {a.teacher?.fullName?.charAt(0)}
+                      </div>
+                      <div style={{ fontSize: "0.8rem" }}>
+                        <div style={{ fontWeight: "bold" }}>{a.teacher?.fullName}</div>
+                        <div style={{ opacity: 0.4 }}>{a.classroom?.name}</div>
+                      </div>
+                    </div>
+                    
+                    {a.fileUrl && (
+                      <a href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`.replace("/api", "") + a.fileUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "5px", textDecoration: "none", fontSize: "0.85rem", fontWeight: "bold" }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                        Fichier
+                      </a>
+                    )}
                   </div>
                 </div>
               ))
