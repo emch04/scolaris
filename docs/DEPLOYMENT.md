@@ -40,3 +40,4 @@ Une fois les deux parties en ligne :
 1. Testez la connexion avec un compte existant.
 2. Vérifiez que les images et PDF s'ouvrent correctement.
 3. Testez la messagerie en temps réel.
+ouf
