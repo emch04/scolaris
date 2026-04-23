@@ -1,14 +1,5 @@
 const express = require("express");
-// const cors = require("cors");
-// Remplace ton bloc CORS actuel par celui-ci pour être sûr
-// Configuration CORS simplifiée et efficace
-app.use(
-  cors({
-    origin: ["https://scolaris-tau.vercel.app", "http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true
-  })
-);
+const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
