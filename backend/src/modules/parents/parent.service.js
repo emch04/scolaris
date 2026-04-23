@@ -12,6 +12,20 @@ const getParentChildren = async (parentId) => {
   return parent ? parent.children : [];
 };
 
+/**
+ * Récupère tous les parents (avec leurs enfants)
+ */
+const getAllParents = async () => {
+  return await Parent.find().populate("children", "fullName matricule");
+};
+
+/**
+ * Récupère un parent par son ID
+ */
+const getParentById = async (id) => {
+  return await Parent.findById(id).populate("children", "fullName matricule classroom");
+};
+
 const getChildrenAssignments = async (childIds) => {
   if (!childIds || childIds.length === 0) return [];
 
@@ -26,4 +40,9 @@ const getChildrenAssignments = async (childIds) => {
     .sort({ createdAt: -1 });
 };
 
-module.exports = { getParentChildren, getChildrenAssignments };
+module.exports = { 
+  getParentChildren, 
+  getChildrenAssignments, 
+  getAllParents, 
+  getParentById 
+};

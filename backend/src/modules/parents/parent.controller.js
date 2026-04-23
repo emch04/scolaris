@@ -1,6 +1,30 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-const { getParentChildren, getChildrenAssignments } = require("./parent.service");
+const { 
+  getParentChildren, 
+  getChildrenAssignments,
+  getAllParents,
+  getParentById
+} = require("./parent.service");
+
+/**
+ * Récupère la liste de tous les parents (Admin/Directeur)
+ */
+const getParents = asyncHandler(async (req, res) => {
+  const parents = await getAllParents();
+  return apiResponse(res, 200, "Liste des parents récupérée.", parents);
+});
+
+/**
+ * Récupère un parent par son ID (Admin/Directeur)
+ */
+const getOneParent = asyncHandler(async (req, res) => {
+  const parent = await getParentById(req.params.id);
+  if (!parent) {
+    return apiResponse(res, 404, "Parent non trouvé.");
+  }
+  return apiResponse(res, 200, "Détails du parent récupérés.", parent);
+});
 
 const getMyDashboard = asyncHandler(async (req, res) => {
   const children = await getParentChildren(req.user.id);
@@ -13,4 +37,4 @@ const getMyDashboard = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getMyDashboard };
+module.exports = { getMyDashboard, getParents, getOneParent };

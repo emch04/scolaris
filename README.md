@@ -61,8 +61,8 @@ npm run dev
 ```
 
 ## 🔑 Identifiants de test (après seed)
-- **Email** : `demo@ecole.cd`
-- **Mot de passe** : `admin123`
+- **Email** : `
+- **Mot de passe** : ``
 
 ## 📝 Licence
 Ce projet est développé pour le secteur éducatif.
