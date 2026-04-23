@@ -37,29 +37,31 @@ const app = express();
 app.use(compression());
 
 // Sécurisation des headers HTTP (configuré pour permettre l'affichage des uploads)
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
 
 // Prévention des injections NoSQL
 app.use(mongoSanitize());
 
 // Limitation du taux de requêtes
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
+  windowMs: 15 * 60 * 1000,
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Trop de requêtes, veuillez réessayer plus tard."
+  message: "Trop de requêtes, veuillez réessayer plus tard.",
 });
 app.use("/api", limiter);
 
 // Configuration CORS dynamique
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:5173"] : true,
-    credentials: true
-  })
+    origin: ["https://scolaris-tau.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  }),
 );
 
 app.use(express.json());
