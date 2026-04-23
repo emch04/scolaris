@@ -43,6 +43,37 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
+    let timeoutId;
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (token) {
+          console.log("Inactivité détectée, déconnexion...");
+          logout();
+        }
+      }, 15 * 60 * 1000); // 15 minutes
+    };
+
+    if (token) {
+      const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart", "visibilitychange"];
+      
+      events.forEach((event) => {
+        window.addEventListener(event, resetTimer);
+      });
+
+      resetTimer(); // Démarrer le minuteur initial
+
+      return () => {
+        if (timeoutId) clearTimeout(timeoutId);
+        events.forEach((event) => {
+          window.removeEventListener(event, resetTimer);
+        });
+      };
+    }
+  }, [token]);
+
+  useEffect(() => {
     const storedUser = getUser();
     const storedToken = getToken();
     if (storedUser) setCurrentUser(storedUser);
