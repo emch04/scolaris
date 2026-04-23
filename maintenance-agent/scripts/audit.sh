@@ -10,7 +10,11 @@ cd ../backend && npm outdated
 cd ../frontend && npm outdated
 
 echo "[3/3] Vérification de l'état des serveurs..."
-lsof -i :5001 && echo "Backend (5001) OK" || echo "Backend (5001) ARRETÉ"
-lsof -i :5173 && echo "Frontend (5173) OK" || echo "Frontend (5173) ARRETÉ"
+if [ "$CI" = "true" ]; then
+  echo "Environnement CI détecté : saut de la vérification des ports locaux."
+else
+  lsof -i :5001 && echo "Backend (5001) OK" || echo "Backend (5001) ARRETÉ"
+  lsof -i :5173 && echo "Frontend (5173) OK" || echo "Frontend (5173) ARRETÉ"
+fi
 
 echo "--- Audit terminé ---"

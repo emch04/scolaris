@@ -1,0 +1,36 @@
+name: Maintenance Audit Scolaris
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 1' # S'exécute tous les lundis à minuit pour une maintenance de routine
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: |
+          backend/package-lock.json
+          frontend/package-lock.json
+
+    - name: Install Backend Dependencies
+      run: cd backend && npm ci
+
+    - name: Install Frontend Dependencies
+      run: cd frontend && npm ci
+
+    - name: Run Maintenance Audit
+      run: bash maintenance-agent/scripts/audit.sh
+      env:
+        CI: true
