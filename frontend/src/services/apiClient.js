@@ -3,8 +3,8 @@ import { getToken } from "../utils/storage";
 
 const apiClient = axios.create({
   // Vérifie que cette variable correspond bien à celle du fichier .env
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api",
-  timeout: 10000
+  baseURL: "https://scolaris-fucv.onrender.com/api",
+  timeout: 10000,
 });
 
 apiClient.interceptors.request.use(
@@ -17,7 +17,7 @@ apiClient.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 export default apiClient;
