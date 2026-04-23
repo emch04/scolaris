@@ -14,32 +14,27 @@ Une plateforme de gestion scolaire légère et moderne, conçue pour faciliter l
 - **Contrôle d'Accès (RBAC)** : Permissions différenciées selon les rôles (Admin, Directeur, Enseignant, Parent). Seuls les Admins peuvent ajouter des écoles.
 - **Design Moderne & Épuré** : Nouvelle interface visuelle optimisée, plus rapide et professionnelle.
 - **Signature Numérique Sécurisée** : Validation des devoirs par les parents via un code de sécurité simulation (OTP).
+- **Déconnexion Automatique** : Protection des sessions avec déconnexion après 15 minutes d'inactivité.
+- **Maintenance Automatisée** : Audit de santé et de sécurité hebdomadaire via GitHub Actions.
 
 ## 🛠️ Stack Technique
 
 - **Backend** : Node.js, Express.js, MongoDB (Mongoose), JWT.
 - **Frontend** : React.js (Vite), React Router, Axios, CSS Vanilla.
 - **Base de données** : MongoDB Atlas.
+- **Maintenance** : GitHub Actions, Scripts d'audit de sécurité.
 
 ## 📁 Structure du Projet
 
 ```text
 scolaris/
 ├── backend/                # API REST Node.js
-│   ├── src/
-│   │   ├── modules/        # Logique métier par domaine (Auth, Students, etc.)
-│   │   ├── middlewares/    # Protections et gestion d'erreurs
-│   │   ├── utils/          # Helpers (asyncHandler, apiResponse)
-│   │   └── config/         # Connexion DB
-│   └── seed.js             # Script d'initialisation des données
-└── frontend/               # Application React
-    ├── src/
-    │   ├── components/     # Composants réutilisables
-    │   ├── pages/          # Vues de l'application
-    │   ├── services/       # Appels API (Axios)
-    │   └── context/        # Gestion de l'état global (Auth)
+├── frontend/               # Application React
+├── maintenance-agent/      # Agent spécialisé (Audit & Sécurité)
+│   ├── scripts/            # Script d'audit automatisé
+│   └── references/         # Checklist de sécurité
+└── .github/workflows/      # Automatisation CI/CD (GitHub Actions)
 ```
-
 ## ⚙️ Installation et Démarrage
 
 ### 1. Cloner le projet

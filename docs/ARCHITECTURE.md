@@ -14,6 +14,12 @@ Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js)
   - `super_admin` : Accès global, gestion des écoles.
   - `admin` : Gestion administrative d'une école spécifique.
 - **Validation OTP** : Système de code à usage unique (simulé via console) pour la signature numérique des devoirs.
+- **Gestion de Session** : Déconnexion automatique après 15 minutes d'inactivité (côté client via `AuthContext`) pour prévenir les accès non autorisés sur des postes partagés.
+
+## 🛠️ Maintenance et Audit
+La plateforme intègre un **Agent de Maintenance** dédié :
+- **Scripts d'Audit** : Vérification des vulnérabilités (npm audit) et de l'état des serveurs.
+- **Automatisation** : Intégration avec GitHub Actions (`.github/workflows/maintenance-audit.yml`) pour des audits hebdomadaires et lors de chaque mise à jour de code.
 
 ## 📂 Structure des Données (MongoDB)
 - **Schools** : Établissements scolaires.

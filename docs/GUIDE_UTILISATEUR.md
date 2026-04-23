@@ -25,6 +25,9 @@ Bienvenue sur Scolaris. Ce guide vous aide à utiliser les fonctionnalités selo
 - **Signature Numérique** : Valider les devoirs de son enfant via un code de sécurité SMS.
 - **Communications** : Recevoir et lire les annonces de l'école.
 
+## 🔒 Sécurité de Session
+Pour protéger vos données, notamment si vous utilisez un ordinateur partagé à l'école, Scolaris vous déconnectera automatiquement après **15 minutes d'inactivité**. Pensez à enregistrer votre travail ou à rester actif pour maintenir la session.
+
 ## ✍️ Comment signer un devoir ?
 1. Cliquez sur le devoir dans votre espace.
 2. Saisissez votre nom complet.
