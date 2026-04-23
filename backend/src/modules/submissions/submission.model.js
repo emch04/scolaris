@@ -1,0 +1,39 @@
+const mongoose = require("mongoose");
+
+const submissionSchema = new mongoose.Schema(
+  {
+    assignment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Assignment",
+      required: true
+    },
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true
+    },
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Parent",
+      required: true
+    },
+    signatureUrl: {
+      type: String, // Stockera le nom saisi par le parent
+      required: true
+    },
+    comment: {
+      type: String,
+      trim: true
+    },
+    status: {
+      type: String,
+      enum: ["signé", "en attente"],
+      default: "signé"
+    }
+  },
+  {
+    timestamps: true
+  }
+);
+
+module.exports = mongoose.model("Submission", submissionSchema);

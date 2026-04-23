@@ -1,39 +1,80 @@
-# Dépendances
+# Dependencies
 node_modules/
 backend/node_modules/
 frontend/node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+docs/EVOLUTION.md
 
-# Environnement et secrets
+# Environment and secrets
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 backend/.env
 frontend/.env
 frontend/.env.local
 
-# Build et compilation
+# Build and compilation
 dist/
 frontend/dist/
 build/
+out/
 .next/
 .serverless/
+bin/
+obj/
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Système et IDE
+# System and IDE
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.swp
+*.bak
+*.tmp
+*.temp
 
-# Fichiers temporaires
+# Testing and Coverage
+coverage/
+.nyc_output/
+.jest/
+cypress/videos/
+cypress/screenshots/
+
+# Temporary and Cache
 .temp/
 .cache/
 .qodo/
+.eslintcache
+.stylelintcache
+.parcel-cache
+.turbo/
+
+# Uploads and Assets
+backend/uploads/*
+!backend/uploads/.gitkeep
+public/uploads/*
+
+# OS generated files
+Icon?
+desktop.ini

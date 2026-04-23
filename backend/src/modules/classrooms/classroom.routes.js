@@ -1,13 +1,12 @@
-// Import Express
 const express = require("express");
-// Création du routeur
 const router = express.Router();
-// Import contrôleurs
+
 const { create, getClassrooms } = require("./classroom.controller");
-// Import middleware auth
 const authMiddleware = require("../../middlewares/auth.middleware");
-// Routes protégées
+const { authorizeRoles } = require("../../middlewares/auth.middleware");
+const ROLES = require("../../constants/roles");
+
 router.get("/", authMiddleware, getClassrooms);
-router.post("/", authMiddleware, create);
-// Export
+router.post("/", authMiddleware, authorizeRoles(ROLES.ADMIN, ROLES.DIRECTOR), create);
+
 module.exports = router;

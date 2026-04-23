@@ -1,32 +1,42 @@
-// On importe jsonwebtoken pour vérifier le token
 const jwt = require("jsonwebtoken");
-// Middleware qui protège les routes privées
+
 const authMiddleware = (req, res, next) => {
   try {
-    // On récupère le header Authorization
     const authHeader = req.headers.authorization;
-    // Si le header n'existe pas ou ne commence pas par Bearer
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
         message: "Accès non autorisé. Token manquant."
       });
     }
-    // On extrait le token en retirant "Bearer "
+
     const token = authHeader.split(" ")[1];
-    // On vérifie et décode le token avec le secret JWT
+    // Utilisation de JWT_SECRET pour correspondre au fichier .env
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // On injecte les infos décodées dans la requête
+
     req.user = decoded;
-    // On continue vers la suite
     next();
   } catch (error) {
-    // Si le token est invalide ou expiré
     return res.status(401).json({
       success: false,
       message: "Token invalide ou expiré."
     });
   }
 };
-// Export
+
+const authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Accès interdit. Permission insuffisante."
+      });
+    }
+
+    next();
+  };
+};
+
 module.exports = authMiddleware;
+module.exports.authorizeRoles = authorizeRoles;

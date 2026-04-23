@@ -20,6 +20,10 @@ const assignmentSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    // Fichier attaché (URL ou chemin relatif)
+    fileUrl: {
+      type: String
+    },
     // Date limite éventuelle
     dueDate: {
       type: Date

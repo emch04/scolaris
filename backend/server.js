@@ -13,6 +13,11 @@ const PORT = process.env.PORT || 5000;
 // On lance une fonction asynchrone immédiatement
 (async () => {
   try {
+    // Vérification des variables d'environnement cruciales
+    if (!process.env.JWT_SECRET) {
+      throw new Error("La variable JWT_SECRET est manquante dans le fichier .env");
+    }
+
     // On se connecte d'abord à la base de données
     await connectDB();
 

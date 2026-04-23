@@ -1,5 +1,5 @@
 {
-  "name": "tshangu-edu-primaire-frontend",
+  "name": "scolaris-frontend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -12,7 +12,8 @@
     "axios": "^1.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "react-signature-canvas": "^1.1.0-alpha.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.3",

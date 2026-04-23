@@ -1,0 +1,151 @@
+import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
+import Card from "../components/Card";
+import Loader from "../components/Loader";
+import { getSchoolsRequest, createSchoolRequest } from "../services/school.api";
+import useAuth from "../hooks/useAuth";
+
+function SchoolsPage() {
+  const { user } = useAuth();
+  const [schools, setSchools] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    code: "",
+    address: "",
+    commune: "Tshangu"
+  });
+
+  const fetchSchools = async () => {
+    try {
+      const response = await getSchoolsRequest();
+      setSchools(response?.data || []);
+    } catch (err) {
+      setError("Impossible de charger les écoles.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSchools();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      await createSchoolRequest(formData);
+      setFormData({ name: "", code: "", address: "", commune: "Tshangu" });
+      fetchSchools();
+    } catch (err) {
+      setError(err?.response?.data?.message || "Erreur lors de la création.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <Navbar />
+      <main className="container">
+        <div style={{ textAlign: "center", padding: "2rem 0" }}>
+          <h1 style={{ fontSize: "2.8rem", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            Espaces Scolaires
+          </h1>
+          <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Administration et annuaire des établissements partenaires</p>
+        </div>
+
+        {/* Formulaire - Réservé Super Admin uniquement */}
+        {user?.role === "super_admin" && (
+          <div style={{ 
+            background: "rgba(255, 255, 255, 0.03)", 
+            padding: "2rem", 
+            borderRadius: "20px", 
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            marginBottom: "3rem"
+          }}>
+            <h3 style={{ marginBottom: "1.5rem" }}>Ajouter un établissement</h3>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                <input
+                  type="text"
+                  placeholder="Nom de l'école"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Code (ex: EPS-001)"
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Commune"
+                  value={formData.commune}
+                  onChange={(e) => setFormData({ ...formData, commune: e.target.value })}
+                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                />
+                <input
+                  type="text"
+                  placeholder="Adresse complète"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                />
+              </div>
+              {error && <p style={{ color: "#ff5252", fontSize: "0.9rem" }}>{error}</p>}
+              <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }} disabled={saving}>
+                {saving ? "Enregistrement..." : "Confirmer l'ajout"}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Liste des écoles */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "1.5rem" }}>Écoles enregistrées</h2>
+          <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>{schools.length} établissements</span>
+        </div>
+
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="grid">
+            {schools.length === 0 ? (
+              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "3rem", opacity: 0.5 }}>Aucun établissement répertorié.</p>
+            ) : (
+              schools.map((s) => (
+                <div key={s._id} style={{ 
+                  background: "rgba(255, 255, 255, 0.05)", 
+                  padding: "1.5rem", 
+                  borderRadius: "15px", 
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  transition: "transform 0.2s"
+                }}>
+                  <div style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.5rem" }}>{s.code}</div>
+                  <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{s.name}</h3>
+                  <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
+                    <p>📍 {s.commune}</p>
+                    <p style={{ marginTop: "0.4rem", fontSize: "0.8rem" }}>{s.address || "Adresse non communiquée"}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </main>
+    </>
+  );
+}
+
+export default SchoolsPage;

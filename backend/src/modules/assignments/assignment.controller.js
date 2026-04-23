@@ -5,8 +5,15 @@ const apiResponse = require("../../utils/apiResponse");
 const { createAssignment, getAllAssignments } = require("./assignment.service");
 // Créer devoir
 const create = asyncHandler(async (req, res) => {
+  const payload = { ...req.body };
+  
+  // Si un fichier est présent, on ajoute son URL au payload
+  if (req.file) {
+    payload.fileUrl = `/uploads/${req.file.filename}`;
+  }
+
   // Appel du service
-  const assignment = await createAssignment(req.body);
+  const assignment = await createAssignment(payload);
   // Réponse de succès
   return apiResponse(res, 201, "Devoir créé avec succès.", assignment);
 });

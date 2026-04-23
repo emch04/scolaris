@@ -1,9 +1,9 @@
-// Liste simple des rôles disponibles dans l'application
 const ROLES = {
+  SUPER_ADMIN: "super_admin",
   ADMIN: "admin",
   DIRECTOR: "director",
-  TEACHER: "teacher"
+  TEACHER: "teacher",
+  PARENT: "parent"
 };
 
-// On exporte l'objet pour l'utiliser partout
 module.exports = ROLES;

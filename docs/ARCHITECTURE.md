@@ -1,0 +1,31 @@
+# Architecture de Scolaris 🏗️
+
+Ce document décrit la structure technique de la plateforme Scolaris.
+
+## 🧱 Architecture Globale
+Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js) découplée en deux parties :
+
+1.  **Backend (API REST)** : Gère la logique métier, la sécurité (JWT) et la base de données.
+2.  **Frontend (SPA)** : Interface utilisateur réactive construite avec React et Vite.
+
+## 🔐 Système de Sécurité
+- **Authentification** : Utilisation de JSON Web Tokens (JWT) stockés de manière sécurisée.
+- **Autorisations (RBAC)** : Les accès sont contrôlés par rôles : `super_admin`, `admin`, `director`, `teacher`, `parent`.
+  - `super_admin` : Accès global, gestion des écoles.
+  - `admin` : Gestion administrative d'une école spécifique.
+- **Validation OTP** : Système de code à usage unique (simulé via console) pour la signature numérique des devoirs.
+
+## 📂 Structure des Données (MongoDB)
+- **Schools** : Établissements scolaires.
+- **Classrooms** : Classes liées aux écoles.
+- **Teachers** : Utilisateurs staff.
+- **Students** : Élèves avec matricules uniques.
+- **Parents** : Utilisateurs liés à un ou plusieurs élèves.
+- **Assignments** : Devoirs et leçons avec fichiers joints.
+- **Results** : Notes des élèves par période.
+- **Submissions** : Signatures numériques des parents.
+- **Communications** : Communiqués et convocations.
+
+## 🚀 Déploiement
+- **Base de données** : MongoDB Atlas.
+- **Fichiers** : Stockage local dans `backend/uploads/` (Configuré pour extension vers Cloudinary/S3).
