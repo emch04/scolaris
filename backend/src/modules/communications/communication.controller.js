@@ -16,7 +16,15 @@ const create = asyncHandler(async (req, res) => {
 const list = asyncHandler(async (req, res) => {
   const { school, classroom, type } = req.query;
   const filter = {};
-  if (school) filter.school = school;
+  
+  if (req.user.role !== "super_admin") {
+    // Les non-super-admins voient ce qui concerne leur école
+    filter.school = req.user.school;
+  } else if (school) {
+    // Le super admin peut filtrer par école s'il le souhaite
+    filter.school = school;
+  }
+
   if (classroom) filter.classroom = classroom;
   if (type) filter.type = type;
 

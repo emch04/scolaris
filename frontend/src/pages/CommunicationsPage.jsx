@@ -27,8 +27,14 @@ function CommunicationsPage() {
 
   const fetchData = async () => {
     try {
+      const params = {};
+      if (user?.role === "student") {
+        params.school = user.school;
+        params.classroom = user.classroom;
+      }
+
       const [resComm, resSchools, resClassrooms] = await Promise.all([
-        getCommunicationsRequest(),
+        getCommunicationsRequest(params),
         getSchoolsRequest(),
         getClassroomsRequest()
       ]);
@@ -81,12 +87,12 @@ function CommunicationsPage() {
         </div>
 
         {/* Formulaire - Réservé Admin / Directeur / Prof */}
-        {(user?.role !== "parent") && (
+        {["super_admin", "admin", "director", "teacher"].includes(user?.role) && (
           <div style={{ 
-            background: "rgba(255, 255, 255, 0.03)", 
+            background: "transparent", 
             padding: "2rem", 
             borderRadius: "20px", 
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: "3px solid rgba(255, 255, 255, 0.1)",
             marginBottom: "3rem"
           }}>
             <h3 style={{ marginBottom: "1.5rem" }}>Publier une nouvelle communication</h3>
@@ -109,8 +115,8 @@ function CommunicationsPage() {
                     onChange={e => setFormData({...formData, type: e.target.value})} 
                     style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                   >
-                    <option value="communique" style={{ background: "#222" }}>Communiqué</option>
-                    <option value="convocation" style={{ background: "#222" }}>Convocation</option>
+                    <option value="communique" style={{ background: "white", color: "#222" }}>Communiqué</option>
+                    <option value="convocation" style={{ background: "white", color: "#222" }}>Convocation</option>
                   </select>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
@@ -121,8 +127,8 @@ function CommunicationsPage() {
                     style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                     required
                   >
-                    <option value="" style={{ background: "#222" }}>Sélectionner l'école</option>
-                    {schools.map(s => <option key={s._id} value={s._id} style={{ background: "#222" }}>{s.name}</option>)}
+                    <option value="" style={{ background: "white", color: "#222" }}>Sélectionner l'école</option>
+                    {schools.map(s => <option key={s._id} value={s._id} style={{ background: "white", color: "#222" }}>{s.name}</option>)}
                   </select>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
@@ -132,8 +138,8 @@ function CommunicationsPage() {
                     onChange={e => setFormData({...formData, classroom: e.target.value})} 
                     style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                   >
-                    <option value="" style={{ background: "#222" }}>Toute l'école</option>
-                    {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "#222" }}>{c.name}</option>)}
+                    <option value="" style={{ background: "white", color: "#222" }}>Toute l'école</option>
+                    {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "white", color: "#222" }}>{c.name}</option>)}
                   </select>
                 </div>
               </div>
@@ -170,10 +176,10 @@ function CommunicationsPage() {
           <div className="grid">
             {communications.length === 0 ? <p style={{ textAlign: "center", gridColumn: "1/-1" }}>Aucune communication.</p> : communications.map(c => (
               <div key={c._id} style={{ 
-                background: "rgba(255, 255, 255, 0.05)", 
+                background: "transparent", 
                 padding: "1.5rem", 
                 borderRadius: "15px", 
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                border: "3px solid rgba(255, 255, 255, 0.1)",
                 position: "relative"
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
@@ -193,23 +199,42 @@ function CommunicationsPage() {
                 <p style={{ fontSize: "0.9rem", opacity: 0.7, marginBottom: "1rem", whiteSpace: "pre-wrap" }}>{c.content}</p>
                 
                 <div style={{ fontSize: "0.75rem", opacity: 0.5, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.8rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span>🏫 {c.school?.name} {c.classroom ? `| 📚 ${c.classroom.name}` : "| 🌍 Toute l'école"}</span>
-                  <a 
-                    href={`https://wa.me/?text=*${encodeURIComponent(c.type.toUpperCase())}: ${encodeURIComponent(c.title)}*%0A%0A${encodeURIComponent(c.content)}%0A%0A_Envoyé via Scolaris_`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ 
-                      background: "#25D366", 
-                      color: "white", 
-                      padding: "4px 10px", 
-                      borderRadius: "5px", 
-                      fontSize: "0.7rem", 
-                      fontWeight: "bold",
-                      textDecoration: "none"
-                    }}
-                  >
-                    Partager WhatsApp
-                  </a>
+                  <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    {c.school?.name} 
+                    {c.classroom ? (
+                      <>
+                        | <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        {c.classroom.name}
+                      </>
+                    ) : (
+                      <>
+                        | <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        Toute l'école
+                      </>
+                    )}
+                  </span>
+                  {["super_admin", "admin", "director", "teacher"].includes(user?.role) && (
+                    <a 
+                      href={`https://wa.me/?text=*${encodeURIComponent(c.type.toUpperCase())}: ${encodeURIComponent(c.title)}*%0A%0A${encodeURIComponent(c.content)}%0A%0A_Envoyé via Scolaris_`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ 
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        background: "#25D366", 
+                        color: "white", 
+                        padding: "4px 10px", 
+                        borderRadius: "5px", 
+                        fontSize: "0.7rem", 
+                        fontWeight: "bold",
+                        textDecoration: "none"
+                      }}
+                    >
+                      Partager WhatsApp
+                    </a>
+                  )}
                 </div>
 
                 {c.fileUrl && (
@@ -218,9 +243,17 @@ function CommunicationsPage() {
                       href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${c.fileUrl}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      style={{ color: "var(--primary)", fontSize: "0.8rem", textDecoration: "underline" }}
+                      style={{ 
+                        color: "var(--primary)", 
+                        fontSize: "0.8rem", 
+                        textDecoration: "underline",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px"
+                      }}
                     >
-                      📂 Télécharger la pièce jointe
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                      Télécharger la pièce jointe
                     </a>
                   </div>
                 )}

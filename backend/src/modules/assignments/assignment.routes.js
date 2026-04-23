@@ -7,7 +7,7 @@ const upload = require("../../middlewares/upload.middleware");
 const validateMiddleware = require("../../middlewares/validate.middleware");
 const { createAssignmentValidator } = require("./assignment.validator");
 
-router.get("/", getAssignments);
+router.get("/", authMiddleware, getAssignments);
 router.post(
   "/",
   authMiddleware,

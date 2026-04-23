@@ -15,9 +15,10 @@ export function AuthProvider({ children }) {
     try {
       const response = await loginRequest({ email, password });
       
-      // On accepte 'user' (nouveau backend) ou 'teacher' (ancien backend)
-      const receivedToken = response?.data?.token;
-      const receivedUser = response?.data?.user || response?.data?.teacher;
+      // Le backend renvoie { success: true, message: "...", data: { token, user } }
+      const authData = response?.data;
+      const receivedToken = authData?.token;
+      const receivedUser = authData?.user || authData?.teacher;
 
       if (receivedToken) {
         setToken(receivedToken);
@@ -27,7 +28,8 @@ export function AuthProvider({ children }) {
         setUser(receivedUser);
         setCurrentUser(receivedUser);
       }
-      return response;
+      // On retourne authData pour que LoginPage y accède directement
+      return authData;
     } catch (error) {
       throw error;
     } finally {

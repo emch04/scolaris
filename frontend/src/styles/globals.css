@@ -3,11 +3,28 @@
   --primary: #0066cc;
   --primary-dark: #004d99;
   --white: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #080808 0%, #1a0b5e 50%, #321498 100%);
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --text-color: #ffffff;
+  --input-bg: #ffffff;
+  --input-text: #222222;
   --font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --border-radius: 12px;
   --box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   --transition: all 0.3s ease;
 }
+
+body.dark-mode {
+  --bg-gradient: linear-gradient(135deg, #020202 0%, #0a042e 50%, #150840 100%);
+  --card-bg: rgba(0, 0, 0, 0.4);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --text-color: #e0e0e0;
+}
+
+/* Version Claire (si on veut inverser par défaut ou gérer différemment) */
+/* Pour l'instant on garde le style Scolaris "sombre/bleu" par défaut, 
+   le "dark-mode" sera encore plus sombre et profond. */
 
 /* ========== RESET & BASE ========== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,11 +32,12 @@ a { text-decoration: none; }
 body {
   font-family: var(--font-family);
   line-height: 1.6;
-  color: var(--white);
-  background: linear-gradient(135deg, #080808 0%, #1a0b5e 50%, #321498 100%);
+  color: var(--text-color);
+  background: var(--bg-gradient);
   background-attachment: fixed;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 #root { min-height: 100vh; display: flex; flex-direction: column; }
@@ -197,11 +215,11 @@ body {
 
 .form input, .form select, .form textarea {
   width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  border: 2px solid #ccc;
   padding: 0.9rem 1.2rem;
   border-radius: 10px;
-  color: white;
+  color: #222;
   font-size: 1rem;
 }
 
@@ -232,6 +250,11 @@ body {
 /* ========== UTILS ========== */
 .hide-on-tiny {
   display: block;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile { display: none !important; }
+  .brand-text { font-size: 1.1rem !important; }
 }
 
 @media (max-width: 480px) {

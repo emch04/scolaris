@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Card from "../components/Card";
 import Loader from "../components/Loader";
-import { getSchoolsRequest, createSchoolRequest } from "../services/school.api";
+import { getSchoolsRequest, createSchoolRequest, validateSchoolRequest } from "../services/school.api";
 import useAuth from "../hooks/useAuth";
 
 function SchoolsPage() {
@@ -34,6 +34,16 @@ function SchoolsPage() {
     fetchSchools();
   }, []);
 
+  const handleValidate = async (id, status) => {
+    if (!window.confirm(`Voulez-vous vraiment ${status === "approved" ? "approuver" : "rejeter"} cet établissement ?`)) return;
+    try {
+      await validateSchoolRequest(id, status);
+      fetchSchools();
+    } catch (err) {
+      alert("Erreur lors de la validation.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -63,10 +73,10 @@ function SchoolsPage() {
         {/* Formulaire - Réservé Super Admin uniquement */}
         {user?.role === "super_admin" && (
           <div style={{ 
-            background: "rgba(255, 255, 255, 0.03)", 
+            background: "transparent", 
             padding: "2rem", 
             borderRadius: "20px", 
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: "3px solid rgba(255, 255, 255, 0.1)",
             marginBottom: "3rem"
           }}>
             <h3 style={{ marginBottom: "1.5rem" }}>Ajouter un établissement</h3>
@@ -126,18 +136,62 @@ function SchoolsPage() {
             ) : (
               schools.map((s) => (
                 <div key={s._id} style={{ 
-                  background: "rgba(255, 255, 255, 0.05)", 
+                  background: "transparent", 
                   padding: "1.5rem", 
                   borderRadius: "15px", 
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  transition: "transform 0.2s"
+                  border: "3px solid rgba(255, 255, 255, 0.1)",
+                  transition: "transform 0.2s",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between"
                 }}>
-                  <div style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.5rem" }}>{s.code}</div>
-                  <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{s.name}</h3>
-                  <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
-                    <p>📍 {s.commune}</p>
-                    <p style={{ marginTop: "0.4rem", fontSize: "0.8rem" }}>{s.address || "Adresse non communiquée"}</p>
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                      <div style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold" }}>{s.code || "EN ATTENTE"}</div>
+                      <span style={{ 
+                        fontSize: "0.6rem", 
+                        padding: "2px 8px", 
+                        borderRadius: "4px", 
+                        background: s.status === "approved" ? "#34A853" : s.status === "rejected" ? "#ff5252" : "#f9ab00",
+                        fontWeight: "bold",
+                        textTransform: "uppercase"
+                      }}>
+                        {s.status === "approved" ? "Validé" : s.status === "rejected" ? "Rejeté" : "En attente"}
+                      </span>
+                    </div>
+                    <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{s.name}</h3>
+                    <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
+                      <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        {s.commune}
+                      </p>
+                      <p style={{ marginTop: "0.4rem", fontSize: "0.8rem", paddingLeft: "22px" }}>{s.address || "Adresse non communiquée"}</p>
+                      {s.adminFullName && (
+                        <p style={{ marginTop: "0.8rem", fontSize: "0.8rem", opacity: 0.5 }}>
+                          Resp: {s.adminFullName} ({s.adminEmail})
+                        </p>
+                      )}
+                    </div>
                   </div>
+
+                  {user?.role === "super_admin" && s.status === "pending" && (
+                    <div style={{ display: "flex", gap: "10px", marginTop: "1.5rem" }}>
+                      <button 
+                        onClick={() => handleValidate(s._id, "approved")}
+                        className="btn" 
+                        style={{ flex: 1, padding: "0.5rem", background: "#34A853", fontSize: "0.8rem" }}
+                      >
+                        Approuver
+                      </button>
+                      <button 
+                        onClick={() => handleValidate(s._id, "rejected")}
+                        className="btn" 
+                        style={{ flex: 1, padding: "0.5rem", background: "#ff5252", fontSize: "0.8rem" }}
+                      >
+                        Rejeter
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))
             )}

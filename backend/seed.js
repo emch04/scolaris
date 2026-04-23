@@ -8,6 +8,8 @@ const Classroom = require("./src/modules/classrooms/classroom.model");
 const Student = require("./src/modules/students/student.model");
 const Parent = require("./src/modules/parents/parent.model");
 const Result = require("./src/modules/results/result.model");
+const Assignment = require("./src/modules/assignments/assignment.model");
+const Communication = require("./src/modules/communications/communication.model");
 const ROLES = require("./src/constants/roles");
 
 const seed = async () => {
@@ -22,6 +24,8 @@ const seed = async () => {
     await Student.deleteMany({});
     await Parent.deleteMany({});
     await Result.deleteMany({});
+    await Assignment.deleteMany({});
+    await Communication.deleteMany({});
 
     // 1. Création d'un Super Admin (Global)
     const hashedSuperAdminPassword = await bcrypt.hash("superadmin123", 10);
@@ -30,7 +34,6 @@ const seed = async () => {
       email: "admin@scolaris.cd",
       password: hashedSuperAdminPassword,
       role: ROLES.SUPER_ADMIN
-      // Pas de schoolId ici car il est global
     });
     console.log("Super Admin créé :", superAdmin.email);
 
@@ -39,7 +42,11 @@ const seed = async () => {
       name: "École Primaire de la Tshangu",
       code: "EPS-001",
       address: "Quartier Kingasani",
-      commune: "N'djili"
+      commune: "N'djili",
+      description: "Un établissement d'excellence engagé dans la formation intégrale de la jeunesse congolaise depuis 1995.",
+      principalName: "M. Dieudonné Kabeya",
+      phone: "+243 81 234 56 78",
+      email: "contact@ecole-tshangu.cd"
     });
     console.log("École créée :", school.name);
 
@@ -64,17 +71,19 @@ const seed = async () => {
     console.log("Classe créée :", classroom.name);
 
     // 5. Création d'un élève
+    const hashedStudentPassword = await bcrypt.hash("scolaris123", 10);
     const student = await Student.create({
       matricule: "TEDP-2026-123456",
       fullName: "Emma Kongo Jr",
       gender: "M",
       birthDate: new Date("2014-05-12"),
       school: school._id,
-      classroom: classroom._id
+      classroom: classroom._id,
+      password: hashedStudentPassword
     });
     console.log("Élève créé :", student.fullName);
 
-    // 6. Création d'un parent lié à cet élève
+    // 6. Création d'un parent
     const hashedParentPassword = await bcrypt.hash("parent123", 10);
     const parent = await Parent.create({
       fullName: "Parent Kongo",
@@ -86,24 +95,60 @@ const seed = async () => {
     });
     console.log("Parent créé :", parent.email);
 
-    // 7. Création de notes de test
-    const subjects = ["Mathématiques", "Français", "Sciences", "Histoire-Géo", "Éducation Civique"];
-    const periods = ["Trimestre 1", "Trimestre 2", "Trimestre 3"];
-
-    for (const period of periods) {
-      for (const subject of subjects) {
-        await Result.create({
-          student: student._id,
-          subject: subject,
-          score: Math.floor(Math.random() * (20 - 10 + 1)) + 10, // Note entre 10 et 20
-          maxScore: 20,
-          appreciation: "Bon travail",
-          period: period,
-          teacher: schoolAdmin._id
-        });
-      }
+    // 7. Création de notes
+    const subjects = ["Mathématiques", "Français", "Sciences"];
+    for (const subject of subjects) {
+      await Result.create({
+        student: student._id,
+        subject: subject,
+        score: 15,
+        maxScore: 20,
+        appreciation: "Très bien",
+        period: "Trimestre 1",
+        teacher: schoolAdmin._id
+      });
     }
-    console.log("Notes de test créées pour Emma Kongo Jr");
+
+    // 8. Création de devoirs
+    await Assignment.create([
+      {
+        title: "Exercices de Géométrie",
+        description: "Faire les exercices 1 à 5 de la page 42 du manuel.",
+        subject: "Mathématiques",
+        classroom: classroom._id,
+        teacher: schoolAdmin._id,
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      },
+      {
+        title: "Dictée préparée",
+        description: "Apprendre le texte 'Le petit prince' pour la dictée de vendredi.",
+        subject: "Français",
+        classroom: classroom._id,
+        teacher: schoolAdmin._id,
+        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+      }
+    ]);
+    console.log("Devoirs créés.");
+
+    // 9. Création de communications
+    await Communication.create([
+      {
+        title: "Réunion de parents",
+        content: "La réunion trimestrielle aura lieu ce samedi à 10h dans la salle polyvalente.",
+        type: "communique",
+        school: school._id,
+        classroom: classroom._id,
+        author: schoolAdmin._id
+      },
+      {
+        title: "Congé de Pâques",
+        content: "Les cours s'arrêteront le jeudi 17 avril pour les vacances de Pâques.",
+        type: "communique",
+        school: school._id,
+        author: schoolAdmin._id
+      }
+    ]);
+    console.log("Communications créées.");
 
     console.log("Seed terminé avec succès !");
     process.exit();

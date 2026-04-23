@@ -59,9 +59,9 @@ function GradesPage() {
         </div>
 
         <div style={{ 
-          background: "rgba(255, 255, 255, 0.03)", 
+          background: "transparent", 
           borderRadius: "20px", 
-          border: "1px solid rgba(255, 255, 255, 0.1)", 
+          border: "3px solid rgba(255, 255, 255, 0.1)", 
           overflow: "hidden",
           boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
         }}>

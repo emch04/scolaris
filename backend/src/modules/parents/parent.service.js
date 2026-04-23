@@ -15,8 +15,8 @@ const getParentChildren = async (parentId) => {
 /**
  * Récupère tous les parents (avec leurs enfants)
  */
-const getAllParents = async () => {
-  return await Parent.find().populate("children", "fullName matricule");
+const getAllParents = async (filter = {}) => {
+  return await Parent.find(filter).populate("children", "fullName matricule");
 };
 
 /**
@@ -40,9 +40,17 @@ const getChildrenAssignments = async (childIds) => {
     .sort({ createdAt: -1 });
 };
 
+/**
+ * Met à jour un parent (pour ajouter des enfants par exemple)
+ */
+const updateParent = async (id, data) => {
+  return await Parent.findByIdAndUpdate(id, data, { new: true }).populate("children", "fullName matricule");
+};
+
 module.exports = { 
   getParentChildren, 
   getChildrenAssignments, 
   getAllParents, 
-  getParentById 
+  getParentById,
+  updateParent 
 };

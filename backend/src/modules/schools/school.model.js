@@ -25,6 +25,35 @@ const schoolSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: "Tshangu"
+    },
+    description: {
+      type: String,
+      trim: true
+    },
+    principalName: {
+      type: String,
+      trim: true
+    },
+    phone: {
+      type: String,
+      trim: true
+    },
+    email: {
+      type: String,
+      trim: true
+    },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending"
+    },
+    adminEmail: {
+      type: String,
+      trim: true
+    },
+    adminFullName: {
+      type: String,
+      trim: true
     }
   },
   {

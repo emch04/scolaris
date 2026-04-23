@@ -5,8 +5,13 @@ const apiResponse = require("../../utils/apiResponse");
 const { getAllTeachers } = require("./teacher.service");
 // Liste enseignants
 const getTeachers = asyncHandler(async (req, res) => {
+  const filter = {};
+  if (req.user.role !== "super_admin") {
+    filter.school = req.user.school;
+  }
+
   // On récupère les enseignants
-  const teachers = await getAllTeachers();
+  const teachers = await getAllTeachers(filter);
   // Réponse
   return apiResponse(res, 200, "Liste des enseignants récupérée avec succès.", teachers);
 });

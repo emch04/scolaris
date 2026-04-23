@@ -1,0 +1,5 @@
+import apiClient from "./apiClient";
+
+export const sendMessageRequest = async (data) => (await apiClient.post("/messages", data)).data;
+export const getMyMessagesRequest = async () => (await apiClient.get("/messages/my")).data;
+export const markMessageAsReadRequest = async (id) => (await apiClient.patch(`/messages/read/${id}`)).data;

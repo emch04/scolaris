@@ -37,10 +37,10 @@ function ClassroomsPage() {
 
         {/* Formulaire épuré */}
         <div style={{ 
-          background: "rgba(255, 255, 255, 0.03)", 
+          background: "transparent", 
           padding: "2rem", 
           borderRadius: "20px", 
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          border: "3px solid rgba(255, 255, 255, 0.1)",
           marginBottom: "3rem"
         }}>
           <h3 style={{ marginBottom: "1.5rem" }}>Ouvrir une nouvelle classe</h3>
@@ -50,24 +50,24 @@ function ClassroomsPage() {
                 placeholder="Nom (ex: 6ème A)" 
                 value={formData.name} 
                 onChange={e => setFormData({...formData, name: e.target.value})} 
-                style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }}
                 required 
               />
               <input 
                 placeholder="Niveau (ex: Primaire 6)" 
                 value={formData.level} 
                 onChange={e => setFormData({...formData, level: e.target.value})} 
-                style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }}
                 required 
               />
               <select 
                 value={formData.school} 
                 onChange={e => setFormData({...formData, school: e.target.value})} 
-                style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
+                style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }}
                 required
               >
-                <option value="" style={{ background: "#222" }}>Choisir l'établissement</option>
-                {schools.map(s => <option key={s._id} value={s._id} style={{ background: "#222" }}>{s.name}</option>)}
+                <option value="" style={{ background: "white", color: "#222" }}>Choisir l'établissement</option>
+                {schools.map(s => <option key={s._id} value={s._id} style={{ background: "white", color: "#222" }}>{s.name}</option>)}
               </select>
             </div>
             <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }}>
@@ -87,15 +87,18 @@ function ClassroomsPage() {
           ) : (
             classrooms.map(c => (
               <div key={c._id} style={{ 
-                background: "rgba(255, 255, 255, 0.05)", 
+                background: "transparent", 
                 padding: "1.5rem", 
                 borderRadius: "15px", 
-                border: "1px solid rgba(255, 255, 255, 0.1)"
+                border: "3px solid rgba(255, 255, 255, 0.1)"
               }}>
                 <div style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.5rem" }}>{c.level}</div>
                 <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{c.name}</h3>
                 <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
-                  <p>🏫 {c.school?.name || "École non spécifiée"}</p>
+                  <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    {c.school?.name || "École non spécifiée"}
+                  </p>
                 </div>
               </div>
             ))

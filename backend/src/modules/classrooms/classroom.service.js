@@ -6,9 +6,9 @@ const createClassroom = async (payload) => {
   return await Classroom.create(payload);
 };
 // Lister classes
-const getAllClassrooms = async () => {
+const getAllClassrooms = async (filter = {}) => {
   // Retourne classes avec école et titulaire
-  return await Classroom.find()
+  return await Classroom.find(filter)
     .populate("school", "name code")
     .populate("titularTeacher", "fullName email")
     .sort({ createdAt: -1 });

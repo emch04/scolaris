@@ -17,10 +17,10 @@ const registerValidator = [
 ];
 // Règles de validation pour la connexion
 const loginValidator = [
-  // Vérification email
+  // Vérification email ou matricule (on vérifie juste que ce n'est pas vide)
   body("email")
-    .isEmail()
-    .withMessage("Veuillez fournir un email valide."),
+    .notEmpty()
+    .withMessage("L'email ou le matricule est obligatoire."),
   // Vérification mot de passe
   body("password")
     .notEmpty()

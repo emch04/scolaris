@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 import "./styles/globals.css";
 
 const rootElement = document.getElementById("root");
@@ -14,7 +16,11 @@ if (!rootElement) {
     <React.StrictMode>
       <BrowserRouter>
         <AuthProvider>
-          <App />
+          <ToastProvider>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </ToastProvider>
         </AuthProvider>
       </BrowserRouter>
     </React.StrictMode>

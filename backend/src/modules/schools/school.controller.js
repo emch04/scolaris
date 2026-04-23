@@ -1,24 +1,43 @@
-// Import des utilitaires
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-// Import des services
-const { getAllSchools, createSchool } = require("./school.service");
+const { getAllSchools, getSchoolById, createSchool, updateSchoolStatus } = require("./school.service");
+
 // Lister les écoles
 const getSchools = asyncHandler(async (req, res) => {
-  // On récupère la liste
-  const schools = await getAllSchools();
-  // Réponse
-  return apiResponse(res, 200, "Liste des écoles récupérée avec succès.", schools);
+  const { status } = req.query;
+  const filter = {};
+  if (status) filter.status = status;
+  
+  const schools = await getAllSchools(filter);
+  return apiResponse(res, 200, "Liste des écoles récupérée.", schools);
 });
+
+// Récupérer une école par son ID
+const getOne = asyncHandler(async (req, res) => {
+  const school = await getSchoolById(req.params.id);
+  if (!school) return apiResponse(res, 404, "École non trouvée.");
+  return apiResponse(res, 200, "Détails de l'école récupérés.", school);
+});
+
 // Ajouter une école
 const create = asyncHandler(async (req, res) => {
-  // Création de l'école
   const school = await createSchool(req.body);
-  // Réponse
-  return apiResponse(res, 201, "École créée avec succès.", school);
+  return apiResponse(res, 201, "Demande d'inscription enregistrée. Elle sera validée par un administrateur.", school);
 });
-// Export
-module.exports = {
-  getSchools,
-  create
-};
+
+// Valider ou rejeter une école (Super Admin uniquement)
+const validateSchool = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!["approved", "rejected"].includes(status)) {
+    return apiResponse(res, 400, "Statut invalide.");
+  }
+
+  const school = await updateSchoolStatus(id, status);
+  if (!school) return apiResponse(res, 404, "École non trouvée.");
+
+  return apiResponse(res, 200, `L'école a été ${status === "approved" ? "approuvée" : "rejetée"}.`, school);
+});
+
+module.exports = { getSchools, getOne, create, validateSchool };

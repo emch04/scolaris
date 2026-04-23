@@ -11,7 +11,11 @@ const {
  * Récupère la liste de tous les parents (Admin/Directeur)
  */
 const getParents = asyncHandler(async (req, res) => {
-  const parents = await getAllParents();
+  const filter = {};
+  if (req.user.role !== "super_admin") {
+    filter.school = req.user.school;
+  }
+  const parents = await getAllParents(filter);
   return apiResponse(res, 200, "Liste des parents récupérée.", parents);
 });
 
@@ -37,4 +41,15 @@ const getMyDashboard = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getMyDashboard, getParents, getOneParent };
+/**
+ * Met à jour un parent (Admin/Directeur)
+ */
+const update = asyncHandler(async (req, res) => {
+  const parent = await updateParent(req.params.id, req.body);
+  if (!parent) {
+    return apiResponse(res, 404, "Parent non trouvé.");
+  }
+  return apiResponse(res, 200, "Parent mis à jour avec succès.", parent);
+});
+
+module.exports = { getMyDashboard, getParents, getOneParent, update };

@@ -12,7 +12,14 @@ const login = asyncHandler(async (req, res) => {
   const result = await loginUser(email, password);
   return apiResponse(res, 200, "Connexion réussie.", {
     token: result.token,
-    user: { id: result.user._id, fullName: result.user.fullName, email: result.user.email, role: result.user.role }
+    user: { 
+      id: result.user._id, 
+      fullName: result.user.fullName, 
+      email: result.user.email, 
+      role: result.user.role,
+      school: result.user.school,
+      classroom: result.user.classroom // Ajout de la classe pour les élèves
+    }
   });
 });
 

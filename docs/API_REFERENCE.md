@@ -24,6 +24,21 @@ Toutes les requêtes commencent par `/api`. Les routes marquées d'un 🔒 néce
 - `GET /parents/:id` 🔒: Détails d'un parent et ses enfants (**Admin/Director**).
 - `GET /parents/dashboard` 🔒: Espace personnel du parent (**Parent uniquement**).
 
+## ✅ Présences (Attendance)
+- `POST /attendance` 🔒: Marquer les présences d'une classe (**Teacher/Admin**).
+- `GET /attendance/classroom/:classroomId` 🔒: Liste des présences d'une classe pour une date.
+- `GET /attendance/student/:studentId` 🔒: Historique des présences d'un élève.
+
+## 📅 Emploi du Temps (Timetable)
+- `GET /timetable/classroom/:classroomId` 🔒: Consulter l'emploi du temps d'une classe.
+- `POST /timetable` 🔒: Ajouter un cours (**Admin/Director**).
+- `DELETE /timetable/:id` 🔒: Supprimer un cours (**Admin/Director**).
+
+## 💬 Messagerie (Messages)
+- `GET /messages/my` 🔒: Liste des messages reçus par l'utilisateur connecté.
+- `POST /messages` 🔒: Envoyer un message à un autre utilisateur.
+- `PATCH /messages/read/:id` 🔒: Marquer un message comme lu.
+
 ## 📝 Résultats & Bulletins
 - `POST /results` 🔒: Ajouter une note (**Teacher/Director**).
 - `GET /results/student/:studentId` 🔒: Consulter le bulletin d'un élève.

@@ -1,5 +1,6 @@
 const Teacher = require("../teachers/teacher.model");
 const Parent = require("../parents/parent.model");
+const Student = require("../students/student.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -11,16 +12,49 @@ const registerTeacher = async (payload) => {
   return await Teacher.create({ fullName, email, password: hashedPassword, phone, role, school });
 };
 
-const loginUser = async (email, password) => {
-  let user = await Teacher.findOne({ email });
-  if (!user) user = await Parent.findOne({ email });
-  if (!user) throw new Error("Email ou mot de passe incorrect.");
+const loginUser = async (identifier, password) => {
+  const id = identifier ? identifier.trim() : "";
+  const pwd = password ? password.trim() : "";
   
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error("Email ou mot de passe incorrect.");
+  console.log("Tentative de connexion pour:", id);
+
+  // On cherche d'abord par email (Enseignants, Parents)
+  let user = await Teacher.findOne({ email: id });
+  if (!user) {
+    console.log("Non trouvé dans Teacher, recherche dans Parent...");
+    user = await Parent.findOne({ email: id });
+  }
+  
+  // Si pas trouvé, on cherche par email OU matricule chez les élèves
+  if (!user) {
+    console.log("Non trouvé dans Parent, recherche dans Student (email ou matricule)...");
+    user = await Student.findOne({ 
+      $or: [
+        { email: id },
+        { matricule: id }
+      ]
+    });
+  }
+
+  if (!user) {
+    console.log("Utilisateur non trouvé avec l'identifiant:", id);
+    throw new Error("Identifiant ou mot de passe incorrect.");
+  }
+
+  console.log("Utilisateur trouvé:", user.fullName, "Rôle:", user.role);
+  
+  // Comparaison du mot de passe
+  const isMatch = (pwd === user.password) || await bcrypt.compare(pwd, user.password);
+  
+  if (!isMatch) {
+    console.log("Mot de passe incorrect pour:", id);
+    throw new Error("Identifiant ou mot de passe incorrect.");
+  }
+
+  console.log("Connexion réussie pour:", user.fullName);
 
   const token = jwt.sign(
-    { id: user._id, email: user.email, role: user.role },
+    { id: user._id, email: user.email || user.matricule, role: user.role, school: user.school },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

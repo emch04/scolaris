@@ -2,24 +2,33 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useAuth from "../hooks/useAuth";
+import { useToast } from "../context/ToastContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login, loading } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      const response = await login(email, password);
-      const user = response?.data?.user;
+      const authData = await login(email, password);
+      // login() renvoie déjà response.data (qui contient user et token)
+      const user = authData?.user || authData?.teacher;
+
+      console.log("Utilisateur connecté:", user);
+      showToast(`Bienvenue, ${user?.fullName} !`);
 
       // Redirection intelligente selon le rôle
       if (user?.role === "parent") {
         navigate("/parent/dashboard");
+      } else if (user?.role === "student") {
+        navigate("/student/dashboard");
       } else {
         navigate("/dashboard");
       }
@@ -55,16 +64,40 @@ function LoginPage() {
             }}>
               <img src="/assets/image.png" alt="Scolaris Logo" style={{ width: "85%", height: "85%", objectFit: "contain" }} />
             </div>
-            <h1 style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>Connexion</h1>
+            <h1 style={{ 
+              fontSize: "2.5rem", 
+              marginBottom: "0.5rem", 
+              display: "flex", 
+              flexDirection: "column",
+              alignItems: "center", 
+              justifyContent: "center", 
+              gap: "10px" 
+            }}>
+              <svg 
+                width="60" 
+                height="60" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                style={{ color: "var(--primary)", marginBottom: "5px" }}
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Connexion
+            </h1>
             <p style={{ color: "rgba(255,255,255,0.7)" }}>Accédez à votre espace éducatif</p>
           </div>
           
           <form onSubmit={handleSubmit} className="form" style={{ margin: "0" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <label style={{ fontSize: "0.9rem", fontWeight: "600" }}>Email</label>
+              <label style={{ fontSize: "0.9rem", fontWeight: "600" }}>Email ou Matricule</label>
               <input 
-                type="email" 
-                placeholder="votre@email.com" 
+                type="text" 
+                placeholder="votre@email.com ou matricule" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
                 required 
@@ -73,13 +106,40 @@ function LoginPage() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               <label style={{ fontSize: "0.9rem", fontWeight: "600" }}>Mot de passe</label>
-              <input 
-                type="password" 
-                placeholder="••••••••" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                required 
-              />
+              <div style={{ position: "relative" }}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  required 
+                  style={{ width: "100%", paddingRight: "40px" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    color: "#000",
+                    transition: "color 0.2s"
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                    {!showPassword && <line x1="1" y1="1" x2="23" y2="23" strokeWidth="3" stroke="white" />}
+                    {!showPassword && <line x1="1" y1="1" x2="23" y2="23" />}
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {error && <p className="error-text" style={{ color: "#ff5252", fontSize: "0.9rem", textAlign: "center" }}>{error}</p>}

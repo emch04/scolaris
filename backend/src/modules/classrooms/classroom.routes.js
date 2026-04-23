@@ -7,6 +7,6 @@ const { authorizeRoles } = require("../../middlewares/auth.middleware");
 const ROLES = require("../../constants/roles");
 
 router.get("/", authMiddleware, getClassrooms);
-router.post("/", authMiddleware, authorizeRoles(ROLES.ADMIN, ROLES.DIRECTOR), create);
+router.post("/", authMiddleware, authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR), create);
 
 module.exports = router;

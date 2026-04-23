@@ -6,7 +6,7 @@ Ce document décrit la structure technique de la plateforme Scolaris.
 Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js) découplée en deux parties :
 
 1.  **Backend (API REST)** : Gère la logique métier, la sécurité (JWT) et la base de données.
-2.  **Frontend (SPA)** : Interface utilisateur réactive construite avec React et Vite.
+2.  **Frontend (SPA)** : Interface utilisateur réactive construite avec React et Vite. Utilisation de la Context API pour la gestion de l'état global (**Auth**, **Theme**, **Toasts**).
 
 ## 🔐 Système de Sécurité
 - **Authentification** : Utilisation de JSON Web Tokens (JWT) stockés de manière sécurisée.
@@ -28,6 +28,9 @@ La plateforme intègre un **Agent de Maintenance** dédié :
 - **Students** : Élèves avec matricules uniques.
 - **Parents** : Utilisateurs liés à un ou plusieurs élèves.
 - **Assignments** : Devoirs et leçons avec fichiers joints.
+- **Attendance** : Suivi des présences par élève et par date.
+- **Timetable** : Emploi du temps hebdomadaire par classe.
+- **Messages** : Échanges internes entre les membres de la plateforme.
 - **Results** : Notes des élèves par période.
 - **Submissions** : Signatures numériques des parents.
 - **Communications** : Communiqués et convocations.

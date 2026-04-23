@@ -45,6 +45,14 @@ const studentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Classroom",
       required: true
+    },
+    password: {
+      type: String,
+      default: "scolaris123" // Mot de passe par défaut
+    },
+    role: {
+      type: String,
+      default: "student"
     }
   },
   {

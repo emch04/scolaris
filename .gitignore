@@ -78,3 +78,16 @@ public/uploads/*
 # OS generated files
 Icon?
 desktop.ini
+
+# Test and debug scripts
+backend/bot_simulation.js
+backend/check_admin.js
+backend/check_schools.js
+backend/check_student.js
+backend/db_status.js
+backend/debug_login.js
+backend/massive_test.js
+backend/restore_admin.js
+backend/simulate_life.js
+backend/test_admin_hash.js
+backend/test_hash.js

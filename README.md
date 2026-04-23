@@ -9,10 +9,16 @@ Une plateforme de gestion scolaire légère et moderne, conçue pour faciliter l
 - **Gestion des Classes** : Création de classes avec attribution de titulaires.
 - **Gestion des Élèves** : Inscription des élèves avec génération automatique de matricules uniques.
 - **Système de Devoirs** : Publication de leçons et devoirs par les enseignants, avec possibilité de joindre des fichiers (PDF, documents, images).
+- **Gestion des Absences** : Module complet permettant aux enseignants de faire l'appel et aux parents de suivre l'historique des présences en temps réel.
+- **Emploi du Temps** : Planning interactif des cours par classe, géré par l'administration et consultable par tous.
+- **Messagerie Interne** : Espace de discussion sécurisé entre parents, enseignants et administration.
+- **Tableau de Bord Visuel** : Graphiques et statistiques dynamiques pour les administrateurs et suivi de progression pour les parents.
 - **Module Communications** : Diffusion de communiqués officiels et de convocations aux parents et élèves.
-- **Espace Parent** : Interface dédiée permettant aux parents de suivre les devoirs de leurs enfants et de consulter les communications de l'école.
-- **Contrôle d'Accès (RBAC)** : Permissions différenciées selon les rôles (Admin, Directeur, Enseignant, Parent). Seuls les Admins peuvent ajouter des écoles.
-- **Design Moderne & Épuré** : Nouvelle interface visuelle optimisée, plus rapide et professionnelle.
+- **Expérience Utilisateur (UX)** :
+  - **Mode Sombre / Clair** : Thème personnalisable avec mémorisation des préférences.
+  - **Système de Notifications (Toasts)** : Alertes élégantes en temps réel pour une navigation fluide.
+- **Espace Parent** : Interface dédiée permettant aux parents de suivre les devoirs, les notes, les absences et l'emploi du temps de leurs enfants.
+- **Contrôle d'Accès (RBAC)** : Permissions différenciées selon les rôles (Admin, Directeur, Enseignant, Parent, Élève).
 - **Signature Numérique Sécurisée** : Validation des devoirs par les parents via un code de sécurité simulation (OTP).
 - **Déconnexion Automatique** : Protection des sessions avec déconnexion après 15 minutes d'inactivité.
 - **Maintenance Automatisée** : Audit de santé et de sécurité hebdomadaire via GitHub Actions.
@@ -20,7 +26,7 @@ Une plateforme de gestion scolaire légère et moderne, conçue pour faciliter l
 ## 🛠️ Stack Technique
 
 - **Backend** : Node.js, Express.js, MongoDB (Mongoose), JWT.
-- **Frontend** : React.js (Vite), React Router, Axios, CSS Vanilla.
+- **Frontend** : React.js (Vite), React Router, Axios, Context API (Theme, Auth, Toasts), CSS Vanilla.
 - **Base de données** : MongoDB Atlas.
 - **Maintenance** : GitHub Actions, Scripts d'audit de sécurité.
 
@@ -73,5 +79,7 @@ Ce projet est développé pour le secteur éducatif.
 
 - [ ] **Notifications SMS Réelles** : Intégration d'une passerelle (Twilio/Vonage) pour l'envoi des codes OTP et des alertes.
 - [ ] **Paiement des Frais** : Module de paiement en ligne des frais de scolarité (Mobile Money).
-- [ ] **Emploi du Temps** : Planning interactif des cours pour chaque classe.
-- [ ] **Gestion des Absences** : Suivi en temps réel de la présence des élèves.
+- [ ] **Export PDF** : Génération des bulletins de notes et certificats au format PDF.
+- [x] **Emploi du Temps** : Planning interactif des cours pour chaque classe.
+- [x] **Gestion des Absences** : Suivi en temps réel de la présence des élèves.
+- [x] **Messagerie** : Système de discussion interne.

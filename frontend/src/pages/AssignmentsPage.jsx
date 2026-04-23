@@ -70,10 +70,10 @@ function AssignmentsPage() {
 
         {/* Formulaire épuré */}
         <div style={{ 
-          background: "rgba(255, 255, 255, 0.03)", 
+          background: "transparent", 
           padding: "2rem", 
           borderRadius: "20px", 
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          border: "3px solid rgba(255, 255, 255, 0.1)",
           marginBottom: "3rem"
         }}>
           <h3 style={{ marginBottom: "1.5rem" }}>Publier un nouveau devoir</h3>
@@ -107,8 +107,8 @@ function AssignmentsPage() {
                   style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                   required
                 >
-                  <option value="" style={{ background: "#222" }}>Sélectionner la classe</option>
-                  {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "#222" }}>{c.name}</option>)}
+                  <option value="" style={{ background: "white", color: "#222" }}>Sélectionner la classe</option>
+                  {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "white", color: "#222" }}>{c.name}</option>)}
                 </select>
               </div>
             </div>
@@ -153,10 +153,10 @@ function AssignmentsPage() {
             ) : (
               assignments.map(a => (
                 <div key={a._id} style={{ 
-                  background: "rgba(255, 255, 255, 0.05)", 
+                  background: "transparent", 
                   padding: "1.5rem", 
                   borderRadius: "15px", 
-                  border: "1px solid rgba(255, 255, 255, 0.1)"
+                  border: "3px solid rgba(255, 255, 255, 0.1)"
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
                     <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase" }}>{a.subject}</span>
@@ -173,9 +173,17 @@ function AssignmentsPage() {
                         href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${a.fileUrl}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        style={{ color: "var(--primary)", fontSize: "0.85rem", textDecoration: "underline" }}
+                        style={{ 
+                          color: "var(--primary)", 
+                          fontSize: "0.85rem", 
+                          textDecoration: "underline",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px"
+                        }}
                       >
-                        📂 Voir le fichier joint
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        Voir le fichier joint
                       </a>
                     </div>
                   )}

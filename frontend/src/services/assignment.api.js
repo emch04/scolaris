@@ -1,5 +1,5 @@
 import apiClient from "./apiClient";
-export const getAssignmentsRequest = async () => (await apiClient.get("/assignments")).data;
+export const getAssignmentsRequest = async (params) => (await apiClient.get("/assignments", { params })).data;
 export const createAssignmentRequest = async (payload) => {
   const config = {
     headers: {

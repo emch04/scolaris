@@ -6,9 +6,9 @@ const createAssignment = async (payload) => {
   return await Assignment.create(payload);
 };
 // Lister devoirs
-const getAllAssignments = async () => {
+const getAllAssignments = async (filter = {}) => {
   // On charge les relations utiles
-  return await Assignment.find()
+  return await Assignment.find(filter)
     .populate("classroom", "name level")
     .populate("teacher", "fullName email")
     .sort({ createdAt: -1 });

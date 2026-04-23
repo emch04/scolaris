@@ -12,8 +12,13 @@ const create = asyncHandler(async (req, res) => {
 });
 // Lister classes
 const getClassrooms = asyncHandler(async (req, res) => {
+  const filter = {};
+  if (req.user.role !== "super_admin") {
+    filter.school = req.user.school;
+  }
+
   // Appel service
-  const classrooms = await getAllClassrooms();
+  const classrooms = await getAllClassrooms(filter);
   // Réponse
   return apiResponse(res, 200, "Liste des classes récupérée avec succès.", classrooms);
 });

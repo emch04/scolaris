@@ -13,17 +13,23 @@ Bienvenue sur Scolaris. Ce guide vous aide à utiliser les fonctionnalités selo
 
 ## 👨‍🏫 Enseignant / Directeur
 - **Gestion des Élèves** : Inscrire des élèves et générer leurs matricules.
+- **Suivi des Présences** : Réaliser l'appel quotidien via le module "Feuille de Présence".
+- **Emploi du Temps** : Gérer les horaires de cours de l'école.
 - **Bulletins de Notes** : Saisir les notes par matière et par trimestre.
 - **Devoirs** : Publier des leçons et des exercices (possibilité de joindre des PDF/Images).
+- **Messagerie** : Communiquer directement avec les parents via la messagerie interne.
 - **Communications** : Envoyer des communiqués et des convocations officielles.
-- **Contact Parent** : Boutons rapides pour contacter les parents via WhatsApp ou SMS.
 
 ## 👪 Parent
-- **Tableau de Bord** : Suivre les devoirs et les notes de tous ses enfants.
-- **Suivi des Notes** : Visualiser le tableau récapitulatif annuel.
+- **Tableau de Bord** : Suivre les devoirs, notes, absences et horaires de tous ses enfants.
+- **Suivi des Présences** : Visualiser l'historique des absences et retards.
+- **Emploi du Temps** : Consulter le planning hebdomadaire de chaque enfant.
 - **Bulletin Numérique** : Accéder au portail interactif avec barres de progression.
+- **Messagerie** : Échanger avec les enseignants via l'espace de discussion sécurisé.
 - **Signature Numérique** : Valider les devoirs de son enfant via un code de sécurité SMS.
-- **Communications** : Recevoir et lire les annonces de l'école.
+
+## 🌙 Mode Sombre / Clair
+Vous pouvez basculer entre le mode sombre et le mode clair à tout moment via l'icône de **lune/soleil** située dans la barre de navigation. Votre préférence sera automatiquement mémorisée.
 
 ## 🔒 Sécurité de Session
 Pour protéger vos données, notamment si vous utilisez un ordinateur partagé à l'école, Scolaris vous déconnectera automatiquement après **15 minutes d'inactivité**. Pensez à enregistrer votre travail ou à rester actif pour maintenir la session.
