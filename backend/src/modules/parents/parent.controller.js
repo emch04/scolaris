@@ -1,3 +1,4 @@
+const Submission = require("../submissions/submission.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { 
@@ -49,9 +50,22 @@ const getMyDashboard = asyncHandler(async (req, res) => {
   const childIds = children.map(c => c._id);
   const assignments = await getChildrenAssignments(childIds);
 
+  // Récupérer les IDs des devoirs déjà signés par ce parent
+  const signedSubmissions = await Submission.find({ parent: req.user.id }).select("assignment");
+  const signedAssignmentIds = signedSubmissions.map(s => s.assignment.toString());
+
+  // Calculer le nombre de devoirs non signés
+  const pendingAssignmentsCount = assignments.filter(a => !signedAssignmentIds.includes(a._id.toString())).length;
+
   return apiResponse(res, 200, "Données parent récupérées.", {
     children,
-    assignments
+    assignments,
+    stats: {
+      totalChildren: children.length,
+      totalAssignments: assignments.length,
+      pendingAssignments: pendingAssignmentsCount
+    },
+    signedAssignmentIds
   });
 });
 

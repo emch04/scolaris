@@ -6,21 +6,21 @@ function HomePage() {
   const features = [
     {
       title: "Gestion Intelligente",
-      desc: "Inscriptions, matricules et dossiers élèves centralisés et sécurisés.",
+      desc: "Automatisez les inscriptions, générez des matricules uniques et sécurisez les dossiers élèves avec un système de cloud crypté accessible partout.",
       icon: (
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
       )
     },
     {
       title: "Continuité Pédagogique",
-      desc: "Diffusion instantanée des devoirs, leçons et supports de cours.",
+      desc: "Accédez aux plans de cours annuels, devoirs interactifs et à une bibliothèque numérique complète. L'éducation ne s'arrête jamais, même à la maison.",
       icon: (
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
       )
     },
     {
       title: "Lien École-Famille",
-      desc: "Communications, convocations et suivis de notes en temps réel.",
+      desc: "Signatures numériques de devoirs, bulletins instantanés et messagerie intelligente. Réduisez la distance entre l'école et le foyer.",
       icon: (
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
       )
@@ -61,7 +61,7 @@ function HomePage() {
           boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
           transform: "rotate(-5deg)"
         }}>
-          <img src="/assets/image.png" alt="Scolaris Logo" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
+          <img src="/assets/image.jpg" alt="Scolaris Logo" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
         </div>
         
         <h1 style={{ 
@@ -174,7 +174,7 @@ function HomePage() {
               position: "absolute"
             }}></div>
             <img 
-              src="/assets/image.png" 
+              src="/assets/image.jpg" 
               alt="Education" 
               style={{ 
                 width: "100%", 

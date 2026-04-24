@@ -1,0 +1,18 @@
+{
+  "common": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "dashboard": "Tableau de Bord",
+    "home": "Accueil",
+    "contact": "Contact",
+    "about": "À Propos",
+    "language": "Langue"
+  },
+  "home": {
+    "hero_title": "Réinventons ensemble l'éducation.",
+    "hero_desc": "Scolaris est la plateforme de gestion scolaire nouvelle génération conçue pour les établissements d'excellence.",
+    "cta_login": "Espace de connexion",
+    "cta_discover": "Découvrir Scolaris"
+  }
+}

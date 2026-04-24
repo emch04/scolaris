@@ -6,7 +6,9 @@ const addCoursePlan = asyncHandler(async (req, res) => {
   const payload = { ...req.body, teacher: req.user.id };
   
   if (req.file) {
-    payload.fileUrl = `/uploads/${req.file.filename}`;
+    payload.fileUrl = req.file.path.includes("cloudinary") 
+      ? req.file.path 
+      : `/uploads/${req.file.filename}`;
   }
 
   const plan = await CoursePlan.create(payload);

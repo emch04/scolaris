@@ -11,7 +11,11 @@ const create = asyncHandler(async (req, res) => {
   
   // Si un fichier est présent, on ajoute son URL au payload
   if (req.file) {
-    payload.fileUrl = `/uploads/${req.file.filename}`;
+    // Si c'est Cloudinary, req.file.path contient l'URL complète
+    // Sinon c'est local, et on garde le chemin relatif
+    payload.fileUrl = req.file.path.includes("cloudinary") 
+      ? req.file.path 
+      : `/uploads/${req.file.filename}`;
   }
 
   // Appel du service

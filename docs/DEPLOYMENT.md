@@ -10,10 +10,15 @@ Ce document explique comment héberger la plateforme Scolaris en ligne.
 3.  **Commande de Build :** `npm install`
 4.  **Commande de Start :** `npm start`
 5.  **Variables d'Environnement (Environment Variables) :**
-    *   `PORT` : 5000 (ou laisser par défaut)
+    *   `PORT` : 5001
     *   `MONGODB_URI` : Votre URL de connexion MongoDB Atlas.
     *   `JWT_SECRET` : Une clé secrète longue et complexe.
-    *   `FRONTEND_URL` : L'URL finale de votre site (ex: `https://scolaris.vercel.app`).
+    *   `CLIENT_URL` : L'URL finale de votre frontend (ex: `https://scolaris.vercel.app`).
+    *   `EMAIL_USER` / `EMAIL_PASS` : Pour l'envoi des codes de récupération.
+    *   **Stockage Cloud (Optionnel mais recommandé) :**
+        *   `CLOUDINARY_CLOUD_NAME`
+        *   `CLOUDINARY_API_KEY`
+        *   `CLOUDINARY_API_SECRET`
 
 ## 💻 Étape 2 : Hébergement du Frontend (Client)
 **Hébergeurs recommandés :** Vercel, Netlify, ou Cloudflare Pages.

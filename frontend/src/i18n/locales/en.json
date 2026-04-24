@@ -1,0 +1,18 @@
+{
+  "common": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "contact": "Contact",
+    "about": "About",
+    "language": "Language"
+  },
+  "home": {
+    "hero_title": "Reinventing education together.",
+    "hero_desc": "Scolaris is the next-generation school management platform designed for excellence.",
+    "cta_login": "Login Space",
+    "cta_discover": "Discover Scolaris"
+  }
+}

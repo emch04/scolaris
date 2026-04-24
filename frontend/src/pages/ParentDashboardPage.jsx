@@ -8,7 +8,7 @@ import useAuth from "../hooks/useAuth";
 
 function ParentDashboardPage() {
   const { user } = useAuth();
-  const [data, setData] = useState({ children: [], assignments: [] });
+  const [data, setData] = useState({ children: [], assignments: [], stats: { pendingAssignments: 0 }, signedAssignmentIds: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -47,10 +47,19 @@ function ParentDashboardPage() {
         <div style={{ 
           display: "flex", 
           gap: "1rem", 
-          marginBottom: "4rem", 
+          marginBottom: "3rem", 
           flexWrap: "wrap", 
           justifyContent: "center" 
         }}>
+          <div style={{ background: "rgba(255,255,255,0.05)", padding: "0.8rem 1.5rem", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: "10px" }}>
+             <span style={{ fontSize: "1.2rem", fontWeight: "900", color: "var(--primary)" }}>{data.children?.length || 0}</span>
+             <span style={{ fontSize: "0.75rem", opacity: 0.6, textTransform: "uppercase", fontWeight: "bold" }}>Enfants</span>
+          </div>
+          <div style={{ background: data.stats?.pendingAssignments > 0 ? "rgba(217, 48, 37, 0.1)" : "rgba(52, 168, 83, 0.1)", padding: "0.8rem 1.5rem", borderRadius: "12px", border: `1px solid ${data.stats?.pendingAssignments > 0 ? '#d93025' : '#34a853'}`, display: "flex", alignItems: "center", gap: "10px" }}>
+             <span style={{ fontSize: "1.2rem", fontWeight: "900", color: data.stats?.pendingAssignments > 0 ? "#d93025" : "#34a853" }}>{data.stats?.pendingAssignments || 0}</span>
+             <span style={{ fontSize: "0.75rem", opacity: 0.8, textTransform: "uppercase", fontWeight: "bold", color: data.stats?.pendingAssignments > 0 ? "#d93025" : "#34a853" }}>À signer</span>
+          </div>
+
           <Link to="/communications" className="btn" style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(26, 115, 232, 0.2)", color: "#1A73E8", border: "1px solid #1A73E8", padding: "0.8rem 1.5rem" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
@@ -168,32 +177,45 @@ function ParentDashboardPage() {
               </h2>
               <div className="grid">
                 {data.assignments && data.assignments.length > 0 ? (
-                  data.assignments.slice(0, 3).map(a => (
-                    <Link key={a._id} to={`/assignment/${a._id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                      <div style={{ 
-                        background: "transparent", 
-                        padding: "1.5rem", 
-                        borderRadius: "15px", 
-                        border: "1px solid rgba(255, 255, 255, 0.05)",
-                        transition: "0.2s",
-                        cursor: "pointer"
-                      }}
-                      onMouseOver={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
-                      onMouseOut={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
-                      >
-                        <h4 style={{ color: "var(--primary)", marginBottom: "0.5rem" }}>{a.subject}</h4>
-                        <p style={{ fontWeight: "600", marginBottom: "0.5rem" }}>{a.title}</p>
-                        <p style={{ fontSize: "0.85rem", opacity: 0.6, marginBottom: "1rem" }}>{a.description.substring(0, 100)}...</p>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "0.75rem", opacity: 0.4 }}>{formatDate(a.createdAt)}</span>
-                          <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", display: "flex", alignItems: "center", gap: "5px" }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
-                            Signer
-                          </span>
+                  data.assignments.slice(0, 3).map(a => {
+                    const isSigned = data.signedAssignmentIds?.includes(a._id);
+                    return (
+                      <Link key={a._id} to={`/assignment/${a._id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                        <div style={{ 
+                          background: isSigned ? "rgba(52, 168, 83, 0.03)" : "transparent", 
+                          padding: "1.5rem", 
+                          borderRadius: "15px", 
+                          border: isSigned ? "1px solid rgba(52, 168, 83, 0.2)" : "1px solid rgba(255, 255, 255, 0.05)",
+                          transition: "0.2s",
+                          cursor: "pointer",
+                          position: "relative"
+                        }}
+                        onMouseOver={e => e.currentTarget.style.background = isSigned ? "rgba(52, 168, 83, 0.06)" : "rgba(255,255,255,0.08)"}
+                        onMouseOut={e => e.currentTarget.style.background = isSigned ? "rgba(52, 168, 83, 0.03)" : "transparent"}
+                        >
+                          {isSigned && (
+                            <div style={{ position: "absolute", top: "15px", right: "15px", color: "#34A853" }}>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                          )}
+                          <h4 style={{ color: isSigned ? "#34A853" : "var(--primary)", marginBottom: "0.5rem" }}>{a.subject}</h4>
+                          <p style={{ fontWeight: "600", marginBottom: "0.5rem" }}>{a.title}</p>
+                          <p style={{ fontSize: "0.85rem", opacity: 0.6, marginBottom: "1rem" }}>{a.description.substring(0, 100)}...</p>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span style={{ fontSize: "0.75rem", opacity: 0.4 }}>{formatDate(a.createdAt)}</span>
+                            <span style={{ fontSize: "0.7rem", color: isSigned ? "#34A853" : "var(--primary)", fontWeight: "bold", display: "flex", alignItems: "center", gap: "5px" }}>
+                              {isSigned ? "Signé" : (
+                                <>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
+                                  Signer
+                                </>
+                              )}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))
+                      </Link>
+                    );
+                  })
                 ) : (
                   <p style={{ opacity: 0.5 }}>Aucun devoir récent.</p>
                 )}

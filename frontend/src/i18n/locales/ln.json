@@ -1,0 +1,18 @@
+{
+  "common": {
+    "login": "Kokota",
+    "register": "Komikomisa",
+    "logout": "Kobima",
+    "dashboard": "Etando ya mosala",
+    "home": "Ebandeli",
+    "contact": "Kosolola",
+    "about": "Sango na biso",
+    "language": "Lokota"
+  },
+  "home": {
+    "hero_title": "Tobongola elongo kelasi ya lobi.",
+    "hero_desc": "Scolaris ezali esika ya sika mpo na kotala mpe kobongisa makambo ya kelasi na mayele.",
+    "cta_login": "Esika ya kokota",
+    "cta_discover": "Koyeba Scolaris"
+  }
+}

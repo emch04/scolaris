@@ -6,7 +6,9 @@ const apiResponse = require("../../utils/apiResponse");
 const addResource = asyncHandler(async (req, res) => {
   const payload = { ...req.body };
   if (req.file) {
-    payload.fileUrl = `/uploads/${req.file.filename}`;
+    payload.fileUrl = req.file.path.includes("cloudinary") 
+      ? req.file.path 
+      : `/uploads/${req.file.filename}`;
   }
   
   payload.addedBy = req.user.id;

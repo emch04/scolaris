@@ -106,7 +106,7 @@ function LoginPage() {
           
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <div style={{ background: "white", width: "90px", height: "90px", borderRadius: "22px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", border: "3px solid white", boxShadow: "0 10px 30px rgba(0,0,0,0.2)", overflow: "hidden" }}>
-              <img src="/assets/image.png" alt="Scolaris" style={{ width: "80%", height: "85%", objectFit: "contain" }} />
+              <img src="/assets/image.jpg" alt="Scolaris" style={{ width: "80%", height: "85%", objectFit: "contain" }} />
             </div>
             <h1 style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>
               {view === "login" ? "Connexion" : view === "register_type" ? "Créer un compte" : "Scolaris"}

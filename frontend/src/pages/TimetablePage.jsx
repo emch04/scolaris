@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
@@ -6,6 +6,8 @@ import { getClassroomsRequest } from "../services/classroom.api";
 import { getClassroomTimetableRequest, addTimetableEntryRequest, deleteTimetableEntryRequest } from "../services/timetable.api";
 import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 function TimetablePage() {
   const { user } = useAuth();
@@ -14,8 +16,10 @@ function TimetablePage() {
   const [selectedClass, setSelectedClass] = useState(classroomId || "");
   const [timetable, setTimetable] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [printing, setPrinting] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const { showToast } = useToast();
+  const timetableRef = useRef();
 
   const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const [formData, setFormData] = useState({
@@ -47,6 +51,41 @@ function TimetablePage() {
   const handleClassChange = (classId) => {
     setSelectedClass(classId);
     fetchTimetable(classId);
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!selectedClass) return;
+    setPrinting(true);
+    setTimeout(async () => {
+      try {
+        const element = timetableRef.current;
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#050505"
+        });
+        const imgData = canvas.toDataURL("image/png");
+        
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4"
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        const className = classrooms.find(c => c._id === selectedClass)?.name || "Classe";
+        pdf.save(`Emploi_du_temps_${className.replace(/\s+/g, '_')}.pdf`);
+      } catch (err) {
+        console.error("Erreur PDF:", err);
+        showToast("Erreur lors de la génération du PDF.", "error");
+      } finally {
+        setPrinting(false);
+      }
+    }, 100);
   };
 
   const handleSubmit = async (e) => {
@@ -83,15 +122,29 @@ function TimetablePage() {
           <p style={{ opacity: 0.6 }}>Consultez et gérez les horaires par classe</p>
         </div>
 
-        <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <select 
-            value={selectedClass} 
-            onChange={e => handleClassChange(e.target.value)}
-            style={{ width: "300px", background: "white", color: "#222", padding: "12px", borderRadius: "10px", border: "none" }}
-          >
-            <option value="">Choisir une classe</option>
-            {classrooms.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-          </select>
+        <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <select 
+              value={selectedClass} 
+              onChange={e => handleClassChange(e.target.value)}
+              style={{ width: "300px", background: "white", color: "#222", padding: "12px", borderRadius: "10px", border: "none" }}
+            >
+              <option value="">Choisir une classe</option>
+              {classrooms.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+            </select>
+
+            {selectedClass && (
+              <button 
+                onClick={handleDownloadPDF} 
+                disabled={printing || timetable.length === 0}
+                className="btn"
+                style={{ background: "rgba(255,255,255,0.1)", color: "white", display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                {printing ? "Export..." : "Exporter PDF"}
+              </button>
+            )}
+          </div>
 
           {["admin", "director", "super_admin", "teacher"].includes(user?.role) && selectedClass && (
             <button onClick={() => setShowAddForm(!showAddForm)} className="btn btn-primary">
@@ -153,43 +206,51 @@ function TimetablePage() {
 
         {loading ? <Loader /> : (
           selectedClass ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
-              {days.map(day => (
-                <div key={day} style={{ 
-                  background: "rgba(255,255,255,0.03)", 
-                  padding: "1.5rem", 
-                  borderRadius: "20px", 
-                  border: "1px solid rgba(255,255,255,0.08)"
-                }}>
-                  <h3 style={{ color: "var(--primary)", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "10px", marginBottom: "1rem" }}>{day}</h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {timetable.filter(t => t.day === day).length > 0 ? (
-                      timetable.filter(t => t.day === day).map(item => (
-                        <div key={item._id} style={{ 
-                          background: "rgba(255,255,255,0.02)", 
-                          padding: "1rem", 
-                          borderRadius: "12px", 
-                          display: "flex", 
-                          justifyContent: "space-between",
-                          alignItems: "center"
-                        }}>
-                          <div>
-                            <div style={{ fontWeight: "bold" }}>{item.subject}</div>
-                            <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{item.startTime} - {item.endTime}</div>
-                          </div>
-                          {["admin", "director", "super_admin", "teacher"].includes(user?.role) && (
-                            <button onClick={() => handleDelete(item._id)} style={{ background: "none", border: "none", color: "#ff5252", cursor: "pointer" }}>
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            </button>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <p style={{ fontSize: "0.8rem", opacity: 0.3 }}>Aucun cours prévu.</p>
-                    )}
-                  </div>
+            <div ref={timetableRef} style={{ padding: printing ? "40px" : "0", background: printing ? "#050505" : "transparent" }}>
+              {printing && (
+                <div style={{ marginBottom: "30px", textAlign: "center", borderBottom: "2px solid var(--primary)", paddingBottom: "20px" }}>
+                  <h2 style={{ color: "white", margin: 0 }}>Emploi du Temps - {classrooms.find(c => c._id === selectedClass)?.name}</h2>
+                  <p style={{ color: "var(--primary)", fontWeight: "bold", margin: "5px 0 0" }}>Scolaris RDC</p>
                 </div>
-              ))}
+              )}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
+                {days.map(day => (
+                  <div key={day} style={{ 
+                    background: "rgba(255,255,255,0.03)", 
+                    padding: "1.5rem", 
+                    borderRadius: "20px", 
+                    border: "1px solid rgba(255,255,255,0.08)"
+                  }}>
+                    <h3 style={{ color: "var(--primary)", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "10px", marginBottom: "1rem" }}>{day}</h3>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {timetable.filter(t => t.day === day).length > 0 ? (
+                        timetable.filter(t => t.day === day).map(item => (
+                          <div key={item._id} style={{ 
+                            background: "rgba(255,255,255,0.02)", 
+                            padding: "1rem", 
+                            borderRadius: "12px", 
+                            display: "flex", 
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}>
+                            <div>
+                              <div style={{ fontWeight: "bold" }}>{item.subject}</div>
+                              <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{item.startTime} - {item.endTime}</div>
+                            </div>
+                            {["admin", "director", "super_admin", "teacher"].includes(user?.role) && !printing && (
+                              <button onClick={() => handleDelete(item._id)} style={{ background: "none", border: "none", color: "#ff5252", cursor: "pointer" }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                              </button>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <p style={{ fontSize: "0.8rem", opacity: 0.3 }}>Aucun cours prévu.</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <div style={{ textAlign: "center", padding: "4rem", opacity: 0.3 }}>

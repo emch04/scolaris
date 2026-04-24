@@ -30,7 +30,7 @@ function Navbar() {
 
         <Link to="/" className="brand" onClick={closeMenu} style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
           <div style={{ background: "white", width: "40px", height: "40px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-            <img src="/assets/image.png" alt="S" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
+            <img src="/assets/image.jpg" alt="S" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
           </div>
           <span className="brand-text" style={{ fontSize: "1.3rem", fontWeight: "900" }}>Scolaris</span>
         </Link>
