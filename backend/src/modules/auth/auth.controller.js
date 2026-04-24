@@ -1,17 +1,37 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-const { registerTeacher, forgotPassword, resetPassword, loginUser } = require("./auth.service");
+const { 
+  registerTeacher, 
+  registerTeacherPublic,
+  registerStudentPublic,
+  registerParentPublic,
+  forgotPassword, 
+  resetPassword, 
+  loginUser 
+} = require("./auth.service");
 
 const register = asyncHandler(async (req, res) => {
-  const teacher = await registerTeacher(req.body);
-  return apiResponse(res, 201, "Enseignant enregistré.", { id: teacher._id, fullName: teacher.fullName, role: teacher.role });
+  const { type } = req.body; // "teacher", "student", "parent"
+  let user;
+
+  if (type === "student") {
+    user = await registerStudentPublic(req.body);
+  } else if (type === "parent") {
+    user = await registerParentPublic(req.body);
+  } else if (type === "teacher_public") {
+    user = await registerTeacherPublic(req.body);
+  } else {
+    // Inscription admin (privée)
+    user = await registerTeacher(req.body);
+  }
+
+  return apiResponse(res, 201, "Inscription réussie.", { id: user._id, fullName: user.fullName, role: user.role, matricule: user.matricule });
 });
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const result = await loginUser(email, password);
   
-  // Construction dynamique de l'objet user pour éviter les champs undefined
   const userData = {
     id: result.user._id,
     fullName: result.user.fullName,
@@ -20,13 +40,8 @@ const login = asyncHandler(async (req, res) => {
     school: result.user.school
   };
 
-  if (result.user.classroom) {
-    userData.classroom = result.user.classroom;
-  }
-
-  if (result.user.matricule) {
-    userData.matricule = result.user.matricule;
-  }
+  if (result.user.classroom) userData.classroom = result.user.classroom;
+  if (result.user.matricule) userData.matricule = result.user.matricule;
 
   return apiResponse(res, 200, "Connexion réussie.", {
     token: result.token,

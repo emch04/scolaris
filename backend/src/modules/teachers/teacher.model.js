@@ -35,6 +35,12 @@ const teacherSchema = new mongoose.Schema(
       enum: Object.values(ROLES),
       default: ROLES.TEACHER
     },
+    // Statut du compte (pour validation admin)
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "approved"
+    },
     // Référence vers une école
     school: {
       type: mongoose.Schema.Types.ObjectId,

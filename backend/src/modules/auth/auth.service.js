@@ -1,9 +1,73 @@
 const Teacher = require("../teachers/teacher.model");
 const Parent = require("../parents/parent.model");
 const Student = require("../students/student.model");
+const School = require("../schools/school.model");
 const Otp = require("./otp.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const generateMatricule = require("../../utils/generateMatricule");
+const sendEmail = require("../../utils/email.service");
+
+// Inscription Enseignant (Public)
+const registerTeacherPublic = async (payload) => {
+  const { fullName, email, password, phone } = payload;
+  const existing = await Teacher.findOne({ email });
+  if (existing) throw new Error("Email déjà utilisé.");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  
+  return await Teacher.create({
+    fullName,
+    email,
+    password: hashedPassword,
+    phone,
+    role: "teacher",
+    status: "pending" // En attente de validation par un admin
+  });
+};
+
+// Inscription Élève (Public)
+const registerStudentPublic = async (payload) => {
+  const { fullName, schoolCode, password } = payload;
+  
+  // Vérifier si l'école existe via son code
+  const school = await School.findOne({ code: schoolCode });
+  if (!school) throw new Error("Code école invalide.");
+
+  const matricule = generateMatricule();
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  return await Student.create({
+    fullName,
+    matricule,
+    password: hashedPassword,
+    school: school._id,
+    role: "student"
+  });
+};
+
+// Inscription Parent (Public)
+const registerParentPublic = async (payload) => {
+  const { fullName, email, studentMatricule, password, phone } = payload;
+
+  // Vérifier si l'enfant existe via son matricule
+  const student = await Student.findOne({ matricule: studentMatricule });
+  if (!student) throw new Error("Matricule élève non trouvé. L'enfant doit être inscrit d'abord.");
+
+  const existing = await Parent.findOne({ email });
+  if (existing) throw new Error("Email déjà utilisé.");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  return await Parent.create({
+    fullName,
+    email,
+    password: hashedPassword,
+    phone,
+    role: "parent",
+    children: [student._id] // Lier immédiatement l'enfant
+  });
+};
 
 const registerTeacher = async (payload) => {
   const { fullName, email, password, phone, role, school } = payload;
@@ -12,8 +76,6 @@ const registerTeacher = async (payload) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   return await Teacher.create({ fullName, email, password: hashedPassword, phone, role, school });
 };
-
-const sendEmail = require("../../utils/email.service");
 
 const forgotPassword = async (identifier) => {
   const id = identifier ? identifier.trim() : "";
@@ -75,6 +137,9 @@ const forgotPassword = async (identifier) => {
       `
     );
   }
+
+  // Fallback console pour le dev
+  // console.log(`[AUTH SIMULATION] Code de réinitialisation pour ${emailDest || user.matricule} : ${code}`);
 
   return true;
 };
@@ -147,6 +212,11 @@ const loginUser = async (identifier, password) => {
     throw new Error("Identifiant ou mot de passe incorrect.");
   }
 
+  // Vérification du statut pour les enseignants (validation admin requise)
+  if (user.role === "teacher" && user.status === "pending") {
+    throw new Error("Votre compte est en attente de validation par l'administration.");
+  }
+
   console.log("Utilisateur trouvé:", user.fullName, "Rôle:", user.role);
   
   // Comparaison du mot de passe
@@ -181,4 +251,12 @@ const loginUser = async (identifier, password) => {
   return { user, token };
 };
 
-module.exports = { registerTeacher, forgotPassword, resetPassword, loginUser };
+module.exports = { 
+  registerTeacher, 
+  registerTeacherPublic, 
+  registerStudentPublic, 
+  registerParentPublic, 
+  forgotPassword, 
+  resetPassword, 
+  loginUser 
+};
