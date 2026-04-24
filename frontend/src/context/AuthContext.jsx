@@ -1,38 +1,50 @@
 import { createContext, useEffect, useMemo, useState } from "react";
-import { loginRequest } from "../services/auth.api";
-import { clearAuthStorage, getToken, getUser, setToken, setUser } from "../utils/storage";
+import { loginRequest, getMeRequest, logoutRequest } from "../services/auth.api";
+import { clearAuthStorage, getUser, setUser } from "../utils/storage";
 
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setCurrentUser] = useState(getUser());
-  const [token, setCurrentToken] = useState(getToken());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Correction de la connexion : accepter 'user' ou 'teacher'
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await getMeRequest();
+        if (response?.data?.user) {
+          const receivedUser = response.data.user;
+          if (receivedUser.role === "student" && receivedUser.classroom && typeof receivedUser.classroom === "object") {
+            receivedUser.classroom = receivedUser.classroom._id;
+          }
+          setUser(receivedUser);
+          setCurrentUser(receivedUser);
+        }
+      } catch (error) {
+        console.log("Session non active.");
+        clearAuthStorage();
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkSession();
+  }, []);
+
   const login = async (email, password) => {
     setLoading(true);
     try {
       const response = await loginRequest({ email, password });
-      
-      // Le backend renvoie { success: true, message: "...", data: { token, user } }
       const authData = response?.data;
-      const receivedToken = authData?.token;
-      const receivedUser = authData?.user || authData?.teacher;
+      const receivedUser = authData?.user;
 
-      if (receivedToken) {
-        setToken(receivedToken);
-        setCurrentToken(receivedToken);
-      }
       if (receivedUser) {
-        // Normalisation de la classe pour les élèves
         if (receivedUser.role === "student" && receivedUser.classroom && typeof receivedUser.classroom === "object") {
           receivedUser.classroom = receivedUser.classroom._id;
         }
         setUser(receivedUser);
         setCurrentUser(receivedUser);
       }
-      // On retourne authData pour que LoginPage y accède directement
       return authData;
     } catch (error) {
       throw error;
@@ -41,11 +53,16 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = () => {
-    clearAuthStorage();
-    setCurrentToken(null);
-    setCurrentUser(null);
-    window.location.href = "/login"; // Redirection propre
+  const logout = async () => {
+    try {
+      await logoutRequest();
+    } catch (err) {
+      console.error("Erreur déconnexion serveur");
+    } finally {
+      clearAuthStorage();
+      setCurrentUser(null);
+      window.location.href = "/login";
+    }
   };
 
   useEffect(() => {
@@ -54,14 +71,14 @@ export function AuthProvider({ children }) {
     const resetTimer = () => {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
-        if (token) {
+        if (user) {
           console.log("Session expirée pour inactivité (15 min).");
           logout();
         }
       }, 15 * 60 * 1000); // 15 minutes
     };
 
-    if (token) {
+    if (user) {
       // Liste étendue d'événements pour détecter l'activité
       const events = [
         "mousedown", "mousemove", "keypress", 
@@ -84,23 +101,15 @@ export function AuthProvider({ children }) {
         });
       };
     }
-  }, [token]);
-
-  useEffect(() => {
-    const storedUser = getUser();
-    const storedToken = getToken();
-    if (storedUser) setCurrentUser(storedUser);
-    if (storedToken) setCurrentToken(storedToken);
-  }, []);
+  }, [user]);
 
   const value = useMemo(() => ({
     user,
-    token,
     loading,
-    isAuthenticated: !!token,
+    isAuthenticated: !!user,
     login,
     logout
-  }), [user, token, loading]);
+  }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

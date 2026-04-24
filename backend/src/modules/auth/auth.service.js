@@ -3,6 +3,8 @@ const Parent = require("../parents/parent.model");
 const Student = require("../students/student.model");
 const School = require("../schools/school.model");
 const Otp = require("./otp.model");
+const Token = require("./token.model");
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const generateMatricule = require("../../utils/generateMatricule");
@@ -243,12 +245,31 @@ const loginUser = async (identifier, password) => {
 
   if (user.classroom) payload.classroom = user.classroom;
 
+  // 1. Générer l'Access Token (durée courte: 15 min)
   const token = jwt.sign(
     payload,
     process.env.JWT_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: "15m" }
   );
-  return { user, token };
+
+  // 2. Générer le Refresh Token (durée longue: 30 jours)
+  const refreshToken = crypto.randomBytes(40).toString("hex");
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  // Déterminer le modèle
+  let userModel = "Teacher";
+  if (user.role === "student") userModel = "Student";
+  else if (user.role === "parent") userModel = "Parent";
+
+  // Sauvegarder en DB
+  await Token.create({
+    userId: user._id,
+    onModel: userModel,
+    refreshToken,
+    expiresAt
+  });
+
+  return { user, token, refreshToken };
 };
 
 module.exports = { 

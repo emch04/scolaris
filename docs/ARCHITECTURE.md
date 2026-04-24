@@ -9,12 +9,17 @@ Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js)
 2.  **Frontend (SPA)** : Interface utilisateur réactive construite avec React et Vite. Utilisation de la Context API pour la gestion de l'état global (**Auth**, **Theme**, **Toasts**).
 
 ## 🔐 Système de Sécurité
-- **Authentification** : Utilisation de JSON Web Tokens (JWT) stockés de manière sécurisée.
-- **Autorisations (RBAC)** : Les accès sont contrôlés par rôles : `super_admin`, `admin`, `director`, `teacher`, `parent`.
-  - `super_admin` : Accès global, gestion des écoles.
-  - `admin` : Gestion administrative d'une école spécifique.
-- **Validation OTP** : Système de code à usage unique (simulé via console) pour la signature numérique des devoirs.
-- **Gestion de Session** : Déconnexion automatique après 15 minutes d'inactivité (côté client via `AuthContext`) pour prévenir les accès non autorisés sur des postes partagés.
+- **Authentification par Cookies** : Scolaris n'utilise plus le `localStorage` pour les tokens. Le JWT est stocké dans un cookie **HTTP-Only**, **Secure** et **SameSite**, éliminant les risques de vol de session via des scripts malveillants.
+- **Refresh Token Strategy** : 
+  - **Access Token** : Courte durée (15 min) pour limiter l'exposition.
+  - **Refresh Token** : Longue durée (30 jours), stocké en base de données et dans un cookie séparé, permettant de renouveler la session automatiquement sans re-saisie du mot de passe.
+- **Déconnexion Centralisée** : Le `logout` efface les cookies côté serveur et supprime le refresh token de la base de données.
+
+## 📱 Progressive Web App (PWA)
+Scolaris est une PWA complète qui offre une expérience proche d'une application native :
+- **Service Worker** : Géré via `vite-plugin-pwa` avec une stratégie `Stale-While-Revalidate`.
+- **Mode Hors-ligne** : L'application met en cache les fichiers statiques et les réponses API critiques (Emploi du temps, Devoirs récents). L'utilisateur peut consulter ses données même en zone blanche.
+- **Manifeste** : Configuration des couleurs (`#0a0a0a`) et des icônes pour un affichage plein écran professionnel.
 
 ## 🛠️ Maintenance et Audit
 La plateforme intègre un **Agent de Maintenance** dédié :

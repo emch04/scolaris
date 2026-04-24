@@ -11,6 +11,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL || (isProduction ? productionU
 const apiClient = axios.create({
   baseURL: baseURL,
   timeout: 15000,
+  withCredentials: true, // Crucial pour les cookies HTTP-Only
 });
 
 apiClient.interceptors.request.use(

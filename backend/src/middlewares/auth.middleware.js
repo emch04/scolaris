@@ -2,16 +2,20 @@ const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    // Lecture du token dans les cookies OU dans le header Authorization
+    let token = req.cookies?.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Accès non autorisé. Token manquant."
+        message: "Accès non autorisé. Session expirée ou manquante."
       });
     }
 
-    const token = authHeader.split(" ")[1];
     // Utilisation de JWT_SECRET pour correspondre au fichier .env
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

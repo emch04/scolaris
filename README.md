@@ -26,7 +26,13 @@ Une plateforme de gestion scolaire complète, légère et moderne, conçue pour 
   - **Chat de Classe** : Espace collaboratif sécurisé par classe.
   - **Communiqués Officiels** : Diffusion de messages importants avec pièces jointes.
 - **Bibliothèque Numérique** : Partage de ressources (livres, exercices, vidéos) avec accès restreint selon le rôle.
-- **Sécurité Avancée** : 
+- **📱 Application Mobile (PWA)** : 
+  - Installable sur iOS, Android et Desktop.
+  - **Mode Hors-ligne** : Consultation des devoirs et de l'emploi du temps même sans connexion internet.
+  - Lancement ultra-rapide et interface plein écran.
+- **🔒 Sécurité de Classe Industrielle** : 
+  - **Cookies HTTP-Only** : Protection totale contre le vol de session (XSS).
+  - **Refresh Tokens** : Maintien de la connexion sécurisée sur le long terme.
   - Déconnexion automatique après 15 min d'inactivité.
   - Détection dynamique de l'environnement (Local vs Production).
   - Contrôle d'accès strict (RBAC).
