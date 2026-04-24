@@ -1,6 +1,7 @@
 const Teacher = require("../teachers/teacher.model");
 const Parent = require("../parents/parent.model");
 const Student = require("../students/student.model");
+const Otp = require("./otp.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -10,6 +11,111 @@ const registerTeacher = async (payload) => {
   if (existing) throw new Error("Email déjà utilisé.");
   const hashedPassword = await bcrypt.hash(password, 10);
   return await Teacher.create({ fullName, email, password: hashedPassword, phone, role, school });
+};
+
+const sendEmail = require("../../utils/email.service");
+
+const forgotPassword = async (identifier) => {
+  const id = identifier ? identifier.trim() : "";
+  
+  // On cherche l'utilisateur dans toutes les collections (Email ou Matricule)
+  let user = await Teacher.findOne({ email: id });
+  let model = "Teacher";
+  
+  if (!user) {
+    user = await Parent.findOne({ email: id });
+    model = "Parent";
+  }
+  
+  if (!user) {
+    user = await Student.findOne({ 
+      $or: [{ email: id }, { matricule: id }]
+    });
+    model = "Student";
+  }
+
+  if (!user) throw new Error("Aucun compte associé à cet identifiant.");
+
+  // Générer un code à 6 chiffres
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Supprimer les anciens OTP de ce type pour cet utilisateur
+  await Otp.deleteMany({ userId: user._id, type: "reset_password" });
+
+  // Sauvegarder le code
+  await Otp.create({
+    userId: user._id,
+    userModel: model,
+    code,
+    type: "reset_password",
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 min
+  });
+
+  const emailDest = user.email;
+  const targetName = user.fullName;
+
+  if (emailDest) {
+    // ENVOI DU VRAI MAIL
+    await sendEmail(
+      emailDest,
+      "Réinitialisation de votre mot de passe Scolaris",
+      `Bonjour ${targetName},\n\nVotre code de réinitialisation est : ${code}\nCe code est valide pendant 10 minutes.`,
+      `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #1a73e8; text-align: center;">Réinitialisation Scolaris</h2>
+        <p>Bonjour <strong>${targetName}</strong>,</p>
+        <p>Vous avez demandé la réinitialisation de votre mot de passe. Voici votre code de sécurité :</p>
+        <div style="background: #f1f3f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 10px; color: #202124; border-radius: 8px; margin: 20px 0;">
+          ${code}
+        </div>
+        <p style="font-size: 13px; color: #5f6368;">Ce code expirera dans 10 minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="text-align: center; color: #9aa0a6; font-size: 12px;">L'équipe pédagogique Scolaris</p>
+      </div>
+      `
+    );
+  }
+
+  return true;
+};
+
+const resetPassword = async (identifier, code, newPassword) => {
+  const id = identifier ? identifier.trim() : "";
+  
+  let user = await Teacher.findOne({ email: id });
+  let UserCollection = Teacher;
+  
+  if (!user) {
+    user = await Parent.findOne({ email: id });
+    UserCollection = Parent;
+  }
+  
+  if (!user) {
+    user = await Student.findOne({ 
+      $or: [{ email: id }, { matricule: id }]
+    });
+    UserCollection = Student;
+  }
+
+  if (!user) throw new Error("Utilisateur non trouvé.");
+
+  // Vérifier le code
+  const otp = await Otp.findOne({ 
+    userId: user._id, 
+    code, 
+    type: "reset_password" 
+  });
+
+  if (!otp) throw new Error("Code invalide ou expiré.");
+
+  // Mettre à jour le mot de passe
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await UserCollection.findByIdAndUpdate(user._id, { password: hashedPassword });
+
+  // Supprimer l'OTP utilisé
+  await Otp.deleteOne({ _id: otp._id });
+
+  return true;
 };
 
 const loginUser = async (identifier, password) => {
@@ -56,9 +162,14 @@ const loginUser = async (identifier, password) => {
   const payload = { 
     id: user._id, 
     email: user.email || user.matricule, 
-    role: user.role || (user.matricule ? "student" : "teacher"), 
+    role: user.role, 
     school: user.school 
   };
+
+  // Fallback au cas où le rôle serait mal défini
+  if (!payload.role) {
+    payload.role = user.matricule ? "student" : "teacher";
+  }
 
   if (user.classroom) payload.classroom = user.classroom;
 
@@ -70,4 +181,4 @@ const loginUser = async (identifier, password) => {
   return { user, token };
 };
 
-module.exports = { registerTeacher, loginUser };
+module.exports = { registerTeacher, forgotPassword, resetPassword, loginUser };

@@ -5,7 +5,14 @@ const getAllTeachers = async (filter = {}) => {
   // Recherche avec tri décroissant
   return await Teacher.find(filter).select("-password").sort({ createdAt: -1 });
 };
+
+// Supprimer un enseignant par son ID
+const deleteTeacherById = async (id) => {
+  return await Teacher.findByIdAndDelete(id);
+};
+
 // Export
 module.exports = {
-  getAllTeachers
+  getAllTeachers,
+  deleteTeacherById
 };

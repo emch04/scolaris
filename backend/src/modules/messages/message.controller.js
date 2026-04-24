@@ -17,7 +17,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     const message = await Message.create({
       sender: req.user.id,
-      senderModel: userRole === "student" ? "Student" : (userRole === "teacher" ? "Teacher" : "Admin"),
+      senderModel: userRole === "student" ? "Student" : "Teacher",
       content,
       classroom: classroomId // On ajoute ce champ au modèle
     });
@@ -42,10 +42,9 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   const message = await Message.create({
     sender: req.user.id,
-    senderModel: ["super_admin", "admin", "director"].includes(userRole) ? "Admin" : 
-                 userRole === "teacher" ? "Teacher" : "Parent",
+    senderModel: ["super_admin", "admin", "director", "teacher"].includes(userRole) ? "Teacher" : "Parent",
     recipient,
-    recipientModel,
+    recipientModel: recipientModel === "Admin" ? "Teacher" : recipientModel,
     content
   });
 

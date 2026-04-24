@@ -55,17 +55,24 @@ export function AuthProvider({ children }) {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         if (token) {
-          console.log("Inactivité détectée, déconnexion...");
+          console.log("Session expirée pour inactivité (15 min).");
           logout();
         }
       }, 15 * 60 * 1000); // 15 minutes
     };
 
     if (token) {
-      const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart", "visibilitychange"];
+      // Liste étendue d'événements pour détecter l'activité
+      const events = [
+        "mousedown", "mousemove", "keypress", 
+        "scroll", "touchstart", "click", 
+        "keydown", "wheel"
+      ];
       
+      const handleActivity = () => resetTimer();
+
       events.forEach((event) => {
-        window.addEventListener(event, resetTimer);
+        window.addEventListener(event, handleActivity, { passive: true });
       });
 
       resetTimer(); // Démarrer le minuteur initial
@@ -73,7 +80,7 @@ export function AuthProvider({ children }) {
       return () => {
         if (timeoutId) clearTimeout(timeoutId);
         events.forEach((event) => {
-          window.removeEventListener(event, resetTimer);
+          window.removeEventListener(event, handleActivity);
         });
       };
     }

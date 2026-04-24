@@ -9,6 +9,7 @@ import apiClient from "../services/apiClient"; // Pour l'appel OTP
 import useAuth from "../hooks/useAuth";
 import formatDate from "../utils/formatDate";
 import { useToast } from "../context/ToastContext";
+import { getFileUrl } from "../utils/fileUrl";
 
 function AssignmentDetailPage() {
   const { assignmentId } = useParams();
@@ -125,7 +126,7 @@ function AssignmentDetailPage() {
                 </div>
                 <div><h4 style={{ margin: 0 }}>Ressource pédagogique</h4><p style={{ margin: 0, fontSize: "0.8rem", opacity: 0.5 }}>Document de cours attaché</p></div>
               </div>
-              <a href={`${(import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api").replace("/api", "")}${assignment.fileUrl}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: "0.6rem 1.2rem", fontSize: "0.85rem" }}>Ouvrir</a>            </div>
+              <a href={getFileUrl(assignment.fileUrl)} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: "0.6rem 1.2rem", fontSize: "0.85rem" }}>Ouvrir</a>            </div>
           )}
         </div>
 
@@ -139,12 +140,24 @@ function AssignmentDetailPage() {
 
         {/* Vue Élève */}
         {user?.role === "student" && (
-          <div style={{ background: "linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)", padding: "2.5rem", borderRadius: "25px", color: "white" }}>
-            <h2>Prêt à travailler ?</h2>
+          <div style={{ background: "linear-gradient(135deg, var(--primary) 0%, #004d99 100%)", padding: "2.5rem", borderRadius: "25px", color: "white", boxShadow: "0 15px 35px rgba(0,0,0,0.2)" }}>
+            <h2 style={{ marginBottom: "1rem" }}>Prêt à travailler ?</h2>
             <p style={{ opacity: 0.9, marginBottom: "2rem" }}>Utilisez les ressources ci-dessus pour réaliser vos exercices.</p>
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <button className="btn" style={{ background: "white", color: "var(--primary)", fontWeight: "bold" }}>J'ai terminé</button>
-              <button className="btn" style={{ background: "rgba(255,255,255,0.2)", color: "white" }}>Une question ?</button>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <button 
+                onClick={() => showToast("Bravo ! N'oubliez pas de demander à vos parents de signer.")} 
+                className="btn" 
+                style={{ background: "white", color: "var(--primary)", fontWeight: "bold", padding: "1rem 2rem" }}
+              >
+                J'ai terminé
+              </button>
+              <button 
+                onClick={() => navigate(`/chat/${user.classroom}`)}
+                className="btn" 
+                style={{ background: "rgba(255,255,255,0.2)", color: "white", padding: "1rem 2rem", border: "1px solid rgba(255,255,255,0.3)" }}
+              >
+                Une question ?
+              </button>
             </div>
           </div>
         )}
@@ -158,25 +171,37 @@ function AssignmentDetailPage() {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34A853" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
                   Validation Parent
                 </h3>
-                <div style={{ display: "grid", gap: "15px" }}>
-                  <select value={selectedChild} onChange={e => setSelectedChild(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "10px" }}>
-                    {children.map(c => <option key={c._id} value={c._id}>{c.fullName}</option>)}
-                  </select>
-                  <input type="text" placeholder="Nom Complet" value={parentName} onChange={e => setParentName(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "10px" }} />
-                  <textarea placeholder="Commentaire" value={comment} onChange={e => setComment(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "10px", minHeight: "80px" }} />
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <input type="checkbox" checked={certified} onChange={e => setCertified(e.target.checked)} />
-                    <label>Je certifie avoir suivi ce devoir.</label>
+                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Élève concerné</label>
+                    <select value={selectedChild} onChange={e => setSelectedChild(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "10px", background: "white", color: "#222" }}>
+                      {children.map(c => <option key={c._id} value={c._id}>{c.fullName}</option>)}
+                    </select>
                   </div>
-                  <button onClick={handleRequestOtp} disabled={sendingOtp} className="btn btn-primary">RECEVOIR LE CODE SMS</button>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom du parent (Signature)</label>
+                    <input type="text" placeholder="Entrez votre nom complet" value={parentName} onChange={e => setParentName(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "10px", background: "white", color: "#222" }} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Commentaire pour le professeur</label>
+                    <textarea placeholder="Ex: Devoir bien compris par l'élève..." value={comment} onChange={e => setComment(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "10px", minHeight: "100px", background: "white", color: "#222" }} />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px", background: "rgba(52, 168, 83, 0.1)", borderRadius: "10px" }}>
+                    <input type="checkbox" id="certify" checked={certified} onChange={e => setCertified(e.target.checked)} style={{ width: "auto" }} />
+                    <label htmlFor="certify" style={{ fontSize: "0.9rem", cursor: "pointer" }}>Je certifie avoir suivi ce devoir.</label>
+                  </div>
+                  <button onClick={handleRequestOtp} disabled={sendingOtp} className="btn btn-primary" style={{ padding: "1.2rem", fontSize: "1rem", letterSpacing: "1px" }}>
+                    {sendingOtp ? "ENVOI..." : "RECEVOIR LE CODE SMS"}
+                  </button>
                 </div>
               </>
             ) : (
               <div style={{ textAlign: "center" }}>
-                <h2>Vérification SMS</h2>
-                <input type="text" placeholder="0 0 0 0 0 0" maxLength="6" value={otpCode} onChange={e => setOtpCode(e.target.value)} style={{ width: "100%", padding: "15px", fontSize: "2rem", textAlign: "center", marginBottom: "2rem" }} />
-                <button onClick={handleFinalSubmit} className="btn btn-primary" style={{ width: "100%" }}>CONFIRMER LA SIGNATURE</button>
-                <button onClick={() => setStep(1)} style={{ background: "none", color: "white", marginTop: "1rem", cursor: "pointer", opacity: 0.7, fontSize: "0.9rem", border: "none" }}>Code non reçu ?</button>
+                <h2 style={{ marginBottom: "1rem" }}>Vérification SMS</h2>
+                <p style={{ opacity: 0.7, marginBottom: "2rem" }}>Saisissez le code à 6 chiffres reçu par SMS.</p>
+                <input type="text" placeholder="· · · · · ·" maxLength="6" value={otpCode} onChange={e => setOtpCode(e.target.value)} style={{ width: "100%", padding: "15px", fontSize: "2.5rem", textAlign: "center", marginBottom: "2rem", letterSpacing: "10px", background: "white", color: "#222", border: "2px solid var(--primary)" }} />
+                <button onClick={handleFinalSubmit} className="btn btn-primary" style={{ width: "100%", padding: "1.2rem", fontSize: "1.1rem" }}>CONFIRMER LA SIGNATURE</button>
+                <button onClick={() => setStep(1)} style={{ background: "none", color: "var(--primary)", marginTop: "1.5rem", cursor: "pointer", opacity: 0.9, fontSize: "0.9rem", border: "none", textDecoration: "underline", fontWeight: "bold" }}>Retour aux informations</button>
               </div>
             )}
           </div>

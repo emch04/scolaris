@@ -6,7 +6,13 @@ const getParentChildren = async (parentId) => {
   // On utilise findById avec l'ID du token
   const parent = await Parent.findById(parentId).populate({
     path: "children",
-    populate: { path: "classroom school" }
+    populate: [
+      { 
+        path: "classroom",
+        populate: { path: "titularTeacher", select: "fullName email role" }
+      },
+      { path: "school" }
+    ]
   });
   
   return parent ? parent.children : [];

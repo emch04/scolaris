@@ -91,13 +91,7 @@ function SchoolsPage() {
 
         {/* Formulaire - Réservé Super Admin uniquement */}
         {user?.role === "super_admin" && (
-          <div style={{ 
-            background: "transparent", 
-            padding: "2rem", 
-            borderRadius: "20px", 
-            border: "3px solid rgba(255, 255, 255, 0.1)",
-            marginBottom: "3rem"
-          }}>
+          <div className="form" style={{ maxWidth: "100%", marginBottom: "3rem" }}>
             <h3 style={{ marginBottom: "1.5rem" }}>Ajouter un établissement</h3>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
@@ -106,7 +100,6 @@ function SchoolsPage() {
                   placeholder="Nom de l'école"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                   required
                 />
                 <input
@@ -114,7 +107,6 @@ function SchoolsPage() {
                   placeholder="Code (ex: EPS-001)"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                   required
                 />
                 <input
@@ -122,18 +114,16 @@ function SchoolsPage() {
                   placeholder="Commune"
                   value={formData.commune}
                   onChange={(e) => setFormData({ ...formData, commune: e.target.value })}
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                 />
                 <input
                   type="text"
                   placeholder="Adresse complète"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "8px", color: "white" }}
                 />
               </div>
               {error && <p style={{ color: "#ff5252", fontSize: "0.9rem" }}>{error}</p>}
-              <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }} disabled={saving}>
+              <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end" }} disabled={saving}>
                 {saving ? "Enregistrement..." : "Confirmer l'ajout"}
               </button>
             </form>
@@ -197,15 +187,15 @@ function SchoolsPage() {
                     <div style={{ display: "flex", gap: "10px", marginTop: "1.5rem" }}>
                       <button 
                         onClick={() => handleValidate(s._id, "approved")}
-                        className="btn" 
-                        style={{ flex: 1, padding: "0.5rem", background: "#34A853", fontSize: "0.8rem" }}
+                        className="btn btn-success" 
+                        style={{ flex: 1, fontSize: "0.8rem", padding: "0.5rem" }}
                       >
                         Approuver
                       </button>
                       <button 
                         onClick={() => handleValidate(s._id, "rejected")}
-                        className="btn" 
-                        style={{ flex: 1, padding: "0.5rem", background: "#ff5252", fontSize: "0.8rem" }}
+                        className="btn btn-danger" 
+                        style={{ flex: 1, fontSize: "0.8rem", padding: "0.5rem" }}
                       >
                         Rejeter
                       </button>

@@ -38,7 +38,7 @@ const resourceSchema = new mongoose.Schema({
   },
   addedByModel: {
     type: String,
-    enum: ["Teacher", "Admin"]
+    enum: ["Teacher"]
   }
 }, { timestamps: true });
 

@@ -47,7 +47,7 @@ const communicationSchema = new mongoose.Schema(
     authorModel: {
       type: String,
       required: true,
-      enum: ["Teacher", "Admin"] // Admin inclut super_admin
+      enum: ["Teacher"]
     }
   },
   {

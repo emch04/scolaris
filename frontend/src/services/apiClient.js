@@ -2,9 +2,9 @@ import axios from "axios";
 import { getToken } from "../utils/storage";
 
 const apiClient = axios.create({
-  // Vérifie que cette variable correspond bien à celle du fichier .env
-  baseURL: "https://scolaris-fucv.onrender.com/api",
-  timeout: 10000,
+  // Utilisation de la variable d'environnement avec fallback local
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api",
+  timeout: 15000,
 });
 
 apiClient.interceptors.request.use(

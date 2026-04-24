@@ -4,7 +4,8 @@ const {
   getParentChildren, 
   getChildrenAssignments,
   getAllParents,
-  getParentById
+  getParentById,
+  updateParent
 } = require("./parent.service");
 
 /**

@@ -6,6 +6,7 @@ import { getClassroomsRequest } from "../services/classroom.api";
 import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
 import formatDate from "../utils/formatDate";
+import { getFileUrl } from "../utils/fileUrl";
 
 function AssignmentsPage() {
   const { user } = useAuth();
@@ -87,14 +88,7 @@ function AssignmentsPage() {
         </div>
 
         {user?.role === "teacher" && (
-          <div style={{ 
-            background: "rgba(255, 255, 255, 0.03)", 
-            padding: "2.5rem", 
-            borderRadius: "30px", 
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
-            marginBottom: "4rem"
-          }}>
+          <div className="form" style={{ maxWidth: "100%", marginBottom: "4rem" }}>
             <h2 style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: "15px" }}>
               <div style={{ background: "var(--primary)", width: "12px", height: "12px", borderRadius: "50%" }}></div>
               Publier un nouveau travail
@@ -108,7 +102,6 @@ function AssignmentsPage() {
                     placeholder="Ex: Analyse de texte - Le Petit Prince" 
                     value={formData.title} 
                     onChange={e => setFormData({...formData, title: e.target.value})} 
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", fontSize: "1rem" }}
                     required 
                   />
                 </div>
@@ -118,7 +111,6 @@ function AssignmentsPage() {
                     placeholder="Ex: Français" 
                     value={formData.subject} 
                     onChange={e => setFormData({...formData, subject: e.target.value})} 
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", fontSize: "1rem" }}
                     required 
                   />
                 </div>
@@ -127,11 +119,10 @@ function AssignmentsPage() {
                   <select 
                     value={formData.classroom} 
                     onChange={e => setFormData({...formData, classroom: e.target.value})} 
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", fontSize: "1rem", cursor: "pointer" }}
                     required
                   >
-                    <option value="" style={{ background: "#222" }}>Sélectionner une classe</option>
-                    {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "#222" }}>{c.name} ({c.level})</option>)}
+                    <option value="">Sélectionner une classe</option>
+                    {classrooms.map(c => <option key={c._id} value={c._id}>{c.name} ({c.level})</option>)}
                   </select>
                 </div>
               </div>
@@ -142,7 +133,7 @@ function AssignmentsPage() {
                   placeholder="Expliquez ici le contenu du devoir, les pages à lire ou les exercices à faire..." 
                   value={formData.description} 
                   onChange={e => setFormData({...formData, description: e.target.value})} 
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white", minHeight: "150px", fontSize: "1rem", resize: "vertical" }}
+                  style={{ minHeight: "150px" }}
                   required 
                 />
               </div>
@@ -154,7 +145,6 @@ function AssignmentsPage() {
                     type="date" 
                     value={formData.dueDate} 
                     onChange={e => setFormData({...formData, dueDate: e.target.value})} 
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1rem", borderRadius: "12px", color: "white" }}
                   />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
@@ -162,12 +152,12 @@ function AssignmentsPage() {
                   <input 
                     type="file" 
                     onChange={e => setFile(e.target.files[0])}
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "0.8rem", borderRadius: "12px", color: "white" }}
+                    style={{ background: "transparent", border: "none", color: "white" }}
                   />
                 </div>
               </div>
 
-              <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "1.2rem 4rem", borderRadius: "15px", fontSize: "1.1rem", fontWeight: "bold", boxShadow: "0 10px 20px rgba(26, 115, 232, 0.3)" }} disabled={saving}>
+              <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "1.2rem 4rem" }} disabled={saving}>
                 {saving ? "Publication..." : "PUBLIER LE DEVOIR"}
               </button>
             </form>
@@ -234,7 +224,7 @@ function AssignmentsPage() {
                     </div>
                     
                     {a.fileUrl && (
-                      <a href={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"}`.replace("/api", "") + a.fileUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "5px", textDecoration: "none", fontSize: "0.85rem", fontWeight: "bold" }}>
+                      <a href={getFileUrl(a.fileUrl)} target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "5px", textDecoration: "none", fontSize: "0.85rem", fontWeight: "bold" }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                         Fichier
                       </a>

@@ -35,6 +35,26 @@ La plateforme intègre un **Agent de Maintenance** dédié :
 - **Submissions** : Signatures numériques des parents.
 - **Communications** : Communiqués et convocations.
 
+## 🏷️ Standards de Naming (Conventions)
+Pour garantir la cohérence du projet, les termes désignant le personnel enseignant suivent une règle stricte :
+
+| Niveau | Terme utilisé | Raison |
+| :--- | :--- | :--- |
+| **Technique (Code/DB)** | `teacher` / `Teacher` | Standard de programmation et nom du modèle Mongoose. |
+| **Structurel (Fichiers)** | `teacher.api.js` | Cohérence avec le modèle backend. |
+| **Interface (Labels)** | `Enseignant` | Utilisé dans les formulaires et listes administratives. |
+| **Humain (Affichage)** | `Professeur` / `Prof` | Plus lisible et naturel pour les Parents et Élèves. |
+
+> **Note :** Il n'y a aucune différence fonctionnelle entre ces termes dans le code. Le rôle de sécurité reste toujours `teacher`.
+
+## 🎨 Interface et UX (User Experience)
+Pour garantir l'homogénéité visuelle et faciliter le travail en équipe, un document complet a été rédigé.
+👉 **Consultez le fichier `docs/UI_UX_GUIDELINES.md`** pour tout savoir sur :
+- L'utilisation des boutons (`.btn-primary`, `.btn-danger`, etc.).
+- La structure des formulaires (`.form`).
+- La gestion sécurisée des liens vers les fichiers joints (`getFileUrl`).
+- Le fonctionnement des composants dynamiques (ex: choix de cible des communications).
+
 ## 🚀 Déploiement
 - **Base de données** : MongoDB Atlas.
 - **Fichiers** : Stockage local dans `backend/uploads/` (Configuré pour extension vers Cloudinary/S3).

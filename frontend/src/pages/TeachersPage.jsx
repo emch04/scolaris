@@ -106,8 +106,8 @@ function TeachersPage() {
                   <div style={{ marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                     <button 
                       onClick={() => handleDelete(t._id)}
-                      className="btn" 
-                      style={{ width: "100%", background: "rgba(255,82,82,0.1)", color: "#ff5252", border: "1px solid #ff5252", padding: "8px", fontSize: "0.8rem" }}
+                      className="btn btn-danger" 
+                      style={{ width: "100%", fontSize: "0.8rem", padding: "8px" }}
                     >
                       Supprimer l'accès
                     </button>

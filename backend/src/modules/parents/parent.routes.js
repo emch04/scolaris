@@ -5,11 +5,19 @@ const authMiddleware = require("../../middlewares/auth.middleware");
 const { authorizeRoles } = require("../../middlewares/auth.middleware");
 const ROLES = require("../../constants/roles");
 
-// Routes pour l'administration
+// 1. D'abord les routes spécifiques (prioritaires)
+router.get(
+  "/dashboard",
+  authMiddleware,
+  authorizeRoles(ROLES.PARENT, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
+  getMyDashboard
+);
+
+// 2. Ensuite les routes générales
 router.get(
   "/",
   authMiddleware,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
+  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.TEACHER),
   getParents
 );
 
@@ -25,14 +33,6 @@ router.put(
   authMiddleware,
   authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
   update
-);
-
-// Route pour l'espace parent
-router.get(
-  "/dashboard",
-  authMiddleware,
-  authorizeRoles(ROLES.PARENT),
-  getMyDashboard
 );
 
 module.exports = router;

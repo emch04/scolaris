@@ -28,7 +28,7 @@ const create = asyncHandler(async (req, res) => {
   }
 
   payload.author = req.user.id;
-  payload.authorModel = ["super_admin", "admin", "director"].includes(userRole) ? "Admin" : "Teacher";
+  payload.authorModel = "Teacher";
 
   if (!payload.targetStudent) delete payload.targetStudent;
   if (!payload.targetTeacher) delete payload.targetTeacher;
@@ -44,7 +44,7 @@ const create = asyncHandler(async (req, res) => {
     for (const parent of parents) {
       await Message.create({
         sender: req.user.id,
-        senderModel: payload.authorModel,
+        senderModel: "Teacher",
         recipient: parent._id,
         recipientModel: "Parent",
         content: `🚨 ALERTE CONVOCATION : Votre enfant ${student.fullName} a reçu une convocation officielle. Sujet : ${payload.title}. Veuillez consulter vos communications.`

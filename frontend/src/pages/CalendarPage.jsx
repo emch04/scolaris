@@ -61,25 +61,25 @@ function CalendarPage() {
         )}
 
         {showForm && (
-          <form onSubmit={handleSubmit} style={{ background: "rgba(255,255,255,0.03)", padding: "2rem", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", marginBottom: "3rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", alignItems: "flex-end" }}>
-            <div>
-              <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Titre</label>
-              <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "none" }} required />
+          <form onSubmit={handleSubmit} className="form" style={{ marginBottom: "3rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", alignItems: "flex-end" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Titre de l'événement</label>
+              <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Ex: Réunion parents-profs" required />
             </div>
-            <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Date</label>
-              <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "none" }} required />
+              <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required />
             </div>
-            <div>
-              <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Type</label>
-              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "none" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Type d'entrée</label>
+              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
                 <option value="Événement">Événement</option>
                 <option value="Congé">Congé</option>
                 <option value="Examen">Examen</option>
                 <option value="Réunion">Réunion</option>
               </select>
             </div>
-            <button type="submit" className="btn btn-primary">Enregistrer</button>
+            <button type="submit" className="btn btn-primary" style={{ padding: "0.8rem" }}>Enregistrer</button>
           </form>
         )}
 

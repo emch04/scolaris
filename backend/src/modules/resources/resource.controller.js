@@ -10,7 +10,7 @@ const addResource = asyncHandler(async (req, res) => {
   }
   
   payload.addedBy = req.user.id;
-  payload.addedByModel = req.user.role === "teacher" ? "Teacher" : "Admin";
+  payload.addedByModel = "Teacher";
   if (req.user.school) payload.school = req.user.school;
 
   const resource = await Resource.create(payload);

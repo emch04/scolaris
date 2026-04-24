@@ -101,36 +101,33 @@ function TimetablePage() {
         </div>
 
         {showAddForm && (
-          <form onSubmit={handleSubmit} style={{ 
-            background: "rgba(255,255,255,0.03)", 
-            padding: "2rem", 
-            borderRadius: "20px", 
-            border: "1px solid rgba(255,255,255,0.1)",
+          <form onSubmit={handleSubmit} className="form" style={{ 
             marginBottom: "2rem",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
             gap: "1rem",
-            alignItems: "flex-end"
+            alignItems: "flex-end",
+            maxWidth: "100%"
           }}>
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Jour</label>
-              <select value={formData.day} onChange={e => setFormData({...formData, day: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "white", color: "#222" }}>
+              <select value={formData.day} onChange={e => setFormData({...formData, day: e.target.value})}>
                 {days.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             </div>
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Matière</label>
-              <input type="text" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "white", color: "#222" }} required />
+              <input type="text" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} placeholder="Matière" required />
             </div>
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Début</label>
-              <input type="time" value={formData.startTime} onChange={e => setFormData({...formData, startTime: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "white", color: "#222" }} required />
+              <input type="time" value={formData.startTime} onChange={e => setFormData({...formData, startTime: e.target.value})} required />
             </div>
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Fin</label>
-              <input type="time" value={formData.endTime} onChange={e => setFormData({...formData, endTime: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "white", color: "#222" }} required />
+              <input type="time" value={formData.endTime} onChange={e => setFormData({...formData, endTime: e.target.value})} required />
             </div>
-            <button type="submit" className="btn btn-primary" style={{ height: "45px" }}>Enregistrer</button>
+            <button type="submit" className="btn btn-primary">Enregistrer</button>
           </form>
         )}
 

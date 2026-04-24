@@ -1,6 +1,6 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-const { registerTeacher, loginUser } = require("./auth.service");
+const { registerTeacher, forgotPassword, resetPassword, loginUser } = require("./auth.service");
 
 const register = asyncHandler(async (req, res) => {
   const teacher = await registerTeacher(req.body);
@@ -34,4 +34,16 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { register, login };
+const requestPasswordReset = asyncHandler(async (req, res) => {
+  const { identifier } = req.body;
+  await forgotPassword(identifier);
+  return apiResponse(res, 200, "Si un compte existe pour cet identifiant, un code de réinitialisation a été envoyé.");
+});
+
+const executePasswordReset = asyncHandler(async (req, res) => {
+  const { identifier, code, newPassword } = req.body;
+  await resetPassword(identifier, code, newPassword);
+  return apiResponse(res, 200, "Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.");
+});
+
+module.exports = { register, login, requestPasswordReset, executePasswordReset };

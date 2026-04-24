@@ -9,7 +9,7 @@ const messageSchema = new mongoose.Schema({
   senderModel: {
     type: String,
     required: true,
-    enum: ["Teacher", "Parent", "Student", "Admin"]
+    enum: ["Teacher", "Parent", "Student"]
   },
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +19,7 @@ const messageSchema = new mongoose.Schema({
   recipientModel: {
     type: String,
     required: false, // Optionnel pour le chat de groupe
-    enum: ["Teacher", "Parent", "Student", "Admin"]
+    enum: ["Teacher", "Parent", "Student"]
   },
   classroom: {
     type: mongoose.Schema.Types.ObjectId,
@@ -35,5 +35,8 @@ const messageSchema = new mongoose.Schema({
     default: false
   }
 }, { timestamps: true });
+
+messageSchema.index({ recipient: 1 });
+messageSchema.index({ classroom: 1 });
 
 module.exports = mongoose.model("Message", messageSchema);
