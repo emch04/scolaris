@@ -89,7 +89,7 @@ function HomePage() {
         
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
           <Link to="/login" className="btn btn-primary" style={{ padding: "1.2rem 2.5rem", fontSize: "1.1rem", borderRadius: "15px" }}>
-            Accéder à mon espace
+            Espace de connexion
           </Link>
           <Link to="/a-propos" className="btn" style={{ 
             background: "rgba(255,255,255,0.05)", 
