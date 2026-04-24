@@ -59,7 +59,7 @@ app.use("/api", limiter);
 // Configuration CORS dynamique
 app.use(
   cors({
-    origin: ["https://scolaris-tau.vercel.app", "http://localhost:5173"],
+    origin: ["https://scolaris-tau.vercel.app", "https://scolaris2.vercel.app", "http://localhost:5173"],
     credentials: true,
   }),
 );
