@@ -33,8 +33,8 @@ function Footer() {
             <span style={{ fontSize: "1.5rem", fontWeight: "900", color: "var(--white)" }}>Scolaris</span>
           </div>
           <p style={{ opacity: 0.6, lineHeight: "1.6", fontSize: "0.95rem" }}>
-            La plateforme d'excellence pour la gestion scolaire numérique. 
-            Développée avec passion par <strong>Emch</strong> pour transformer l'éducation.
+            Scolaris est l'outil indispensable pour une école moderne et connectée. 
+            Une création signée <strong>Emch</strong> pour accompagner la réussite de chaque élève.
           </p>
           <div style={{ display: "flex", gap: "1rem" }}>
             {[

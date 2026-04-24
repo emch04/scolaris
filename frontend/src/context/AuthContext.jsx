@@ -6,10 +6,16 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setCurrentUser] = useState(getUser());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // On met à false par défaut pour ne pas bloquer l'UI
 
   useEffect(() => {
     const checkSession = async () => {
+      // Si on n'a pas d'utilisateur du tout dans le storage, on ne fait rien (évite les requêtes inutiles)
+      if (!getUser()) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await getMeRequest();
         if (response?.data?.user) {

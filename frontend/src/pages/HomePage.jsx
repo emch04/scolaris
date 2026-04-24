@@ -5,24 +5,24 @@ import Footer from "../components/Footer";
 function HomePage() {
   const features = [
     {
-      title: "Gestion Intelligente",
-      desc: "Automatisez les inscriptions, générez des matricules uniques et sécurisez les dossiers élèves avec un système de cloud crypté accessible partout.",
+      title: "Tranquillité d'Esprit",
+      desc: "Vos informations sont protégées comme dans un coffre-fort. Personne d'autre que vous et l'école n'y a accès.",
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       )
     },
     {
-      title: "Continuité Pédagogique",
-      desc: "Accédez aux plans de cours annuels, devoirs interactifs et à une bibliothèque numérique complète. L'éducation ne s'arrête jamais, même à la maison.",
+      title: "Partout avec Vous",
+      desc: "Utilisez Scolaris comme une application sur votre téléphone. Ça marche même sans internet pour consulter vos cours et horaires.",
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
       )
     },
     {
-      title: "Lien École-Famille",
-      desc: "Signatures numériques de devoirs, bulletins instantanés et messagerie intelligente. Réduisez la distance entre l'école et le foyer.",
+      title: "Documents Officiels",
+      desc: "Obtenez vos bulletins de notes en un clic. Ils sont clairs, professionnels et prêts à être imprimés pour vos dossiers.",
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
       )
     }
   ];
@@ -83,8 +83,8 @@ function HomePage() {
           marginBottom: "3rem",
           lineHeight: "1.6"
         }}>
-          Scolaris est la plateforme de gestion scolaire nouvelle génération conçue pour les établissements d'excellence. 
-          Un pont numérique entre enseignants, élèves et parents.
+          Scolaris est l'outil indispensable pour une école moderne et connectée, 
+          conçu pour accompagner la réussite de chaque élève.
         </p>
         
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
@@ -150,9 +150,8 @@ function HomePage() {
           <div>
             <h2 style={{ fontSize: "2.5rem", marginBottom: "1.5rem" }}>Notre Mission</h2>
             <p style={{ fontSize: "1.1rem", opacity: 0.7, lineHeight: "1.8", marginBottom: "2rem" }}>
-              Nous croyons que la technologie doit être un levier pour l'éducation, pas un obstacle. 
-              Scolaris a été créé pour libérer les enseignants des tâches administratives lourdes 
-              et permettre aux parents d'être acteurs de la réussite de leurs enfants.
+              Scolaris est né d'une idée simple : rendre la vie scolaire plus facile et plus belle pour tout le monde. 
+              Nous aidons les parents à suivre leurs enfants sans stress et nous permettons aux professeurs de se concentrer sur le plus important : transmettre le savoir.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {["Transparence totale sur les notes", "Suivi pédagogique personnalisé", "Communication fluide et immédiate"].map((item, i) => (

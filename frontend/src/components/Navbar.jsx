@@ -43,7 +43,7 @@ function Navbar() {
           {isAuthenticated && (
             <button className="user-badge hide-on-mobile" onClick={handleLogout} style={{ fontSize: "0.8rem", padding: "6px 12px", background: "rgba(255,255,255,0.1)", borderRadius: "50px", display: "flex", alignItems: "center", gap: "8px", border: "1px solid rgba(255,255,255,0.1)", color: "white", cursor: "pointer" }}>
               <div style={{ width: "8px", height: "8px", background: "#34A853", borderRadius: "50%" }}></div>
-              <span style={{ fontWeight: "600" }}>{user?.fullName.split(' ')[0]}</span>
+              <span style={{ fontWeight: "600" }}>{user?.fullName ? user.fullName.split(' ')[0] : "Utilisateur"}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
           )}
