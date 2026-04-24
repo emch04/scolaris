@@ -4,6 +4,7 @@ const Parent = require("../parents/parent.model");
 const Teacher = require("../teachers/teacher.model");
 const Assignment = require("../assignments/assignment.model");
 const Classroom = require("../classrooms/classroom.model");
+const Result = require("../results/result.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 
@@ -59,4 +60,33 @@ const getGlobalStats = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getGlobalStats };
+const getTeacherStats = asyncHandler(async (req, res) => {
+  const teacherId = req.user.id;
+
+  // Récupérer tous les résultats saisis par ce professeur
+  const results = await Result.find({ teacher: teacherId });
+
+  if (!results || results.length === 0) {
+    return apiResponse(res, 200, "Aucune donnée disponible pour ce professeur.", {
+      average: 0,
+      successRate: 0,
+      totalGrades: 0
+    });
+  }
+
+  // Calculer la moyenne globale (ramenée sur 20)
+  const totalPoints = results.reduce((acc, curr) => acc + (curr.score / curr.maxScore) * 20, 0);
+  const average = (totalPoints / results.length).toFixed(1);
+
+  // Calculer le taux de réussite (score >= 50%)
+  const successCount = results.filter(r => (r.score / r.maxScore) >= 0.5).length;
+  const successRate = ((successCount / results.length) * 100).toFixed(0);
+
+  return apiResponse(res, 200, "Statistiques enseignant récupérées.", {
+    average: parseFloat(average),
+    successRate: parseInt(successRate),
+    totalGrades: results.length
+  });
+});
+
+module.exports = { getGlobalStats, getTeacherStats };

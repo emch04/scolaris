@@ -107,13 +107,26 @@ function AssignmentsPage() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                   <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Matière</label>
-                  <input 
-                    placeholder="Ex: Français" 
-                    value={formData.subject} 
-                    onChange={e => setFormData({...formData, subject: e.target.value})} 
-                    required 
+                  <input
+                    placeholder="Ex: Français"
+                    list="subjects-list"
+                    value={formData.subject}
+                    onChange={e => setFormData({...formData, subject: e.target.value})}
+                    required
                   />
-                </div>
+                  <datalist id="subjects-list">
+                    <option value="Mathématiques" />
+                    <option value="Français" />
+                    <option value="Anglais" />
+                    <option value="Histoire" />
+                    <option value="Géographie" />
+                    <option value="Sciences" />
+                    <option value="Informatique" />
+                    <option value="Éducation Physique" />
+                    <option value="Arts Plastiques" />
+                    <option value="Musique" />
+                    <option value="Citoyenneté" />
+                  </datalist>                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                   <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Classe destinataire</label>
                   <select 
@@ -224,7 +237,7 @@ function AssignmentsPage() {
                     </div>
                     
                     {a.fileUrl && (
-                      <a href={getFileUrl(a.fileUrl)} target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "5px", textDecoration: "none", fontSize: "0.85rem", fontWeight: "bold" }}>
+                      <a href={getFileUrl(a.fileUrl)} download target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "5px", textDecoration: "none", fontSize: "0.85rem", fontWeight: "bold" }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                         Fichier
                       </a>

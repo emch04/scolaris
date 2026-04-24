@@ -135,8 +135,8 @@ function StudentsPage() {
             </div>
           </div>
         </div>
-{/* Formulaire d'inscription épuré - Masqué pour le Super Admin */}
-{user?.role !== "super_admin" && (
+{/* Formulaire d'inscription épuré - Réservé Admin / Directeur */}
+{["admin", "director"].includes(user?.role) && (
   <div style={{ 
     background: "transparent", 
     padding: "2rem", 
@@ -310,15 +310,28 @@ function StudentsPage() {
                         
                         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                           <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Matière</label>
-                          <input 
-                            placeholder="Ex: Français" 
+                          <input
+                            placeholder="Ex: Français"
+                            list="subjects-list"
                             value={scoreData.subject}
                             onChange={e => setScoreForm({...scoreData, subject: e.target.value})}
                             style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "10px", fontSize: "0.9rem", borderRadius: "8px" }}
                             required
                           />
+                          <datalist id="subjects-list">
+                            <option value="Mathématiques" />
+                            <option value="Français" />
+                            <option value="Anglais" />
+                            <option value="Histoire" />
+                            <option value="Géographie" />
+                            <option value="Sciences" />
+                            <option value="Informatique" />
+                            <option value="Éducation Physique" />
+                            <option value="Arts Plastiques" />
+                            <option value="Musique" />
+                            <option value="Citoyenneté" />
+                          </datalist>
                         </div>
-
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                           <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                             <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Note obtenue</label>

@@ -111,7 +111,27 @@ function LibraryPage() {
             <h3 style={{ marginBottom: "1.5rem" }}>Publier une ressource</h3>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
               <input type="text" placeholder="Titre du document" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
-              <input type="text" placeholder="Matière" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} required />
+              <input 
+                type="text" 
+                list="subjects-list"
+                placeholder="Matière" 
+                value={formData.subject} 
+                onChange={e => setFormData({...formData, subject: e.target.value})} 
+                required 
+              />
+              <datalist id="subjects-list">
+                <option value="Mathématiques" />
+                <option value="Français" />
+                <option value="Anglais" />
+                <option value="Histoire" />
+                <option value="Géographie" />
+                <option value="Sciences" />
+                <option value="Informatique" />
+                <option value="Éducation Physique" />
+                <option value="Arts Plastiques" />
+                <option value="Musique" />
+                <option value="Citoyenneté" />
+              </datalist>
               <input type="text" placeholder="Niveau (ex: 6ème Primaire)" value={formData.level} onChange={e => setFormData({...formData, level: e.target.value})} required />
               <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
                 <option value="Livre">Livre / Manuel</option>
@@ -150,7 +170,7 @@ function LibraryPage() {
                 </div>
 
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <a href={getFileUrl(r.fileUrl)} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ flex: 1, textAlign: "center", fontSize: "0.8rem" }}>Télécharger</a>
+                  <a href={getFileUrl(r.fileUrl)} download target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ flex: 1, textAlign: "center", fontSize: "0.8rem" }}>Télécharger</a>
                   {["admin", "director", "super_admin"].includes(user?.role) && (
                     <button onClick={() => handleDelete(r._id)} className="btn btn-danger" style={{ padding: "8px", borderRadius: "8px" }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>

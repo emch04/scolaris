@@ -126,7 +126,7 @@ function AssignmentDetailPage() {
                 </div>
                 <div><h4 style={{ margin: 0 }}>Ressource pédagogique</h4><p style={{ margin: 0, fontSize: "0.8rem", opacity: 0.5 }}>Document de cours attaché</p></div>
               </div>
-              <a href={getFileUrl(assignment.fileUrl)} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: "0.6rem 1.2rem", fontSize: "0.85rem" }}>Ouvrir</a>            </div>
+              <a href={getFileUrl(assignment.fileUrl)} download target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: "0.6rem 1.2rem", fontSize: "0.85rem" }}>Ouvrir</a>            </div>
           )}
         </div>
 

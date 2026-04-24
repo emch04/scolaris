@@ -8,7 +8,7 @@ const app = require("./app");
 const connectDB = require("./src/config/db");
 
 // On récupère le port depuis les variables d'environnement
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // On lance une fonction asynchrone immédiatement
 (async () => {

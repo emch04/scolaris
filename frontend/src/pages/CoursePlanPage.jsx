@@ -105,7 +105,27 @@ function CoursePlanPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
               <div>
                 <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "5px", display: "block" }}>Matière</label>
-                <input type="text" placeholder="Ex: Mathématiques" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} required />
+                <input 
+                  type="text" 
+                  list="subjects-list"
+                  placeholder="Ex: Mathématiques" 
+                  value={formData.subject} 
+                  onChange={e => setFormData({...formData, subject: e.target.value})} 
+                  required 
+                />
+                <datalist id="subjects-list">
+                  <option value="Mathématiques" />
+                  <option value="Français" />
+                  <option value="Anglais" />
+                  <option value="Histoire" />
+                  <option value="Géographie" />
+                  <option value="Sciences" />
+                  <option value="Informatique" />
+                  <option value="Éducation Physique" />
+                  <option value="Arts Plastiques" />
+                  <option value="Musique" />
+                  <option value="Citoyenneté" />
+                </datalist>
               </div>
               <div>
                 <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "5px", display: "block" }}>Année Scolaire</label>
@@ -148,6 +168,7 @@ function CoursePlanPage() {
                   {p.fileUrl && (
                     <a 
                       href={getFileUrl(p.fileUrl)} 
+                      download
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="btn" 

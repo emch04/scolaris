@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useAuth from "../hooks/useAuth";
-import { getGlobalStatsRequest } from "../services/stats.api";
+import { getGlobalStatsRequest, getTeacherStatsRequest } from "../services/stats.api";
 
 function DashboardPage() {
   const { user } = useAuth();
@@ -15,6 +15,11 @@ function DashboardPage() {
         getGlobalStatsRequest()
           .then(res => setStatsData(res?.data))
           .catch(err => console.error("Erreur stats:", err))
+          .finally(() => setLoading(false));
+      } else if (["admin", "director", "teacher"].includes(user?.role)) {
+        getTeacherStatsRequest()
+          .then(res => setStatsData(res?.data))
+          .catch(err => console.error("Erreur stats enseignant:", err))
           .finally(() => setLoading(false));
       } else {
         setLoading(false);
@@ -45,13 +50,21 @@ function DashboardPage() {
     }
 
     if (["admin", "director", "teacher"].includes(role)) {
-      return [
+      const teacherCards = [
         ...base,
+        { label: "Moyenne Classe", value: statsData?.average !== undefined ? `${statsData.average}/20` : "0/20", color: "#1A73E8", path: "/students", icon: "M12 20v-6M6 20V10M18 20V4" },
+        { label: "Taux Réussite", value: statsData?.successRate !== undefined ? `${statsData.successRate}%` : "0%", color: "#34A853", path: "/students", icon: "M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3" },
         { label: "Mes Élèves", value: "Liste", color: "#0066cc", path: "/students", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" },
-        { label: "Mes Classes", value: "Gérer", color: "#1abc9c", path: "/classrooms", icon: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" },
         { label: "Plan de Cours", value: "Annuel", color: "#e67e22", path: "/course-plans", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" },
         { label: "Bibliothèque", value: "Ouvrir", color: "#F9AB00", path: "/library", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" }
       ];
+
+      // Seuls les admins et directeurs voient "Mes Classes"
+      if (["admin", "director"].includes(role)) {
+        teacherCards.splice(1, 0, { label: "Mes Classes", value: "Gérer", color: "#1abc9c", path: "/classrooms", icon: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" });
+      }
+
+      return teacherCards;
     }
 
     return base;

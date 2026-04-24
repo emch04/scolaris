@@ -11,7 +11,7 @@ const ROLES = require("../../constants/roles");
 router.post(
   "/",
   authMiddleware,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.TEACHER),
+  authorizeRoles(ROLES.ADMIN, ROLES.DIRECTOR),
   createStudentValidator,
   validateMiddleware,
   create

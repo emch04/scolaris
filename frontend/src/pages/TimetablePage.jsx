@@ -93,7 +93,7 @@ function TimetablePage() {
             {classrooms.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
           </select>
 
-          {["admin", "director", "super_admin"].includes(user?.role) && selectedClass && (
+          {["admin", "director", "super_admin", "teacher"].includes(user?.role) && selectedClass && (
             <button onClick={() => setShowAddForm(!showAddForm)} className="btn btn-primary">
               {showAddForm ? "Annuler" : "Ajouter un cours"}
             </button>
@@ -117,7 +117,27 @@ function TimetablePage() {
             </div>
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Matière</label>
-              <input type="text" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} placeholder="Matière" required />
+              <input 
+                type="text" 
+                list="subjects-list"
+                value={formData.subject} 
+                onChange={e => setFormData({...formData, subject: e.target.value})} 
+                placeholder="Ex: Informatique" 
+                required 
+              />
+              <datalist id="subjects-list">
+                <option value="Mathématiques" />
+                <option value="Français" />
+                <option value="Anglais" />
+                <option value="Histoire" />
+                <option value="Géographie" />
+                <option value="Sciences" />
+                <option value="Informatique" />
+                <option value="Éducation Physique" />
+                <option value="Arts Plastiques" />
+                <option value="Musique" />
+                <option value="Citoyenneté" />
+              </datalist>
             </div>
             <div>
               <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Début</label>
@@ -157,7 +177,7 @@ function TimetablePage() {
                             <div style={{ fontWeight: "bold" }}>{item.subject}</div>
                             <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{item.startTime} - {item.endTime}</div>
                           </div>
-                          {["admin", "director", "super_admin"].includes(user?.role) && (
+                          {["admin", "director", "super_admin", "teacher"].includes(user?.role) && (
                             <button onClick={() => handleDelete(item._id)} style={{ background: "none", border: "none", color: "#ff5252", cursor: "pointer" }}>
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             </button>
