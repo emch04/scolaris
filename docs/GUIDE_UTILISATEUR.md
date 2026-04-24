@@ -16,18 +16,22 @@ Scolaris permet aux nouveaux membres de s'inscrire en toute sécurité :
 
 ## 👑 Administrateur d'École (Directeur)
 - **Gestion du Personnel** : Validation et attribution des comptes enseignants au sein de son école.
+- **Inscriptions** : Seule la direction peut inscrire officiellement les nouveaux élèves dans le système.
 - **Paramétrage** : Configuration des classes et de l'emploi du temps hebdomadaire.
 - **Messagerie** : Contact direct avec les parents et collègues.
 
 ## 👨‍🏫 Enseignant
-- **Plan de Cours** : Publication du programme annuel avec possibilité de joindre des PDF.
+- **Tableau de Bord** : Suivi du taux de réussite global et de la moyenne de la classe en temps réel.
+- **Plan de Cours** : Publication du programme annuel avec fichiers joints.
+- **Gestion du Temps** : Possibilité de modifier l'emploi du temps de ses classes.
 - **Devoirs** : Publication de leçons et exercices pour la classe.
 - **Appel & Notes** : Saisie des absences quotidiennes et des résultats trimestriels.
 - **Messagerie de Groupe** : Animation du chat de classe pour le travail collaboratif.
 
 ## 👪 Parent
-- **Tableau de Bord** : Vue d'ensemble sur les devoirs, notes et présences de chaque enfant.
-- **Messagerie Intelligente** : Un bouton permet de contacter directement le professeur titulaire de l'enfant ou la direction, sans chercher ses coordonnées.
+- **Tableau de Bord** : Accès direct aux communications, devoirs et messagerie via des boutons d'accès rapide.
+- **Suivi Scolaire** : Vue d'ensemble sur les devoirs, notes et présences de chaque enfant.
+- **Messagerie Intelligente** : Un bouton permet de contacter directement le professeur titulaire de l'enfant ou la direction.
 - **Signature Numérique** : Validation sécurisée des devoirs par code OTP.
 
 ## 🎓 Élève

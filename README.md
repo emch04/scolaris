@@ -12,14 +12,17 @@ Une plateforme de gestion scolaire complète, légère et moderne, conçue pour 
 - **Organisation Pédagogique** : 
   - Création de classes et attribution des professeurs titulaires.
   - **Plan de Cours Annuel** : Publication du programme et des objectifs par les enseignants avec fichiers joints.
-  - **Emploi du Temps** : Planning interactif hebdomadaire pour chaque classe.
+  - **Gestion du Temps** : Emploi du temps interactif géré par la Direction et les Enseignants.
 - **Suivi des Élèves** : 
+  - **Inscriptions Centralisées** : Seule la Direction peut inscrire de nouveaux élèves pour garantir l'intégrité des données.
   - Génération automatique de matricules uniques.
+  - **Tableau de Bord Professeur** : Visualisation immédiate de la moyenne de classe et du taux de réussite.
   - **Bulletins Numériques** : Consultation des notes et moyennes par période.
   - **Gestion des Absences** : Appel numérique pour les profs et suivi en temps réel pour les parents.
 - **Calendrier Scolaire Moderne** : Vue mensuelle interactive avec indicateurs visuels pour les événements, examens et congés.
 - **Communication & Collaboration** :
-  - **Messagerie Intelligente** : Auto-sélection des destinataires (Titulaires/Direction) pour simplifier les échanges Parents-École.
+  - **Navigation Parent Optimisée** : Accès rapide à la messagerie et aux devoirs depuis le tableau de bord.
+  - **Messagerie Intelligente** : Auto-sélection des destinataires pour simplifier les échanges.
   - **Chat de Classe** : Espace collaboratif sécurisé par classe.
   - **Communiqués Officiels** : Diffusion de messages importants avec pièces jointes.
 - **Bibliothèque Numérique** : Partage de ressources (livres, exercices, vidéos) avec accès restreint selon le rôle.
