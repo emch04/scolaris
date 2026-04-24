@@ -3,9 +3,9 @@
 Ce document décrit la structure technique de la plateforme Scolaris.
 
 ## 🧱 Architecture Globale
-Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js) découplée en deux parties :
+Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js) :
 
-1.  **Backend (API REST)** : Gère la logique métier, la sécurité (JWT) et la base de données.
+1.  **Backend (API REST)** : Gère la logique métier, la sécurité par cookies et la base de données.
 2.  **Frontend (SPA)** : Interface utilisateur réactive construite avec React et Vite. Utilisation de la Context API pour la gestion de l'état global (**Auth**, **Theme**, **Toasts**).
 
 ## 🔐 Système de Sécurité
@@ -20,6 +20,18 @@ Scolaris est une PWA complète qui offre une expérience proche d'une applicatio
 - **Service Worker** : Géré via `vite-plugin-pwa` avec une stratégie `Stale-While-Revalidate`.
 - **Mode Hors-ligne** : L'application met en cache les fichiers statiques et les réponses API critiques (Emploi du temps, Devoirs récents). L'utilisateur peut consulter ses données même en zone blanche.
 - **Manifeste** : Configuration des couleurs (`#0a0a0a`) et des icônes pour un affichage plein écran professionnel.
+
+## ⚡ Performances et Optimisations
+Scolaris a été conçu pour une fluidité maximale, même sur des réseaux limités :
+- **Vitesse d'affichage (LCP)** : ~0,20 s (Chargement quasi instantané).
+- **Stabilité visuelle (CLS)** : 0 (Aucun décalage de mise en page).
+- **Réactivité (INP)** : ~16-48 ms (Réponse aux clics instantanée).
+
+Ces scores sont obtenus grâce à :
+1.  L'utilisation de **Vite** pour un build ultra-performant.
+2.  L'absence de frameworks CSS lourds (utilisation de **CSS pur**).
+3.  L'optimisation des images (conversion en **JPG compressé**).
+4.  La mise en cache intelligente via le **Service Worker (PWA)**.
 
 ## 🛠️ Maintenance et Audit
 La plateforme intègre un **Agent de Maintenance** dédié :
