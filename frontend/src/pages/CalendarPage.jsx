@@ -87,9 +87,13 @@ function CalendarPage() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <button onClick={prevMonth} className="btn" style={{ padding: "0.5rem", background: "rgba(255,255,255,0.05)" }}>←</button>
-            <h2 style={{ minWidth: "150px", textAlign: "center", margin: 0 }}>{monthNames[month]} {year}</h2>
-            <button onClick={nextMonth} className="btn" style={{ padding: "0.5rem", background: "rgba(255,255,255,0.05)" }}>→</button>
+            <button onClick={prevMonth} className="btn" style={{ padding: "0.6rem", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 style={{ minWidth: "150px", textAlign: "center", margin: 0, fontSize: "1.4rem" }}>{monthNames[month]} {year}</h2>
+            <button onClick={nextMonth} className="btn" style={{ padding: "0.6rem", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
           </div>
           
           {["super_admin", "director", "admin"].includes(user?.role) && (

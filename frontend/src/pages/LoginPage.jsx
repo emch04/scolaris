@@ -148,18 +148,27 @@ function LoginPage() {
             <div className="form" style={{ display: "grid", gap: "1rem" }}>
               <p style={{ textAlign: "center", fontSize: "0.9rem", marginBottom: "1rem" }}>Je suis un...</p>
               <button className="btn" onClick={() => { setRegType("student"); setView("register_form"); }} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1.5rem", borderRadius: "15px", textAlign: "left", display: "flex", alignItems: "center", gap: "15px" }}>
-                <span style={{ fontSize: "1.5rem" }}>🎓</span>
+                <div style={{ background: "var(--primary)", padding: "10px", borderRadius: "10px", display: "flex" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                </div>
                 <div><strong style={{ display: "block" }}>Élève</strong><small style={{ opacity: 0.5 }}>Rejoindre ma classe avec mon code école</small></div>
               </button>
               <button className="btn" onClick={() => { setRegType("parent"); setView("register_form"); }} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1.5rem", borderRadius: "15px", textAlign: "left", display: "flex", alignItems: "center", gap: "15px" }}>
-                <span style={{ fontSize: "1.5rem" }}>👪</span>
+                <div style={{ background: "#34A853", padding: "10px", borderRadius: "10px", display: "flex" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
                 <div><strong style={{ display: "block" }}>Parent</strong><small style={{ opacity: 0.5 }}>Suivre les devoirs avec le matricule enfant</small></div>
               </button>
               <button className="btn" onClick={() => { setRegType("teacher_public"); setView("register_form"); }} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", padding: "1.5rem", borderRadius: "15px", textAlign: "left", display: "flex", alignItems: "center", gap: "15px" }}>
-                <span style={{ fontSize: "1.5rem" }}>👨‍🏫</span>
+                <div style={{ background: "#F9AB00", padding: "10px", borderRadius: "10px", display: "flex" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </div>
                 <div><strong style={{ display: "block" }}>Enseignant</strong><small style={{ opacity: 0.5 }}>Demander un accès à l'administration</small></div>
               </button>
-              <button onClick={() => setView("login")} style={{ background: "none", border: "none", color: "white", marginTop: "1rem", cursor: "pointer", opacity: 0.6 }}>Retour</button>
+              <button onClick={() => setView("login")} className="btn" style={{ background: "none", color: "white", marginTop: "1rem", opacity: 0.6, fontSize: "0.9rem" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "8px" }}><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Retour
+              </button>
             </div>
           )}
 

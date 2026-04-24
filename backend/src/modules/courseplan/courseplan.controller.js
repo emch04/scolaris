@@ -4,6 +4,11 @@ const apiResponse = require("../../utils/apiResponse");
 
 const addCoursePlan = asyncHandler(async (req, res) => {
   const payload = { ...req.body, teacher: req.user.id };
+  
+  if (req.file) {
+    payload.fileUrl = `/uploads/${req.file.filename}`;
+  }
+
   const plan = await CoursePlan.create(payload);
   return apiResponse(res, 201, "Plan de cours enregistré.", plan);
 });

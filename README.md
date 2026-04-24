@@ -1,91 +1,77 @@
 # Scolaris 🏫
 
-Une plateforme de gestion scolaire légère et moderne, conçue pour faciliter le suivi des élèves, des classes et des devoirs.
+Une plateforme de gestion scolaire complète, légère et moderne, conçue pour transformer le suivi éducatif.
 
-## 🚀 Fonctionnalités
+## 🚀 Fonctionnalités Clés
 
-- **Authentification Sécurisée** : Connexion pour les enseignants, directeurs et administrateurs via JWT.
-- **Gestion des Écoles** : Enregistrement et suivi des établissements partenaires.
-- **Gestion des Classes** : Création de classes avec attribution de titulaires.
-- **Gestion des Élèves** : Inscription des élèves avec génération automatique de matricules uniques.
-- **Système de Devoirs** : Publication de leçons et devoirs par les enseignants, avec possibilité de joindre des fichiers (PDF, documents, images).
-- **Gestion des Absences** : Module complet permettant aux enseignants de faire l'appel et aux parents de suivre l'historique des présences en temps réel.
-- **Emploi du Temps** : Planning interactif des cours par classe, géré par l'administration.
-- **Calendrier Scolaire** : Planification centralisée des événements, congés et examens par le Super Admin et les Directeurs.
-- **Plan de Cours Annuel** : Publication du programme pédagogique par les enseignants, consultable par les parents et élèves.
-- **Messagerie & Collaboration** :
-  - **Messages Privés** : Échanges sécurisés selon une hiérarchie stricte.
-  - **Chat de Classe** : Espace de discussion de groupe pour le travail collaboratif entre élèves et professeurs.
-- **Bibliothèque Numérique** : Ressources (livres, exercices, vidéos) réservées aux élèves, professeurs et directeurs.
-- **Tableau de Bord Visuel** :
-  - **Super Admin** : Vue globale du réseau (écoles, parents, enseignants, classes) et statistiques de croissance.
-  - **Direction** : Gestion locale complète des parents et élèves de l'établissement.
-- **Confidentialité & Sécurité** : 
-  - Accès restreint aux données sensibles (le Super Admin ne voit pas la liste des parents).
-  - Filtrage des communications pour préserver l'autonomie des écoles.
+- **Authentification & Inscriptions** : 
+  - Connexion sécurisée via JWT (Email ou Matricule).
+  - **Inscriptions Publiques Strictes** : Les Parents (via matricule enfant), Élèves (via code école) et Enseignants peuvent créer leurs comptes en toute autonomie.
+  - **Récupération de Mot de Passe** : Système complet par e-mail via code OTP réel.
+- **Gestion des Établissements** : Enregistrement, suivi et validation des écoles partenaires.
+- **Organisation Pédagogique** : 
+  - Création de classes et attribution des professeurs titulaires.
+  - **Plan de Cours Annuel** : Publication du programme et des objectifs par les enseignants avec fichiers joints.
+  - **Emploi du Temps** : Planning interactif hebdomadaire pour chaque classe.
+- **Suivi des Élèves** : 
+  - Génération automatique de matricules uniques.
+  - **Bulletins Numériques** : Consultation des notes et moyennes par période.
+  - **Gestion des Absences** : Appel numérique pour les profs et suivi en temps réel pour les parents.
+- **Calendrier Scolaire Moderne** : Vue mensuelle interactive avec indicateurs visuels pour les événements, examens et congés.
+- **Communication & Collaboration** :
+  - **Messagerie Intelligente** : Auto-sélection des destinataires (Titulaires/Direction) pour simplifier les échanges Parents-École.
+  - **Chat de Classe** : Espace collaboratif sécurisé par classe.
+  - **Communiqués Officiels** : Diffusion de messages importants avec pièces jointes.
+- **Bibliothèque Numérique** : Partage de ressources (livres, exercices, vidéos) avec accès restreint selon le rôle.
+- **Sécurité Avancée** : 
+  - Déconnexion automatique après 15 min d'inactivité.
+  - Détection dynamique de l'environnement (Local vs Production).
+  - Contrôle d'accès strict (RBAC).
 
 ## 🛠️ Stack Technique
 
-- **Backend** : Node.js, Express.js, MongoDB (Mongoose), JWT.
-- **Frontend** : React.js (Vite), React Router, Axios, Context API (Theme, Auth, Toasts), CSS Vanilla.
-- **Base de données** : MongoDB Atlas.
-- **Maintenance** : GitHub Actions, Scripts d'audit de sécurité.
+- **Frontend** : React.js (Vite), React Router, Axios, Context API, CSS Vanilla (Design Glassmorphism).
+- **Backend** : Node.js, Express.js, MongoDB (Mongoose), Nodemailer (Emails), Multer (Fichiers).
+- **Infrastucture** : Vercel (Frontend), Render (Backend), MongoDB Atlas (Cloud Database).
 
 ## 📁 Structure du Projet
 
 ```text
 scolaris/
 ├── backend/                # API REST Node.js
-├── frontend/               # Application React
-├── maintenance-agent/      # Agent spécialisé (Audit & Sécurité)
-│   ├── scripts/            # Script d'audit automatisé
-│   └── references/         # Checklist de sécurité
-└── .github/workflows/      # Automatisation CI/CD (GitHub Actions)
-```
-## ⚙️ Installation et Démarrage
-
-### 1. Cloner le projet
-```bash
-git clone https://github.com/emch04/scolaris.git
-cd scolaris
+├── frontend/               # Application React (Vite)
+├── docs/                   # Documentation technique et utilisateur
+└── maintenance-agent/      # Agent spécialisé (Audit & Sécurité)
 ```
 
-### 2. Configuration du Backend
+## ⚙️ Installation Rapide
+
+### 1. Backend
 ```bash
 cd backend
 npm install
-# Créez votre fichier .env basé sur .env.example
-node seed.js # Pour créer le compte admin initial
+# Configurez votre .env (MongoDB, JWT_SECRET, EMAIL_USER, EMAIL_PASS)
+node seed.js # Création du compte admin initial
 npm run dev
 ```
 
-### 3. Configuration du Frontend
+### 2. Frontend
 ```bash
 cd ../frontend
 npm install
-# Créez votre fichier .env basé sur .env.example
+# Configurez votre .env (VITE_API_BASE_URL)
 npm run dev
 ```
-
-## 🚀 Mise en ligne (Déploiement)
-
-Le projet est entièrement configuré pour être hébergé en ligne. Consultez le **[Guide de Déploiement](./docs/DEPLOYMENT.md)** pour les instructions pas-à-pas (Vercel, Render, MongoDB Atlas).
 
 ## 🔑 Identifiants de test (après seed)
 - **Super Admin** : `admin@scolaris.cd` / `superadmin123`
 - **Professeur** : `prof@scolaris.cd` / `prof123`
 - **Parent** : `parent@demo.cd` / `parent123`
 
-## 📝 Licence
-Ce projet est développé pour le secteur éducatif.
+## 📝 Documentation Complète
+- **[Architecture Technique](./docs/ARCHITECTURE.md)**
+- **[Charte UI/UX](./docs/UI_UX_GUIDELINES.md)**
+- **[Guide Utilisateur](./docs/GUIDE_UTILISATEUR.md)**
 
 ---
-
-## 🗺️ Roadmap (Évolutions à venir)
-
-- [ ] **Notifications SMS Réelles** : Intégration d'une passerelle (Twilio/Vonage) pour l'envoi des codes OTP et des alertes.
-- [ ] **Paiement des Frais** : Module de paiement en ligne des frais de scolarité (Mobile Money).
-- [ ] **Export PDF** : Génération des bulletins de notes et certificats au format PDF.
-- [x] **Emploi du Temps** : Planning interactif des cours pour chaque classe.
-- [x] **Gestion des Absences** : Suivi en temps réel de la présence des élèves.
-- [x] **Messagerie** : Système de discussion interne.
+Développé par emmanouch avec passion pour moderniser l'éducation. 
