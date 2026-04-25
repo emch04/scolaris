@@ -17,8 +17,21 @@ function ClassroomChatPage() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
+  const [showEmojis, setShowEmojis] = useState(false);
   const { showToast } = useToast();
   const chatEndRef = useRef(null);
+
+  const emojis = Array.from(new Set([
+    "😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠",
+    "👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "👂", "👃", "🧠", "🦷", "🦴", "👀", "👁️", "👅", "👄",
+    "📚", "📖", "📜", "📝", "🖊️", "🖋️", "✒️", "🎨", "🎭", "🎓", "🎒", "🔭", "🔬", "🏫", "🏢", "📐", "📏", "📋", "📅", "🗓️", "⌛", "⏳", "⌚", "⏰", "💡",
+    "✅", "❌", "❓", "❗", "💯", "🌟", "✨", "🔥", "🚀", "🎉", "🎈", "🎁", "🏆", "🥇", "🥈", "🥉", "🏅", "🎖️", "⭐", "🌈", "☀️", "🌙", "☁️", "🌍", "🌎", "🌏", "📍", "🚩", "🏁", "🎵", "🎶", "💻", "📱", "📞", "☎️"
+  ]));
+
+  const addEmoji = (emoji) => {
+    setContent(prev => prev + emoji);
+    // On ne ferme pas forcément pour permettre d'en mettre plusieurs
+  };
 
   const fetchMessages = async () => {
     try {
@@ -100,7 +113,6 @@ function ClassroomChatPage() {
                 return (
                   <div key={m._id} style={{ 
                     alignSelf: isMe ? "flex-end" : "flex-start",
-                    maxWidth: "70%",
                     width: "fit-content",
                     display: "flex",
                     flexDirection: "column",
@@ -139,6 +151,42 @@ function ClassroomChatPage() {
             <div ref={chatEndRef} />
           </div>
 
+          {/* Clavier d'emojis intégré */}
+          {showEmojis && (
+            <div style={{ 
+              padding: "10px", 
+              background: "rgba(20,20,20,0.95)", 
+              backdropFilter: "blur(10px)",
+              borderTop: "1px solid rgba(255,255,255,0.1)",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(35px, 1fr))",
+              gap: "5px",
+              maxHeight: "150px",
+              overflowY: "auto",
+              animation: "slideUp 0.2s ease"
+            }}>
+              {emojis.map(e => (
+                <button 
+                  key={e} 
+                  onClick={() => addEmoji(e)}
+                  style={{ 
+                    background: "none", 
+                    border: "none", 
+                    fontSize: "1.5rem", 
+                    cursor: "pointer", 
+                    padding: "5px",
+                    borderRadius: "8px",
+                    transition: "0.2s"
+                  }}
+                  onMouseOver={el => el.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+                  onMouseOut={el => el.currentTarget.style.background = "none"}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Zone de saisie */}
           <form onSubmit={handleSend} style={{ 
             padding: "10px", 
@@ -147,12 +195,37 @@ function ClassroomChatPage() {
             display: "flex", 
             gap: "8px",
             borderTop: "1px solid rgba(255,255,255,0.05)",
-            paddingBottom: "calc(10px + env(safe-area-inset-bottom))"
+            paddingBottom: "calc(10px + env(safe-area-inset-bottom))",
+            alignItems: "center"
           }}>
+            <button 
+              type="button" 
+              onClick={() => setShowEmojis(!showEmojis)}
+              style={{ 
+                background: "none", 
+                border: "none", 
+                color: showEmojis ? "var(--primary)" : "white", 
+                cursor: "pointer", 
+                padding: "5px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "0.2s"
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+              </svg>
+            </button>
+
             <input 
               type="text" 
               value={content} 
               onChange={e => setContent(e.target.value)}
+              onFocus={() => setShowEmojis(false)}
               placeholder="Votre message..."
               style={{ flex: 1, padding: "10px 15px", borderRadius: "20px", background: "rgba(255,255,255,0.9)", color: "#222", border: "none", fontSize: "0.9rem" }}
             />
@@ -160,6 +233,12 @@ function ClassroomChatPage() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
           </form>
+          <style>{`
+            @keyframes slideUp {
+              from { transform: translateY(10px); opacity: 0; }
+              to { transform: translateY(0); opacity: 1; }
+            }
+          `}</style>
         </div>
       </main>
     </>
