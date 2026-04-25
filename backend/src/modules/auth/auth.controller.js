@@ -56,7 +56,9 @@ const login = asyncHandler(async (req, res) => {
   res.cookie("refreshToken", result.refreshToken, { ...commonOptions, maxAge: 30 * 24 * 60 * 60 * 1000 }); // 30 jours
 
   return apiResponse(res, 200, "Connexion réussie.", {
-    user: userData
+    user: userData,
+    token: result.token,
+    refreshToken: result.refreshToken
   });
 });
 

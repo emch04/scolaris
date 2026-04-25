@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getToken } from "../utils/storage";
 
-const baseURL = "https://scolaris-fucv.onrender.com/api";
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const baseURL = isLocal ? "http://localhost:5001/api" : "https://scolaris-fucv.onrender.com/api";
 
 const apiClient = axios.create({
   baseURL: baseURL,

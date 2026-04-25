@@ -9,35 +9,28 @@ function DashboardPage() {
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [fetchError, setFetchError] = useState(null);
 
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  // ... (dans useEffect handleOnline/Offline)
 
   const fetchStats = () => {
     setLoading(true);
-    if (user?.role === "super_admin") {
-      getGlobalStatsRequest()
-        .then(res => setStatsData(res?.data))
-        .catch(err => console.error("Erreur stats:", err))
-        .finally(() => setLoading(false));
-    } else if (["admin", "director", "teacher"].includes(user?.role)) {
-      getTeacherStatsRequest()
-        .then(res => setStatsData(res?.data))
-        .catch(err => console.error("Erreur stats enseignant:", err))
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    setFetchError(null);
+    const request = user?.role === "super_admin" ? getGlobalStatsRequest() : getTeacherStatsRequest();
+    
+    request
+      .then(res => {
+        if (res?.data) {
+          setStatsData(res.data);
+        } else {
+          setFetchError("Format de données invalide");
+        }
+      })
+      .catch(err => {
+        console.error("Erreur stats:", err);
+        setFetchError(err.message || "Erreur de connexion au serveur");
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -105,6 +98,12 @@ function DashboardPage() {
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <h1 style={{ fontSize: "2.8rem", fontWeight: "900", marginBottom: "0.5rem" }}>Tableau de Bord</h1>
           <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Bienvenue, <strong>{user?.fullName}</strong>. Voici vos outils de gestion.</p>
+          
+          {fetchError && (
+            <p style={{ color: "#EA4335", fontSize: "0.9rem", marginTop: "10px" }}>
+              ⚠️ {fetchError}
+            </p>
+          )}
           
           <div style={{ 
             display: "flex", 

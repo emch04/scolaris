@@ -48,10 +48,15 @@ export function AuthProvider({ children }) {
       const response = await loginRequest({ email, password });
       const authData = response?.data;
       const receivedUser = authData?.user;
+      const token = authData?.token;
 
       if (receivedUser) {
         if (receivedUser.role === "student" && receivedUser.classroom && typeof receivedUser.classroom === "object") {
           receivedUser.classroom = receivedUser.classroom._id;
+        }
+        if (token) {
+          const { setToken } = await import("../utils/storage");
+          setToken(token);
         }
         setUser(receivedUser);
         setCurrentUser(receivedUser);
