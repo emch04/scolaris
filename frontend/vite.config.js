@@ -16,7 +16,7 @@ export default defineConfig({
     
     // Configuration de la PWA pour une installation facile sur mobile
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt', // Changé à prompt pour mieux gérer les mises à jour critiques
       injectRegister: 'auto',
       workbox: {
         // Mise en cache exhaustive des ressources statiques

@@ -29,6 +29,7 @@ import PrivacyPage from "../pages/PrivacyPage";
 import TermsPage from "../pages/TermsPage";
 import SchoolRegistrationPage from "../pages/SchoolRegistrationPage";
 import AboutPage from "../pages/AboutPage";
+import GuidePage from "../pages/GuidePage";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRouter() {
@@ -40,6 +41,7 @@ function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register-school" element={<SchoolRegistrationPage />} />
       <Route path="/a-propos" element={<AboutPage />} />
+      <Route path="/guide" element={<GuidePage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       

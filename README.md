@@ -1,5 +1,7 @@
 # Scolaris 🏫
 
+**Date de création officielle :** Jeudi 22 avril 2026
+
 Une plateforme de gestion scolaire de classe industrielle, ultra-rapide et sécurisée, conçue pour transformer le suivi éducatif.
 
 ## ⚡ Performances Records
@@ -8,11 +10,12 @@ Scolaris est l'une des plateformes de gestion scolaire les plus rapides au monde
 - 🧱 **Stabilité (CLS)** : **0** (Parfaite).
 - 🖱️ **Réactivité (INP)** : **16-48 ms** (Ultra-fluide).
 
-## 🚀 Fonctionnalités Clés
-
-- **📱 Application Mobile (PWA)** : 
-  - Installable sur iOS, Android et Desktop.
-  - **Mode Hors-ligne** : Consultation des devoirs et de l'emploi du temps même sans connexion internet.
+## 🚀 Capacités PWA Avancées
+Scolaris est optimisé pour une expérience native sur mobile :
+- 📱 **Installation Directe** : Pas besoin de passer par l'App Store ou le Play Store.
+- 💾 **Persistance Hors-ligne** : Stratégie *CacheFirst* et *Stale-While-Revalidate* pour un accès instantané aux données métier sans internet.
+- 🔄 **Background Sync** : Synchronisation des données en arrière-plan dès le retour de la connexion.
+- ⚖️ **Stabilité Mobile** : Utilisation de `100dvh` et `overscroll-behavior: none` pour un comportement d'application fluide et sans rebonds.
 - **🔒 Haute Sécurité** : 
   - **Cookies HTTP-Only** : Protection bancaire contre le vol de session.
   - **Refresh Tokens** : Maintien de la connexion sécurisée sur 30 jours.

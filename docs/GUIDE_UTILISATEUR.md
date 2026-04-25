@@ -1,6 +1,14 @@
 # Guide Utilisateur Scolaris 📖
 
+**Date de création officielle :** Jeudi 22 avril 2026
+
 Bienvenue sur Scolaris. Ce guide vous aide à utiliser les fonctionnalités selon votre rôle.
+
+## 📱 Utilisation Mobile (PWA)
+Scolaris est une application moderne que vous pouvez installer sur votre téléphone :
+1.  **Installation** : Sur votre navigateur (Safari ou Chrome), utilisez l'option "Ajouter à l'écran d'accueil".
+2.  **Mode Hors-ligne** : Vous pouvez consulter vos devoirs et votre emploi du temps même sans internet.
+3.  **Synchronisation** : Vos actions sont automatiquement synchronisées dès que la connexion revient.
 
 ## 🆕 Création de Compte & Récupération
 Scolaris permet aux nouveaux membres de s'inscrire en toute sécurité :

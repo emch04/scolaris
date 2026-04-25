@@ -1,5 +1,7 @@
 # Architecture de Scolaris 🏗️
 
+**Date de création officielle :** Jeudi 22 avril 2026
+
 Ce document décrit la structure technique de la plateforme Scolaris.
 
 ## 🧱 Architecture Globale
@@ -17,7 +19,11 @@ Scolaris repose sur une architecture **MERN** (MongoDB, Express, React, Node.js)
 
 ## 📱 Progressive Web App (PWA)
 Scolaris est une PWA complète qui offre une expérience proche d'une application native :
-- **Service Worker** : Géré via `vite-plugin-pwa` avec une stratégie `Stale-While-Revalidate`.
+- **Service Worker** : Géré via `vite-plugin-pwa` avec des stratégies hybrides :
+  - **CacheFirst** : Pour les ressources statiques et médias (images, polices).
+  - **Stale-While-Revalidate** : Pour les données API, permettant une fluidité instantanée même avec un réseau lent.
+- **Background Sync** : Mise en file d'attente des actions utilisateur effectuées hors-ligne pour exécution automatique dès le retour du réseau.
+- **Periodic Sync** : Rafraîchissement automatique des données critiques (horaires, messages) toutes les 12 heures en arrière-plan.
 - **Mode Hors-ligne** : L'application met en cache les fichiers statiques et les réponses API critiques (Emploi du temps, Devoirs récents). L'utilisateur peut consulter ses données même en zone blanche.
 - **Manifeste** : Configuration des couleurs (`#0a0a0a`) et des icônes pour un affichage plein écran professionnel.
 

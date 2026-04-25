@@ -75,10 +75,11 @@ function Footer() {
         </div>
 
         {/* Colonne 2 : Liens Rapides */}
-        <div>
+                <div>
           <h4 style={{ marginBottom: "1.5rem", fontSize: "1.1rem", fontWeight: "700" }}>Navigation</h4>
           <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
             <li><Link to="/" style={{ color: "white", opacity: 0.6, transition: "0.3s" }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.6}>Accueil</Link></li>
+            <li><Link to="/guide" style={{ color: "white", opacity: 0.6, transition: "0.3s" }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.6}>Guide d'utilisation</Link></li>
             <li><Link to="/register-school" style={{ color: "white", opacity: 0.6, transition: "0.3s" }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.6}>Inscrire mon École</Link></li>
             <li><Link to="/devoirs" style={{ color: "white", opacity: 0.6, transition: "0.3s" }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.6}>Espace Devoirs</Link></li>
             <li><Link to="/contact" style={{ color: "white", opacity: 0.6, transition: "0.3s" }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.6}>Contact</Link></li>
@@ -119,7 +120,7 @@ function Footer() {
         opacity: 0.4
       }}>
         <p>&copy; 2026 Scolaris - Système de Gestion Scolaire. Tous droits réservés.</p>
-        <div style={{ display: "flex", gap: "2rem" }}>
+                        <div style={{ display: "flex", gap: "2rem" }}>
           <Link to="/privacy" style={{ color: "white" }}>Confidentialité</Link>
           <Link to="/terms" style={{ color: "white" }}>Conditions d'utilisation</Link>
         </div>
