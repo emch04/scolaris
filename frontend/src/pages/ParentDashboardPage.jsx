@@ -8,8 +8,12 @@ import useAuth from "../hooks/useAuth";
 
 function ParentDashboardPage() {
   const { user } = useAuth();
-  const [data, setData] = useState({ children: [], assignments: [], stats: { pendingAssignments: 0 }, signedAssignmentIds: [] });
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(() => {
+    const cached = localStorage.getItem(`parent_cache_${user?.id}`);
+    const defaultData = { children: [], assignments: [], stats: { pendingAssignments: 0 }, signedAssignmentIds: [] };
+    return cached ? JSON.parse(cached) : defaultData;
+  });
+  const [loading, setLoading] = useState(!localStorage.getItem(`parent_cache_${user?.id}`));
   const [error, setError] = useState("");
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -27,18 +31,23 @@ function ParentDashboardPage() {
   }, []);
 
   const fetchParentData = async () => {
+    if (!navigator.onLine && data.children.length > 0) return;
+    
     setLoading(true);
     try {
       const response = await getParentDashboardRequest();
       if (response?.success) {
         setData(response.data);
+        localStorage.setItem(`parent_cache_${user?.id}`, JSON.stringify(response.data));
       } else {
         setError("Impossible de charger vos données.");
       }
     } catch (err) {
       console.error("Erreur détaillée:", err);
-      const msg = err.response?.data?.message || "Erreur de communication avec le serveur.";
-      setError(`${msg} (Code: ${err.response?.status || 'Network Error'})`);
+      if (!data.children.length) {
+        const msg = err.response?.data?.message || "Erreur de connexion.";
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }

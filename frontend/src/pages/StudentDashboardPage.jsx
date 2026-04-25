@@ -8,8 +8,11 @@ import useAuth from "../hooks/useAuth";
 
 function StudentDashboardPage() {
   const { user } = useAuth();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(() => {
+    const cached = localStorage.getItem(`student_cache_${user?.id}`);
+    return cached ? JSON.parse(cached) : null;
+  });
+  const [loading, setLoading] = useState(!data);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
@@ -26,9 +29,16 @@ function StudentDashboardPage() {
   }, []);
 
   const fetchDashboardData = () => {
+    if (!navigator.onLine && data) return;
+    
     setLoading(true);
     getStudentDashboardRequest()
-      .then(res => setData(res?.data))
+      .then(res => {
+        if (res?.data) {
+          setData(res.data);
+          localStorage.setItem(`student_cache_${user?.id}`, JSON.stringify(res.data));
+        }
+      })
       .catch(err => console.error("Erreur dashboard"))
       .finally(() => setLoading(false));
   };

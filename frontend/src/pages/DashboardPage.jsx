@@ -6,29 +6,38 @@ import { getGlobalStatsRequest, getTeacherStatsRequest } from "../services/stats
 
 function DashboardPage() {
   const { user } = useAuth();
-  const [statsData, setStatsData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState(() => {
+    // Charger les données depuis le cache local au démarrage
+    const cached = localStorage.getItem(`stats_cache_${user?.id}`);
+    return cached ? JSON.parse(cached) : null;
+  });
+  const [loading, setLoading] = useState(!statsData);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [fetchError, setFetchError] = useState(null);
 
-  // ... (dans useEffect handleOnline/Offline)
+  // ... (handleOnline / handleOffline identiques)
 
   const fetchStats = () => {
+    if (!navigator.onLine) return; // Ne pas tenter si offline
+    
     setLoading(true);
-    setFetchError(null);
     const request = user?.role === "super_admin" ? getGlobalStatsRequest() : getTeacherStatsRequest();
     
     request
       .then(res => {
         if (res?.data) {
           setStatsData(res.data);
-        } else {
-          setFetchError("Format de données invalide");
+          // Sauvegarder dans le cache local
+          localStorage.setItem(`stats_cache_${user?.id}`, JSON.stringify(res.data));
+          setFetchError(null);
         }
       })
       .catch(err => {
         console.error("Erreur stats:", err);
-        setFetchError(err.message || "Erreur de connexion au serveur");
+        // On ne met une erreur que si on n'a vraiment aucune donnée (ni cache, ni live)
+        if (!statsData) {
+          setFetchError("Connexion impossible au serveur");
+        }
       })
       .finally(() => setLoading(false));
   };
