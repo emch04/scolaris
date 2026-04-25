@@ -10,15 +10,34 @@ function StudentDashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  const fetchDashboardData = () => {
+    setLoading(true);
     getStudentDashboardRequest()
       .then(res => setData(res?.data))
       .catch(err => console.error("Erreur dashboard"))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
   }, []);
 
-  if (loading) return <><Navbar /><Loader /></>;
+  if (loading && !data) return <><Navbar /><Loader /></>;
   if (!data) return <><Navbar /><div className="container">Erreur de chargement des données.</div></>;
 
   const { student, assignments, results, communications } = data;
@@ -27,6 +46,74 @@ function StudentDashboardPage() {
     <>
       <Navbar />
       <main className="container" style={{ padding: "2rem 1.5rem" }}>
+        
+        {/* Status de connexion */}
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "flex-end", 
+          gap: "10px", 
+          marginBottom: "1rem",
+          alignItems: "center"
+        }}>
+          <span style={{ 
+            padding: "5px 12px", 
+            borderRadius: "20px", 
+            fontSize: "0.7rem", 
+            background: isOnline ? "rgba(52, 168, 83, 0.1)" : "rgba(234, 67, 53, 0.1)",
+            color: isOnline ? "#34A853" : "#EA4335",
+            border: `1px solid ${isOnline ? "#34A85340" : "#EA433540"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px"
+          }}>
+            <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: isOnline ? "#34A853" : "#EA4335" }}></div>
+            {isOnline ? "En ligne" : "Hors-ligne"}
+          </span>
+
+          <button 
+            onClick={fetchDashboardData}
+            disabled={loading || !isOnline}
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              color: "white",
+              cursor: "pointer",
+              padding: "6px 15px",
+              borderRadius: "12px",
+              fontSize: "0.75rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              transition: "all 0.2s ease",
+              opacity: isOnline ? 1 : 0.5
+            }}
+            onMouseOver={e => !loading && (e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)")}
+            onMouseOut={e => !loading && (e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)")}
+          >
+            <svg 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="3" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              style={{ animation: loading ? "spin 1s linear infinite" : "none" }}
+            >
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            {loading ? "" : "Actualiser"}
+            <style>{`
+              @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
+          </button>
+        </div>
         
         {/* Header Profil */}
         <div style={{ 

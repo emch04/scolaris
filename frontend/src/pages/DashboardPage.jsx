@@ -132,16 +132,47 @@ function DashboardPage() {
               onClick={fetchStats}
               disabled={loading || !isOnline}
               style={{
-                background: "transparent",
-                border: "none",
-                color: "var(--primary)",
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                color: "white",
                 cursor: "pointer",
-                fontSize: "0.8rem",
-                textDecoration: "underline",
-                opacity: loading ? 0.5 : 1
+                padding: "8px 18px",
+                borderRadius: "14px",
+                fontSize: "0.85rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                transition: "all 0.2s ease",
+                opacity: isOnline ? 1 : 0.5,
+                fontWeight: "600"
               }}
+              onMouseOver={e => !loading && (e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)")}
+              onMouseOut={e => !loading && (e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)")}
             >
-              {loading ? "Mise à jour..." : "Actualiser"}
+              <svg 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                style={{ 
+                  animation: loading ? "spin 1s linear infinite" : "none",
+                }}
+              >
+                <path d="M23 4v6h-6"></path>
+                <path d="M1 20v-6h6"></path>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              {loading ? "" : "Actualiser"}
+              <style>{`
+                @keyframes spin {
+                  from { transform: rotate(0deg); }
+                  to { transform: rotate(360deg); }
+                }
+              `}</style>
             </button>
           </div>
         </div>

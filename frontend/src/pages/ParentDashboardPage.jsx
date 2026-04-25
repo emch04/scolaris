@@ -11,24 +11,40 @@ function ParentDashboardPage() {
   const [data, setData] = useState({ children: [], assignments: [], stats: { pendingAssignments: 0 }, signedAssignmentIds: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    const fetchParentData = async () => {
-      try {
-        const response = await getParentDashboardRequest();
-        if (response?.success) {
-          setData(response.data);
-        } else {
-          setError("Impossible de charger vos données.");
-        }
-      } catch (err) {
-        console.error("Erreur détaillée:", err);
-        const msg = err.response?.data?.message || "Erreur de communication avec le serveur.";
-        setError(`${msg} (Code: ${err.response?.status || 'Network Error'})`);
-      } finally {
-        setLoading(false);
-      }
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
+  }, []);
+
+  const fetchParentData = async () => {
+    setLoading(true);
+    try {
+      const response = await getParentDashboardRequest();
+      if (response?.success) {
+        setData(response.data);
+      } else {
+        setError("Impossible de charger vos données.");
+      }
+    } catch (err) {
+      console.error("Erreur détaillée:", err);
+      const msg = err.response?.data?.message || "Erreur de communication avec le serveur.";
+      setError(`${msg} (Code: ${err.response?.status || 'Network Error'})`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchParentData();
   }, []);
 
@@ -36,7 +52,75 @@ function ParentDashboardPage() {
     <>
       <Navbar />
       <main className="container">
-        <div style={{ textAlign: "center", padding: "2rem 0" }}>
+        {/* Status de connexion */}
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "flex-end", 
+          gap: "10px", 
+          marginTop: "1rem",
+          alignItems: "center"
+        }}>
+          <span style={{ 
+            padding: "5px 12px", 
+            borderRadius: "20px", 
+            fontSize: "0.7rem", 
+            background: isOnline ? "rgba(52, 168, 83, 0.1)" : "rgba(234, 67, 53, 0.1)",
+            color: isOnline ? "#34A853" : "#EA4335",
+            border: `1px solid ${isOnline ? "#34A85340" : "#EA433540"}`,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px"
+          }}>
+            <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: isOnline ? "#34A853" : "#EA4335" }}></div>
+            {isOnline ? "En ligne" : "Hors-ligne"}
+          </span>
+
+          <button 
+            onClick={fetchParentData}
+            disabled={loading || !isOnline}
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              color: "white",
+              cursor: "pointer",
+              padding: "6px 15px",
+              borderRadius: "12px",
+              fontSize: "0.75rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              transition: "all 0.2s ease",
+              opacity: isOnline ? 1 : 0.5
+            }}
+            onMouseOver={e => !loading && (e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)")}
+            onMouseOut={e => !loading && (e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)")}
+          >
+            <svg 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="3" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              style={{ animation: loading ? "spin 1s linear infinite" : "none" }}
+            >
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            {loading ? "" : "Actualiser"}
+            <style>{`
+              @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
+          </button>
+        </div>
+
+        <div style={{ textAlign: "center", padding: "1rem 0 2rem 0" }}>
           <h1 style={{ fontSize: "2.8rem", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             Espace Parent
           </h1>
