@@ -78,65 +78,65 @@ function ClassroomsPage() {
         {/* Formulaire simplifié d'ajout de classe */}
         <div style={{ 
           background: "transparent", 
-          padding: "2rem", 
+          padding: "1.2rem", 
           borderRadius: "20px", 
-          border: "3px solid rgba(255, 255, 255, 0.1)",
-          marginBottom: "3rem"
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          marginBottom: "2.5rem"
         }}>
-          <h3 style={{ marginBottom: "1.5rem" }}>Ajouter une classe</h3>
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <h3 style={{ marginBottom: "1rem", fontSize: "1.3rem" }}>Ajouter une classe</h3>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
               <input 
                 placeholder="Nom (ex: 6ème A)" 
                 value={formData.name} 
                 onChange={e => setFormData({...formData, name: e.target.value})} 
-                style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }}
+                style={{ background: "white", border: "1px solid #ccc", padding: "0.6rem", borderRadius: "8px", color: "#222", fontSize: "0.9rem" }}
                 required 
               />
               <input 
                 placeholder="Niveau (ex: Primaire 6)" 
                 value={formData.level} 
                 onChange={e => setFormData({...formData, level: e.target.value})} 
-                style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }}
+                style={{ background: "white", border: "1px solid #ccc", padding: "0.6rem", borderRadius: "8px", color: "#222", fontSize: "0.9rem" }}
                 required 
               />
               <select 
                 value={formData.school} 
                 onChange={e => setFormData({...formData, school: e.target.value})} 
-                style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }}
+                style={{ background: "white", border: "1px solid #ccc", padding: "0.6rem", borderRadius: "8px", color: "#222", cursor: "pointer", fontSize: "0.9rem" }}
                 required
               >
                 <option value="" style={{ background: "white", color: "#222" }}>Choisir l'établissement</option>
                 {schools.map(s => <option key={s._id} value={s._id} style={{ background: "white", color: "#222" }}>{s.name}</option>)}
               </select>
             </div>
-            <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }}>
+            <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.6rem 1.5rem", fontSize: "0.9rem" }}>
               Enregistrer la classe
             </button>
           </form>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <h2 style={{ fontSize: "1.5rem" }}>Classes actives</h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem" }}>
+          <h2 style={{ fontSize: "1.3rem" }}>Classes actives</h2>
         </div>
 
         {loading ? <Loader /> : (
           <div className="grid">
             {classrooms.length === 0 ? (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "3rem", opacity: 0.5 }}>Aucune classe enregistrée.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "2rem", opacity: 0.5 }}>Aucune classe enregistrée.</p>
             ) : (
               classrooms.map(c => (
                 <div key={c._id} style={{ 
                   background: "transparent", 
-                  padding: "1.5rem", 
+                  padding: "1.2rem", 
                   borderRadius: "15px", 
-                  border: "3px solid rgba(255, 255, 255, 0.1)"
+                  border: "1px solid rgba(255, 255, 255, 0.12)"
                 }}>
-                  <div style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.5rem" }}>{c.level}</div>
-                  <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>{c.name}</h3>
-                  <div style={{ fontSize: "0.9rem", opacity: 0.7 }}>
-                    <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                  <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.4rem" }}>{c.level}</div>
+                  <h3 style={{ marginBottom: "0.8rem", fontSize: "1.1rem" }}>{c.name}</h3>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+                    <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                       {c.school?.name || "École non spécifiée"}
                     </p>
                   </div>

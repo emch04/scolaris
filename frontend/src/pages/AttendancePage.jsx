@@ -131,33 +131,33 @@ function AttendancePage() {
         {!studentId && (
           <div style={{ 
             background: "rgba(255,255,255,0.03)", 
-            padding: "1.5rem", 
-            borderRadius: "20px", 
-            border: "3px solid rgba(255,255,255,0.1)",
-            marginBottom: "2rem",
+            padding: "1rem", 
+            borderRadius: "15px", 
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            marginBottom: "1.5rem",
             display: "flex",
-            gap: "1rem",
+            gap: "0.8rem",
             flexWrap: "wrap",
             alignItems: "flex-end"
           }}>
-            <div style={{ flex: 1, minWidth: "200px" }}>
-              <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>Classe</label>
+            <div style={{ flex: "1 1 250px" }}>
+              <label style={{ fontSize: "0.75rem", opacity: 0.7, marginBottom: "6px", display: "block" }}>Classe</label>
               <select 
                 value={selectedClass} 
                 onChange={e => handleClassChange(e.target.value)}
-                style={{ width: "100%", background: "white", color: "#222", padding: "10px", borderRadius: "10px", border: "none" }}
+                style={{ width: "100%", background: "white", color: "#222", padding: "10px", borderRadius: "8px", border: "none", fontSize: "0.9rem" }}
               >
                 <option value="">Choisir une classe</option>
                 {classrooms.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
               </select>
             </div>
-            <div style={{ width: "200px" }}>
-              <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>Date</label>
+            <div style={{ flex: "1 1 180px" }}>
+              <label style={{ fontSize: "0.75rem", opacity: 0.7, marginBottom: "6px", display: "block" }}>Date</label>
               <input 
                 type="date" 
                 value={date} 
                 onChange={e => setDate(e.target.value)}
-                style={{ width: "100%", background: "white", color: "#222", padding: "10px", borderRadius: "10px", border: "none" }}
+                style={{ width: "100%", background: "white", color: "#222", padding: "10px", borderRadius: "8px", border: "none", fontSize: "0.9rem" }}
               />
             </div>
           </div>
@@ -166,25 +166,27 @@ function AttendancePage() {
         {loading ? <Loader /> : (
           studentId ? (
             /* Affichage de l'historique pour Parent/Élève */
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {history.length > 0 ? history.map(h => (
                 <div key={h._id} style={{ 
                   background: "rgba(255,255,255,0.03)", 
-                  padding: "1.2rem", 
-                  borderRadius: "15px", 
+                  padding: "1rem", 
+                  borderRadius: "12px", 
                   border: `1px solid ${h.status === 'absent' ? '#ff5252' : h.status === 'late' ? '#F9AB00' : 'rgba(255,255,255,0.05)'}`,
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center"
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: "8px"
                 }}>
                   <div>
-                    <div style={{ fontWeight: "bold", textTransform: "capitalize" }}>{h.status}</div>
-                    <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{formatDate(h.date)} • Par {h.teacher?.fullName}</div>
+                    <div style={{ fontWeight: "bold", textTransform: "capitalize", fontSize: "0.95rem" }}>{h.status}</div>
+                    <div style={{ fontSize: "0.75rem", opacity: 0.5 }}>{formatDate(h.date)} • Par {h.teacher?.fullName}</div>
                   </div>
-                  {h.reason && <div style={{ fontSize: "0.85rem", fontStyle: "italic", opacity: 0.7 }}>Motif: {h.reason}</div>}
+                  {h.reason && <div style={{ fontSize: "0.8rem", fontStyle: "italic", opacity: 0.7 }}>Motif: {h.reason}</div>}
                 </div>
               )) : (
-                <p style={{ textAlign: "center", opacity: 0.5, padding: "3rem" }}>Aucun historique de présence disponible.</p>
+                <p style={{ textAlign: "center", opacity: 0.5, padding: "2rem" }}>Aucun historique de présence disponible.</p>
               )}
             </div>
           ) : (
@@ -192,52 +194,54 @@ function AttendancePage() {
             students.length > 0 ? (
               <div style={{ 
                 background: "rgba(255,255,255,0.03)", 
-                borderRadius: "20px", 
-                border: "3px solid rgba(255,255,255,0.1)",
+                borderRadius: "15px", 
+                border: "1px solid rgba(255, 255, 255, 0.12)",
                 overflow: "hidden"
               }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "rgba(255,255,255,0.05)", textAlign: "left" }}>
-                      <th style={{ padding: "1.2rem" }}>Élève</th>
-                      <th style={{ padding: "1.2rem", textAlign: "center" }}>Présent</th>
-                      <th style={{ padding: "1.2rem", textAlign: "center" }}>Absent</th>
-                      <th style={{ padding: "1.2rem", textAlign: "center" }}>Retard</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.map(s => (
-                      <tr key={s._id} style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                        <td style={{ padding: "1.2rem" }}>
-                          <div style={{ fontWeight: "bold" }}>{s.fullName}</div>
-                          <div style={{ fontSize: "0.7rem", opacity: 0.4 }}>{s.matricule}</div>
-                        </td>
-                        <td style={{ padding: "1.2rem", textAlign: "center" }}>
-                          <input type="radio" name={`status-${s._id}`} checked={attendance[s._id] === "present"} onChange={() => handleStatusChange(s._id, "present")} style={{ width: "20px", height: "20px", accentColor: "#34A853" }} />
-                        </td>
-                        <td style={{ padding: "1.2rem", textAlign: "center" }}>
-                          <input type="radio" name={`status-${s._id}`} checked={attendance[s._id] === "absent"} onChange={() => handleStatusChange(s._id, "absent")} style={{ width: "20px", height: "20px", accentColor: "#ff5252" }} />
-                        </td>
-                        <td style={{ padding: "1.2rem", textAlign: "center" }}>
-                          <input type="radio" name={`status-${s._id}`} checked={attendance[s._id] === "late"} onChange={() => handleStatusChange(s._id, "late")} style={{ width: "20px", height: "20px", accentColor: "#F9AB00" }} />
-                        </td>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "500px" }}>
+                    <thead>
+                      <tr style={{ background: "rgba(255,255,255,0.05)", textAlign: "left" }}>
+                        <th style={{ padding: "1rem" }}>Élève</th>
+                        <th style={{ padding: "1rem", textAlign: "center" }}>Présent</th>
+                        <th style={{ padding: "1rem", textAlign: "center" }}>Absent</th>
+                        <th style={{ padding: "1rem", textAlign: "center" }}>Retard</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div style={{ padding: "1.5rem", textAlign: "right", background: "rgba(255,255,255,0.02)" }}>
+                    </thead>
+                    <tbody>
+                      {students.map(s => (
+                        <tr key={s._id} style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                          <td style={{ padding: "1rem" }}>
+                            <div style={{ fontWeight: "bold", fontSize: "0.95rem" }}>{s.fullName}</div>
+                            <div style={{ fontSize: "0.65rem", opacity: 0.4 }}>{s.matricule}</div>
+                          </td>
+                          <td style={{ padding: "1rem", textAlign: "center" }}>
+                            <input type="radio" name={`status-${s._id}`} checked={attendance[s._id] === "present"} onChange={() => handleStatusChange(s._id, "present")} style={{ width: "18px", height: "18px", accentColor: "#34A853" }} />
+                          </td>
+                          <td style={{ padding: "1rem", textAlign: "center" }}>
+                            <input type="radio" name={`status-${s._id}`} checked={attendance[s._id] === "absent"} onChange={() => handleStatusChange(s._id, "absent")} style={{ width: "18px", height: "18px", accentColor: "#ff5252" }} />
+                          </td>
+                          <td style={{ padding: "1rem", textAlign: "center" }}>
+                            <input type="radio" name={`status-${s._id}`} checked={attendance[s._id] === "late"} onChange={() => handleStatusChange(s._id, "late")} style={{ width: "18px", height: "18px", accentColor: "#F9AB00" }} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ padding: "1.2rem", textAlign: "right", background: "rgba(255,255,255,0.02)" }}>
                   <button 
                     onClick={handleSubmit} 
                     disabled={saving}
                     className="btn btn-primary" 
-                    style={{ padding: "0.8rem 2.5rem" }}
+                    style={{ padding: "0.8rem 2rem", width: "100%", maxWidth: "250px" }}
                   >
                     {saving ? "Enregistrement..." : "Enregistrer l'appel"}
                   </button>
                 </div>
               </div>
             ) : selectedClass && (
-              <p style={{ textAlign: "center", opacity: 0.5, padding: "3rem" }}>Aucun élève trouvé dans cette classe.</p>
+              <p style={{ textAlign: "center", opacity: 0.5, padding: "2rem" }}>Aucun élève trouvé.</p>
             )
           )
         )}

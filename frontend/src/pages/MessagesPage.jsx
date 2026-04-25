@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getMyMessagesRequest, sendMessageRequest, markMessageAsReadRequest } from "../services/message.api";
@@ -16,12 +17,13 @@ import formatDate from "../utils/formatDate";
 
 function MessagesPage() {
   const { user } = useAuth();
+  const location = useLocation();
   const [messages, setMessages] = useState([]);
   const [recipients, setRecipients] = useState([]);
   const [childrenInfo, setChildren] = useState([]);
   const [selectedChildId, setSelectedChild] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showCompose, setShowCompose] = useState(false);
+  const [showCompose, setShowCompose] = useState(new URLSearchParams(location.search).get("compose") === "true");
   const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -200,19 +202,19 @@ function MessagesPage() {
   return (
     <>
       <Navbar />
-      <main className="container">
-        <div style={{ textAlign: "center", padding: "2rem 0" }}>
-          <h1 style={{ fontSize: "2.5rem", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+      <main className="container" style={{ padding: "1.5rem" }}>
+        <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+          <h1 style={{ fontSize: "clamp(1.8rem, 6vw, 2.5rem)", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
             Messagerie Interne
           </h1>
-          <p style={{ opacity: 0.6 }}>Communiquez avec les enseignants et la direction</p>
+          <p style={{ opacity: 0.6, fontSize: "0.95rem" }}>Communiquez avec les enseignants et la direction</p>
         </div>
 
-        <div style={{ marginBottom: "2rem", textAlign: "right" }}>
+        <div style={{ marginBottom: "1.5rem", textAlign: "right" }}>
           <button 
             onClick={() => setShowCompose(!showCompose)} 
             className={`btn ${showCompose ? 'btn-danger' : 'btn-primary'}`}
-            style={{ padding: "0.8rem 2rem" }}
+            style={{ padding: "10px 20px", fontSize: "0.85rem" }}
           >
             {showCompose ? "Annuler" : "Nouveau Message"}
           </button>
@@ -220,78 +222,86 @@ function MessagesPage() {
 
         {showCompose && (
           <form onSubmit={handleSubmit} className="form" style={{ 
-            marginBottom: "3rem",
-            maxWidth: "100%"
+            marginBottom: "2.5rem",
+            maxWidth: "800px",
+            padding: "1.5rem"
           }}>
-            <h3 style={{ marginBottom: "1rem" }}>Nouveau message</h3>
+            <h3 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>Nouveau message</h3>
             
             {user.role === "parent" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", background: "rgba(255,255,255,0.03)", padding: "1.5rem", borderRadius: "15px", marginBottom: "1rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", background: "rgba(255,255,255,0.03)", padding: "1.2rem", borderRadius: "12px", marginBottom: "1rem" }}>
                 <div>
-                  <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>1. Concerne quel enfant ?</label>
+                  <label style={{ fontSize: "0.75rem", opacity: 0.7, marginBottom: "5px", display: "block" }}>1. Concerne quel enfant ?</label>
                   <select 
                     value={selectedChildId} 
                     onChange={e => { setSelectedChild(e.target.value); }}
+                    style={{ padding: "10px", fontSize: "0.9rem" }}
                   >
-                    <option value="">Sélectionner votre enfant</option>
-                    {childrenInfo.map(c => <option key={c._id} value={c._id}>{c.fullName} ({c.classroom?.name || "Classe non définie"})</option>)}
+                    <option value="">Sélectionner l'enfant</option>
+                    {childrenInfo.map(c => <option key={c._id} value={c._id}>{c.fullName}</option>)}
                   </select>
                 </div>
 
                 {selectedChildId && (
                   <div>
-                    <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "10px", display: "block" }}>2. Qui voulez-vous contacter ?</label>
-                    <div style={{ display: "flex", gap: "1rem" }}>
+                    <label style={{ fontSize: "0.75rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>2. Qui voulez-vous contacter ?</label>
+                    <div style={{ display: "flex", gap: "8px" }}>
                       <button 
                         type="button"
                         onClick={() => { setSelectedRole("teacher"); }}
                         className="btn"
-                        style={{ flex: 1, background: selectedRole === "teacher" ? "var(--primary)" : "rgba(255,255,255,0.1)", fontSize: "0.85rem" }}
+                        style={{ flex: 1, padding: "8px", background: selectedRole === "teacher" ? "var(--primary)" : "rgba(255,255,255,0.1)", fontSize: "0.8rem" }}
                       >
-                        Le Professeur
+                        Professeur
                       </button>
                       <button 
                         type="button"
                         onClick={() => { setSelectedRole("director"); }}
                         className="btn"
-                        style={{ flex: 1, background: selectedRole === "director" ? "var(--primary)" : "rgba(255,255,255,0.1)", fontSize: "0.85rem" }}
+                        style={{ flex: 1, padding: "8px", background: selectedRole === "director" ? "var(--primary)" : "rgba(255,255,255,0.1)", fontSize: "0.8rem" }}
                       >
-                        La Direction
+                        Direction
                       </button>
                     </div>
                     
-                    <div style={{ marginTop: "1rem", padding: "10px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                      <p style={{ margin: 0, fontSize: "0.85rem", opacity: 0.7 }}>
-                        Destinataire automatique : <strong style={{ color: formData.recipient ? "var(--primary)" : "#ff5252" }}>{getAutoRecipientName()}</strong>
+                    <div style={{ marginTop: "0.8rem", padding: "12px", background: "rgba(255,255,255,0.05)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      <p style={{ margin: "0 0 12px 0", fontSize: "0.8rem", opacity: 0.7 }}>
+                        Contact suggéré : <strong style={{ color: formData.recipient ? "var(--primary)" : "#ff5252" }}>{getAutoRecipientName()}</strong>
                       </p>
-                    </div>
-
-                    {!formData.recipient && (
-                      <div style={{ marginTop: "1.5rem", padding: "1rem", background: "rgba(255,82,82,0.05)", borderRadius: "10px", border: "1px solid rgba(255,82,82,0.2)" }}>
-                        <label style={{ fontSize: "0.8rem", color: "#ff5252", marginBottom: "8px", display: "block" }}>Aucun destinataire automatique trouvé. Veuillez choisir manuellement :</label>
+                      
+                      <div style={{ borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "12px" }}>
+                        <label style={{ fontSize: "0.75rem", color: "var(--primary)", marginBottom: "8px", display: "block", fontWeight: "bold" }}>Ou choisir un autre contact de l'école :</label>
                         <select 
                           value={formData.recipient} 
                           onChange={e => setFormData({...formData, recipient: e.target.value, recipientModel: "Teacher"})}
+                          style={{ width: "100%", padding: "10px", fontSize: "0.9rem", background: "white", color: "#222", borderRadius: "8px", border: "none" }}
                         >
-                          <option value="">Sélectionner un membre du personnel</option>
+                          <option value="">-- Sélectionner un contact --</option>
                           {recipients.filter(r => {
                             const child = childrenInfo.find(c => c._id === selectedChildId);
-                            return r.school === (child?.school?._id || child?.school);
-                          }).map(r => <option key={r.id} value={r.id}>{r.name} ({r.role})</option>)}
+                            // On filtre pour ne garder que le staff (profs/directeurs) de l'école de l'enfant
+                            return r.model === "Teacher" && r.school === (child?.school?._id || child?.school);
+                          }).map(r => (
+                            <option key={r.id} value={r.id}>
+                              {r.name} ({r.role === 'teacher' ? 'Professeur' : 'Direction'})
+                            </option>
+                          ))}
                         </select>
+                        <p style={{ fontSize: "0.65rem", opacity: 0.5, marginTop: "8px" }}>Seuls les membres du personnel de l'école de votre enfant sont affichés.</p>
                       </div>
-                    )}
+                    </div>
                   </div>
                 )}
               </div>
             )}
 
             {user.role !== "parent" && (
-              <div>
-                <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>Destinataire</label>
+              <div style={{ marginBottom: "1rem" }}>
+                <label style={{ fontSize: "0.75rem", opacity: 0.7, marginBottom: "5px", display: "block" }}>Destinataire</label>
                 <select 
                   value={formData.recipient} 
                   onChange={e => setFormData({...formData, recipient: e.target.value})}
+                  style={{ padding: "10px", fontSize: "0.9rem" }}
                 >
                   <option value="">Sélectionner une personne</option>
                   {recipients.map(r => <option key={r.id} value={r.id}>{r.name} ({r.role})</option>)}
@@ -299,27 +309,22 @@ function MessagesPage() {
               </div>
             )}
 
-            <div>
-              <label style={{ fontSize: "0.8rem", opacity: 0.7, marginBottom: "8px", display: "block" }}>Message</label>
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ fontSize: "0.75rem", opacity: 0.7, marginBottom: "5px", display: "block" }}>Message</label>
               <textarea 
                 value={formData.content} 
                 onChange={e => setFormData({...formData, content: e.target.value})}
-                placeholder="Écrivez votre message ici..."
-                style={{ minHeight: "150px" }}
+                placeholder="Votre message..."
+                style={{ minHeight: "100px", padding: "10px", fontSize: "0.9rem" }}
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2.5rem" }}>Envoyer le message</button>
+            <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px", fontSize: "0.9rem" }}>Envoyer</button>
           </form>
         )}
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <h2 style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>Messages reçus</h2>
-          {fetchError && (
-            <div style={{ padding: "1rem", background: "rgba(255,82,82,0.1)", border: "1px solid #ff5252", borderRadius: "10px", color: "#ff5252", fontSize: "0.9rem", marginBottom: "1rem" }}>
-              Erreur: {fetchError}. <button onClick={fetchData} style={{ background: "none", border: "none", color: "white", textDecoration: "underline", cursor: "pointer" }}>Réessayer</button>
-            </div>
-          )}
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: "700" }}>Messages reçus</h2>
           {loading ? <Loader /> : (
             messages.length > 0 ? (
               messages.map(m => (
@@ -328,22 +333,21 @@ function MessagesPage() {
                   onClick={() => !m.read && handleMarkAsRead(m._id)}
                   style={{ 
                     background: m.read ? "rgba(255,255,255,0.02)" : "rgba(26, 115, 232, 0.1)", 
-                    padding: "1.5rem", 
+                    padding: "1rem 1.2rem", 
                     borderRadius: "15px", 
                     border: m.read ? "1px solid rgba(255,255,255,0.05)" : "1px solid var(--primary)",
-                    cursor: "pointer",
-                    transition: "0.2s"
+                    cursor: "pointer"
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span style={{ fontWeight: "bold", color: m.read ? "inherit" : "var(--primary)" }}>{m.sender?.fullName || "Utilisateur Scolaris"}</span>
-                    <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>{m.createdAt ? formatDate(m.createdAt) : ""}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                    <span style={{ fontWeight: "bold", fontSize: "0.9rem", color: m.read ? "inherit" : "var(--primary)" }}>{m.sender?.fullName || "Utilisateur"}</span>
+                    <span style={{ fontSize: "0.65rem", opacity: 0.4 }}>{m.createdAt ? formatDate(m.createdAt) : ""}</span>
                   </div>
-                  <p style={{ fontSize: "0.95rem", opacity: 0.8 }}>{m.content}</p>
+                  <p style={{ fontSize: "0.85rem", opacity: 0.8, margin: 0, lineHeight: "1.4" }}>{m.content}</p>
                 </div>
               ))
             ) : (
-              <p style={{ textAlign: "center", opacity: 0.3, padding: "3rem" }}>Votre boîte de réception est vide.</p>
+              <p style={{ textAlign: "center", opacity: 0.3, padding: "2rem", fontSize: "0.9rem" }}>Aucun message.</p>
             )
           )}
         </div>

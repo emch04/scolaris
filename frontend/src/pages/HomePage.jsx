@@ -45,24 +45,24 @@ function HomePage() {
       
       {/* Hero Section */}
       <section style={{ 
-        minHeight: "90vh", 
+        minHeight: "80vh", 
         display: "flex", 
         flexDirection: "column", 
         alignItems: "center", 
         justifyContent: "center",
-        padding: "4rem 1.5rem",
+        padding: "clamp(4rem, 10vw, 6rem) 1.5rem",
         textAlign: "center",
         background: "radial-gradient(circle at center, rgba(50, 20, 152, 0.2) 0%, transparent 70%)"
       }}>
         <div style={{ 
           background: "white", 
-          width: "120px", 
-          height: "120px", 
-          borderRadius: "30px", 
+          width: "clamp(80px, 20vw, 120px)", 
+          height: "clamp(80px, 20vw, 120px)", 
+          borderRadius: "clamp(20px, 5vw, 30px)", 
           display: "flex", 
           alignItems: "center", 
           justifyContent: "center", 
-          marginBottom: "2rem",
+          marginBottom: "1.5rem",
           boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
           transform: "rotate(-5deg)"
         }}>
@@ -70,10 +70,10 @@ function HomePage() {
         </div>
         
         <h1 style={{ 
-          fontSize: "clamp(2.5rem, 8vw, 4.5rem)", 
+          fontSize: "clamp(2.2rem, 10vw, 4.5rem)", 
           fontWeight: "900", 
           lineHeight: "1.1", 
-          marginBottom: "1.5rem",
+          marginBottom: "1.2rem",
           background: "linear-gradient(to bottom, #ffffff 0%, #a0a0a0 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent"
@@ -82,27 +82,27 @@ function HomePage() {
         </h1>
         
         <p style={{ 
-          fontSize: "1.25rem", 
+          fontSize: "clamp(1rem, 4vw, 1.25rem)", 
           opacity: 0.7, 
           maxWidth: "700px", 
-          marginBottom: "3rem",
-          lineHeight: "1.6"
+          marginBottom: "2.5rem",
+          lineHeight: "1.5"
         }}>
           Scolaris est l'outil indispensable pour une école moderne et connectée, 
           conçu pour accompagner la réussite de chaque élève.
         </p>
         
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
-          <Link to="/login" className="btn btn-primary" style={{ padding: "1.2rem 2.5rem", fontSize: "1.1rem", borderRadius: "15px" }}>
+          <Link to="/login" className="btn btn-primary" style={{ padding: "1rem 2rem", fontSize: "1rem", borderRadius: "12px" }}>
             Espace de connexion
           </Link>
           <Link to="/a-propos" className="btn" style={{ 
             background: "rgba(255,255,255,0.05)", 
             border: "2px solid rgba(255,255,255,0.1)", 
-            padding: "1.2rem 2.5rem", 
-            fontSize: "1.1rem",
+            padding: "1rem 2rem", 
+            fontSize: "1rem",
             color: "white",
-            borderRadius: "15px"
+            borderRadius: "12px"
           }}>
             Découvrir Scolaris
           </Link>
@@ -110,80 +110,71 @@ function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section style={{ background: "rgba(255,255,255,0.02)", padding: "5rem 0", borderTop: "1px solid rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "2rem", textAlign: "center" }}>
+      <section style={{ background: "rgba(255,255,255,0.02)", padding: "3rem 0", borderTop: "1px solid rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "1.5rem", textAlign: "center" }}>
           {stats.map((stat, i) => (
             <div key={i}>
-              <h2 style={{ fontSize: "3rem", fontWeight: "900", color: "var(--primary)", marginBottom: "0.5rem" }}>{stat.value}</h2>
-              <p style={{ opacity: 0.5, textTransform: "uppercase", fontSize: "0.8rem", letterSpacing: "1px", fontWeight: "bold" }}>{stat.label}</p>
+              <h2 style={{ fontSize: "clamp(2rem, 8vw, 3rem)", fontWeight: "900", color: "var(--primary)", marginBottom: "0.2rem" }}>{stat.value}</h2>
+              <p style={{ opacity: 0.5, textTransform: "uppercase", fontSize: "0.7rem", letterSpacing: "1px", fontWeight: "bold" }}>{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="container" style={{ padding: "8rem 1.5rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-          <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>Une solution complète</h2>
-          <p style={{ opacity: 0.6 }}>Tout ce dont votre établissement a besoin pour briller au 21ème siècle.</p>
+      <section className="container" style={{ padding: "clamp(4rem, 15vw, 8rem) 1.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <h2 style={{ fontSize: "clamp(1.8rem, 8vw, 2.5rem)", marginBottom: "0.8rem" }}>Une solution complète</h2>
+          <p style={{ opacity: 0.6, fontSize: "0.95rem" }}>Tout ce dont votre établissement a besoin pour briller.</p>
         </div>
         
         <div className="grid">
           {features.map((f, i) => (
             <div key={i} style={{ 
               background: "rgba(255,255,255,0.03)", 
-              padding: "3rem 2rem", 
-              borderRadius: "30px", 
+              padding: "2rem 1.5rem", 
+              borderRadius: "25px", 
               border: "1px solid rgba(255,255,255,0.08)",
               transition: "transform 0.3s ease",
               cursor: "default"
             }}
-            onMouseOver={e => e.currentTarget.style.transform = "translateY(-10px)"}
-            onMouseOut={e => e.currentTarget.style.transform = "translateY(0)"}
+            onMouseOver={e => window.innerWidth > 768 && (e.currentTarget.style.transform = "translateY(-10px)")}
+            onMouseOut={e => window.innerWidth > 768 && (e.currentTarget.style.transform = "translateY(0)")}
             >
-              <div style={{ color: "var(--primary)", marginBottom: "1.5rem" }}>{f.icon}</div>
-              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{f.title}</h3>
-              <p style={{ opacity: 0.6, lineHeight: "1.6" }}>{f.desc}</p>
+              <div style={{ color: "var(--primary)", marginBottom: "1.2rem" }}>{f.icon}</div>
+              <h3 style={{ fontSize: "1.3rem", marginBottom: "0.8rem" }}>{f.title}</h3>
+              <p style={{ opacity: 0.6, lineHeight: "1.5", fontSize: "0.9rem" }}>{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Mission Section */}
-      <section style={{ padding: "8rem 1.5rem", background: "rgba(26, 115, 232, 0.05)" }}>
-        <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "4rem", alignItems: "center" }}>
+      <section style={{ padding: "clamp(4rem, 15vw, 8rem) 1.5rem", background: "rgba(26, 115, 232, 0.05)" }}>
+        <div className="container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "3rem", alignItems: "center" }}>
           <div>
-            <h2 style={{ fontSize: "2.5rem", marginBottom: "1.5rem" }}>Notre Mission</h2>
-            <p style={{ fontSize: "1.1rem", opacity: 0.7, lineHeight: "1.8", marginBottom: "2rem" }}>
+            <h2 style={{ fontSize: "clamp(1.8rem, 8vw, 2.5rem)", marginBottom: "1.2rem" }}>Notre Mission</h2>
+            <p style={{ fontSize: "1rem", opacity: 0.7, lineHeight: "1.7", marginBottom: "1.5rem" }}>
               Scolaris est né d'une idée simple : rendre la vie scolaire plus facile et plus belle pour tout le monde. 
-              Nous aidons les parents à suivre leurs enfants sans stress et nous permettons aux professeurs de se concentrer sur le plus important : transmettre le savoir.
+              Nous aidons les parents à suivre leurs enfants sans stress.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
               {["Transparence totale sur les notes", "Suivi pédagogique personnalisé", "Communication fluide et immédiate"].map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34A853" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34A853" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   <span>{item}</span>
                 </div>
               ))}
             </div>
           </div>
           <div style={{ position: "relative" }}>
-            <div style={{ 
-              width: "100%", 
-              aspectRatio: "1", 
-              background: "linear-gradient(45deg, var(--primary), #321498)", 
-              borderRadius: "40px",
-              transform: "rotate(3deg)",
-              opacity: 0.2,
-              position: "absolute"
-            }}></div>
             <img 
               src="/assets/image.jpg" 
               alt="Education" 
               style={{ 
                 width: "100%", 
-                borderRadius: "40px", 
-                boxShadow: "0 30px 60px rgba(0,0,0,0.5)",
+                borderRadius: "25px", 
+                boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
                 position: "relative",
                 zIndex: 1
               }} 
@@ -193,26 +184,26 @@ function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="container" style={{ padding: "10rem 1.5rem", textAlign: "center" }}>
+      <section className="container" style={{ padding: "clamp(5rem, 20vw, 10rem) 1.5rem", textAlign: "center" }}>
         <div style={{ 
           background: "linear-gradient(135deg, var(--primary) 0%, #004d99 100%)", 
-          padding: "5rem 2rem", 
-          borderRadius: "40px",
-          boxShadow: "0 40px 100px rgba(0,0,0,0.4)"
+          padding: "clamp(3rem, 10vw, 5rem) 1.5rem", 
+          borderRadius: "30px",
+          boxShadow: "0 30px 60px rgba(0,0,0,0.4)"
         }}>
-          <h2 style={{ fontSize: "3rem", fontWeight: "900", marginBottom: "1.5rem" }}>Prêt à rejoindre Scolaris ?</h2>
-          <p style={{ fontSize: "1.2rem", opacity: 0.9, marginBottom: "3rem", maxWidth: "600px", margin: "0 auto 3rem" }}>
-            Rejoignez des milliers d'élèves et d'enseignants qui utilisent déjà notre plateforme au quotidien.
+          <h2 style={{ fontSize: "clamp(1.8rem, 10vw, 3rem)", fontWeight: "900", marginBottom: "1rem" }}>Prêt à nous rejoindre ?</h2>
+          <p style={{ fontSize: "1.1rem", opacity: 0.9, marginBottom: "2.5rem", maxWidth: "600px", margin: "0 auto 2.5rem" }}>
+            Rejoignez des milliers d'élèves et d'enseignants dès maintenant.
           </p>
           <Link to="/login" className="btn" style={{ 
             background: "white", 
             color: "var(--primary)", 
-            padding: "1.2rem 3rem", 
+            padding: "1rem 2.5rem", 
             fontSize: "1.1rem", 
-            borderRadius: "15px",
+            borderRadius: "12px",
             boxShadow: "0 10px 20px rgba(0,0,0,0.2)"
           }}>
-            Commencer maintenant
+            Commencer
           </Link>
         </div>
       </section>

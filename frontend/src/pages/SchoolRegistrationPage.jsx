@@ -62,67 +62,67 @@ function SchoolRegistrationPage() {
   return (
     <>
       <Navbar />
-      <main className="container" style={{ padding: "4rem 1.5rem" }}>
+      <main className="container" style={{ padding: "clamp(2rem, 8vw, 4rem) 1.5rem" }}>
         
-        <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-          <h1 style={{ fontSize: "3rem", fontWeight: "900", marginBottom: "1rem" }}>Inscrire mon École</h1>
-          <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Rejoignez le réseau Scolaris et numérisez votre établissement.</p>
+        <div style={{ textAlign: "center", marginBottom: "clamp(2rem, 8vw, 3rem)" }}>
+          <h1 style={{ fontSize: "clamp(1.8rem, 8vw, 3rem)", fontWeight: "900", marginBottom: "0.8rem", lineHeight: "1.1" }}>Inscrire mon École</h1>
+          <p style={{ opacity: 0.6, fontSize: "clamp(0.9rem, 4vw, 1.1rem)" }}>Numérisez votre établissement dès maintenant.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="form" style={{ maxWidth: "800px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+        <form onSubmit={handleSubmit} className="form" style={{ maxWidth: "700px", display: "grid", gridTemplateColumns: window.innerWidth < 640 ? "1fr" : "1fr 1fr", gap: "1.2rem", padding: "1.5rem" }}>
           <div style={{ gridColumn: "1 / -1" }}>
-            <h3 style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "1rem", marginBottom: "1rem" }}>Informations de l'Établissement</h3>
+            <h3 style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "8px", marginBottom: "0.5rem", fontSize: "1.1rem" }}>L'Établissement</h3>
           </div>
           
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label>Nom de l'école</label>
-            <input type="text" required placeholder="Ex: CS Les Étoiles" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Nom de l'école</label>
+            <input type="text" required placeholder="Ex: CS Les Étoiles" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label>Commune</label>
-            <input type="text" required value={formData.commune} onChange={e => setFormData({...formData, commune: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Commune</label>
+            <input type="text" required value={formData.commune} onChange={e => setFormData({...formData, commune: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", gridColumn: "1 / -1" }}>
-            <label>Adresse complète</label>
-            <input type="text" required placeholder="Avenue, Quartier, Référence" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", gridColumn: "1 / -1" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Adresse complète</label>
+            <input type="text" required placeholder="Avenue, Quartier, Référence" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label>Nom du Préfet / Directeur</label>
-            <input type="text" required value={formData.principalName} onChange={e => setFormData({...formData, principalName: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Préfet / Directeur</label>
+            <input type="text" required value={formData.principalName} onChange={e => setFormData({...formData, principalName: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label>Téléphone de contact</label>
-            <input type="text" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Téléphone</label>
+            <input type="text" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", gridColumn: "1 / -1" }}>
-            <label>Description (Bref aperçu)</label>
-            <textarea style={{ minHeight: "100px" }} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", gridColumn: "1 / -1" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Description</label>
+            <textarea style={{ minHeight: "80px", padding: "10px", fontSize: "0.9rem" }} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
           </div>
 
-          <div style={{ gridColumn: "1 / -1", marginTop: "2rem" }}>
-            <h3 style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "1rem", marginBottom: "1rem" }}>Responsable Administratif</h3>
+          <div style={{ gridColumn: "1 / -1", marginTop: "1rem" }}>
+            <h3 style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "8px", marginBottom: "0.5rem", fontSize: "1.1rem" }}>Responsable</h3>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label>Nom de l'administrateur</label>
-            <input type="text" required value={formData.adminFullName} onChange={e => setFormData({...formData, adminFullName: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Nom Complet</label>
+            <input type="text" required value={formData.adminFullName} onChange={e => setFormData({...formData, adminFullName: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label>Email de l'administrateur</label>
-            <input type="email" required value={formData.adminEmail} onChange={e => setFormData({...formData, adminEmail: e.target.value})} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.8rem", opacity: 0.7 }}>Email</label>
+            <input type="email" required value={formData.adminEmail} onChange={e => setFormData({...formData, adminEmail: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
           </div>
 
-          {error && <p style={{ color: "#ff5252", gridColumn: "1 / -1", textAlign: "center" }}>{error}</p>}
+          {error && <p style={{ color: "#ff5252", gridColumn: "1 / -1", textAlign: "center", fontSize: "0.85rem" }}>{error}</p>}
 
-          <div style={{ gridColumn: "1 / -1", textAlign: "center", marginTop: "2rem" }}>
-            <button type="submit" className="btn btn-primary" style={{ padding: "1.2rem 4rem" }} disabled={loading}>
-              {loading ? "Envoi en cours..." : "Soumettre ma demande d'inscription"}
+          <div style={{ gridColumn: "1 / -1", textAlign: "center", marginTop: "1rem" }}>
+            <button type="submit" className="btn btn-primary" style={{ padding: "1rem 2rem", width: "100%", maxWidth: "400px", fontWeight: "bold" }} disabled={loading}>
+              {loading ? "Envoi..." : "Soumettre la demande"}
             </button>
           </div>
         </form>

@@ -103,35 +103,35 @@ function TeachersPage() {
             {teachers.map(t => (
               <div key={t._id} style={{ 
                 background: "transparent", 
-                padding: "1.5rem", 
+                padding: "1.2rem", 
                 borderRadius: "15px", 
-                border: "3px solid rgba(255, 255, 255, 0.1)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between"
               }}>
                 <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-                    <span style={{ fontSize: "0.6rem", padding: "3px 8px", borderRadius: "4px", background: t.role === "teacher" ? "#34A853" : "#F9AB00", fontWeight: "bold", textTransform: "uppercase" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.8rem" }}>
+                    <span style={{ fontSize: "0.55rem", padding: "2px 6px", borderRadius: "4px", background: t.role === "teacher" ? "#34A853" : "#F9AB00", fontWeight: "bold", textTransform: "uppercase" }}>
                       {t.role === "teacher" ? "Professeur" : "Direction"}
                     </span>
                   </div>
-                  <h3 style={{ marginBottom: "0.5rem", fontSize: "1.2rem" }}>{t.fullName}</h3>
-                  <p style={{ fontSize: "0.85rem", opacity: 0.6, marginBottom: "1rem" }}>{t.email}</p>
+                  <h3 style={{ marginBottom: "0.4rem", fontSize: "1.1rem" }}>{t.fullName}</h3>
+                  <p style={{ fontSize: "0.8rem", opacity: 0.6, marginBottom: "0.8rem" }}>{t.email}</p>
                   
-                  <div style={{ fontSize: "0.8rem", opacity: 0.7, display: "flex", alignItems: "center", gap: "8px" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                  <div style={{ fontSize: "0.75rem", opacity: 0.7, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     {t.school?.name || "Réseau Global"}
                   </div>
                 </div>
 
                 {/* Actions réservées au Super Admin */}
                 {user.role === "super_admin" && (
-                  <div style={{ marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div style={{ marginTop: "1.2rem", paddingTop: "0.8rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                     <button 
                       onClick={() => handleDelete(t._id)}
                       className="btn btn-danger" 
-                      style={{ width: "100%", fontSize: "0.8rem", padding: "8px" }}
+                      style={{ width: "100%", fontSize: "0.75rem", padding: "6px" }}
                     >
                       Supprimer l'accès
                     </button>

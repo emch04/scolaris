@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getCommunicationsRequest, createCommunicationRequest } from "../services/communication.api";
-import { getSchoolsRequest } from "../services/school.api";
 import { getClassroomsRequest } from "../services/classroom.api";
 import { getStudentsRequest } from "../services/student.api";
 import { getTeachersRequest } from "../services/teacher.api";
@@ -43,7 +42,6 @@ function CommunicationsPage() {
       const resComm = await getCommunicationsRequest();
       setCommunications(resComm?.data || []);
 
-      // On ne charge les listes de sélection que si l'utilisateur peut publier
       if (["teacher", "admin", "director", "super_admin"].includes(user?.role)) {
         const [resClassrooms, resStudents, resTeachers] = await Promise.all([
           getClassroomsRequest(),
@@ -104,79 +102,75 @@ function CommunicationsPage() {
     <>
       <Navbar />
       <main className="container">
-        <div style={{ textAlign: "center", padding: "3rem 0" }}>
-          <h1 style={{ fontSize: "3rem", fontWeight: "900", background: "linear-gradient(to right, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "1rem" }}>
+        <div style={{ textAlign: "center", padding: "2rem 0" }}>
+          <h1 style={{ fontSize: "clamp(2rem, 8vw, 3rem)", fontWeight: "900", background: "linear-gradient(to right, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
             Communications
           </h1>
-          <p style={{ opacity: 0.6, fontSize: "1.2rem" }}>Actualités et informations officielles</p>
+          <p style={{ opacity: 0.6, fontSize: "1rem" }}>Actualités et informations officielles</p>
         </div>
 
         {["teacher", "admin", "director", "super_admin"].includes(user?.role) && (
-          <div className="form" style={{ maxWidth: "100%", marginBottom: "4rem" }}>
-            <h2 style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: "15px" }}>
-              <div style={{ background: "var(--primary)", width: "12px", height: "12px", borderRadius: "50%" }}></div>
+          <div className="form" style={{ maxWidth: "700px", marginBottom: "2.5rem", padding: "1.2rem 1.5rem" }}>
+            <h2 style={{ marginBottom: "1.2rem", display: "flex", alignItems: "center", gap: "12px", fontSize: "1.3rem" }}>
+              <div style={{ background: "var(--primary)", width: "10px", height: "10px", borderRadius: "50%" }}></div>
               Publier un message
             </h2>
             
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  <label style={{ fontSize: "0.85rem", fontWeight: "600", opacity: 0.7 }}>Titre</label>
-                  <input placeholder="Titre..." value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.7 }}>Titre</label>
+                  <input placeholder="Titre..." value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required style={{ padding: "0.6rem 0.8rem", fontSize: "0.9rem" }} />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  <label style={{ fontSize: "0.85rem", fontWeight: "600", opacity: 0.7 }}>Type</label>
-                  <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value, targetType: "classe"})}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.7 }}>Type</label>
+                  <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value, targetType: "classe"})} style={{ padding: "0.6rem 0.8rem", fontSize: "0.9rem" }}>
                     <option value="communique">Communiqué</option>
                     <option value="convocation">Convocation</option>
                   </select>
                 </div>
               </div>
 
-              {/* Sélection de la cible (Classe/Élève/Prof) */}
-              <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.5rem", borderRadius: "15px", border: "1px dashed rgba(255,255,255,0.1)" }}>
-                <label style={{ fontSize: "0.85rem", fontWeight: "600", opacity: 0.7, marginBottom: "1rem", display: "block" }}>Cible du message :</label>
+              <div style={{ background: "rgba(255,255,255,0.02)", padding: "1rem", borderRadius: "12px", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.7, marginBottom: "0.8rem", display: "block" }}>Cible du message :</label>
                 
-                {/* Type de cible - Pour tout le personnel autorisé à publier */}
-                {["teacher", "admin", "director", "super_admin"].includes(user.role) && (
-                  <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-                    <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "0.9rem" }}>
-                      <input type="radio" checked={formData.targetType === "classe"} onChange={() => setFormData({...formData, targetType: "classe", targetTeacher: "", targetStudent: ""})} style={{ width: "18px", height: "18px" }} /> Toute la classe
-                    </label>
-                    <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "0.9rem" }}>
-                      <input type="radio" checked={formData.targetType === "eleve"} onChange={() => setFormData({...formData, targetType: "eleve", targetTeacher: ""})} style={{ width: "18px", height: "18px" }} /> Un élève précis
-                    </label>
-                    <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "0.9rem" }}>
-                      <input type="radio" checked={formData.targetType === "prof"} onChange={() => setFormData({...formData, targetType: "prof", targetStudent: "", classroom: ""})} style={{ width: "18px", height: "18px" }} /> Un professeur
-                    </label>
-                  </div>
-                )}
+                <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem", flexWrap: "wrap" }}>
+                  <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
+                    <input type="radio" checked={formData.targetType === "classe"} onChange={() => setFormData({...formData, targetType: "classe", targetTeacher: "", targetStudent: ""})} style={{ width: "16px", height: "16px" }} /> Toute la classe
+                  </label>
+                  <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
+                    <input type="radio" checked={formData.targetType === "eleve"} onChange={() => setFormData({...formData, targetType: "eleve", targetTeacher: ""})} style={{ width: "16px", height: "16px" }} /> Un élève précis
+                  </label>
+                  <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
+                    <input type="radio" checked={formData.targetType === "prof"} onChange={() => setFormData({...formData, targetType: "prof", targetStudent: "", classroom: ""})} style={{ width: "16px", height: "16px" }} /> Un professeur
+                  </label>
+                </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                  {/* Sélection de la classe - Toujours visible pour les profs ou si targetType est classe/eleve */}
-                  {(user.role === "teacher" || formData.targetType === "classe" || formData.targetType === "eleve") && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                      <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Classe</label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.8rem" }}>
+                  {(user?.role === "teacher" || formData.targetType === "classe" || formData.targetType === "eleve") && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>Classe</label>
                       <select 
                         value={formData.classroom} 
                         onChange={e => setFormData({...formData, classroom: e.target.value, targetStudent: ""})} 
-                        required={user.role === "teacher" || formData.targetType === "eleve"}
+                        required={user?.role === "teacher" || formData.targetType === "eleve"}
+                        style={{ padding: "0.5rem 0.7rem", fontSize: "0.85rem" }}
                       >
-                        <option value="">{user.role === "teacher" ? "Choisir votre classe" : "Toute l'école (Global)"}</option>
+                        <option value="">{user?.role === "teacher" ? "Choisir votre classe" : "Toute l'école (Global)"}</option>
                         {classrooms.map(c => <option key={c._id} value={c._id}>{c.name} ({c.level})</option>)}
                       </select>
                     </div>
                   )}
                   
-                  {/* Sélection de l'élève (si targetType === eleve) */}
                   {formData.targetType === "eleve" && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                      <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Élève</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>Élève</label>
                       <select 
                         value={formData.targetStudent} 
                         onChange={e => setFormData({...formData, targetStudent: e.target.value})} 
                         required 
                         disabled={!formData.classroom}
+                        style={{ padding: "0.5rem 0.7rem", fontSize: "0.85rem" }}
                       >
                         <option value="">{formData.classroom ? "Choisir l'élève" : "Sélectionnez d'abord la classe"}</option>
                         {students.filter(s => (s.classroom?._id || s.classroom) === formData.classroom).map(s => <option key={s._id} value={s._id}>{s.fullName}</option>)}
@@ -184,11 +178,10 @@ function CommunicationsPage() {
                     </div>
                   )}
 
-                  {/* Sélection du professeur (si targetType === prof) */}
                   {formData.targetType === "prof" && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                      <label style={{ fontSize: "0.75rem", opacity: 0.6 }}>Enseignant</label>
-                      <select value={formData.targetTeacher} onChange={e => setFormData({...formData, targetTeacher: e.target.value})} required>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>Enseignant</label>
+                      <select value={formData.targetTeacher} onChange={e => setFormData({...formData, targetTeacher: e.target.value})} required style={{ padding: "0.5rem 0.7rem", fontSize: "0.85rem" }}>
                         <option value="">Choisir l'enseignant</option>
                         {teachers.filter(t => t.role === "teacher").map(t => <option key={t._id} value={t._id}>{t.fullName}</option>)}
                       </select>
@@ -197,39 +190,71 @@ function CommunicationsPage() {
                 </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                <label style={{ fontSize: "0.85rem", fontWeight: "600", opacity: 0.7 }}>Contenu</label>
-                <textarea placeholder="Message..." value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={{ minHeight: "120px" }} required />
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.7 }}>Contenu</label>
+                <textarea placeholder="Message..." value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} style={{ minHeight: "120px", padding: "0.6rem 0.8rem", fontSize: "0.9rem" }} required />
               </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <input type="file" onChange={e => setFile(e.target.files[0])} style={{ color: "white", width: "auto", background: "transparent", border: "none" }} />
-                <button className="btn btn-primary" style={{ padding: "1rem 3rem" }} disabled={saving}>DIFFUSER</button>
+              <div style={{ 
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "1rem"
+              }}>
+                <div style={{ flex: 1, minWidth: "180px" }}>
+                  <input type="file" onChange={e => setFile(e.target.files[0])} style={{ color: "white", width: "100%", background: "transparent", border: "none", fontSize: "0.8rem" }} />
+                </div>
+                <button className="btn btn-primary" style={{ padding: "0.8rem 2rem", width: "100%", maxWidth: "200px" }} disabled={saving}>DIFFUSER</button>
               </div>
             </form>
           </div>
         )}
 
         {loading ? <Loader /> : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
             {communications.map(c => (
-              <div key={c._id} style={{ background: "rgba(255,255,255,0.02)", padding: "2.5rem", borderRadius: "25px", border: "1px solid rgba(255, 255, 255, 0.08)", position: "relative" }}>
-                <div style={{ position: "absolute", top: "2.5rem", right: "2.5rem", padding: "5px 15px", borderRadius: "50px", fontSize: "0.7rem", fontWeight: "900", textTransform: "uppercase", background: getTypeStyle(c.type).bg, color: getTypeStyle(c.type).color }}>{c.type}</div>
-                <h3 style={{ fontSize: "1.8rem", fontWeight: "800", marginBottom: "0.5rem" }}>{c.title}</h3>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "15px", fontSize: "0.8rem", opacity: 0.5, marginBottom: "1.5rem" }}>
-                  <span>{formatDate(c.createdAt)}</span> • <span>Par {c.author?.fullName}</span>
+              <div key={c._id} style={{ 
+                background: "rgba(255,255,255,0.02)", 
+                padding: "1.2rem", 
+                borderRadius: "16px", 
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                maxWidth: "700px"
+              }}>
+                <div style={{ 
+                  alignSelf: "flex-start",
+                  marginBottom: "0.8rem",
+                  padding: "3px 10px", 
+                  borderRadius: "50px", 
+                  fontSize: "0.6rem", 
+                  fontWeight: "900", 
+                  textTransform: "uppercase", 
+                  background: getTypeStyle(c.type).bg, 
+                  color: getTypeStyle(c.type).color 
+                }}>
+                  {c.type}
+                </div>
+                
+                <h3 style={{ fontSize: "1.2rem", fontWeight: "800", marginBottom: "0.4rem", lineHeight: "1.2" }}>{c.title}</h3>
+                
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", fontSize: "0.7rem", opacity: 0.5, marginBottom: "0.8rem" }}>
+                  <span>{formatDate(c.createdAt)}</span>
+                  <span>•</span>
+                  <span>Par {c.author?.fullName}</span>
                   {c.targetStudent && <span style={{ color: "#ff5252", fontWeight: "bold" }}> • Pour: {c.targetStudent?.fullName}</span>}
                   {c.targetTeacher && <span style={{ color: "#F9AB00", fontWeight: "bold" }}> • Pour: {c.targetTeacher?.fullName}</span>}
                 </div>
-                <p style={{ fontSize: "1.05rem", lineHeight: "1.8", opacity: 0.8, whiteSpace: "pre-wrap", marginBottom: c.fileUrl ? "2rem" : "0" }}>{c.content}</p>
+                <p style={{ fontSize: "1rem", lineHeight: "1.6", opacity: 0.8, whiteSpace: "pre-wrap", marginBottom: c.fileUrl ? "1.5rem" : "0" }}>{c.content}</p>
                 
                 {c.fileUrl && (
                   <div style={{ 
-                    marginTop: "1.5rem", 
-                    paddingTop: "1.5rem", 
+                    marginTop: "auto",
+                    paddingTop: "1rem", 
                     borderTop: "1px solid rgba(255,255,255,0.05)",
-                    display: "flex",
-                    justifyContent: "flex-end"
+                    display: "flex"
                   }}>
                     <a
                       href={getFileUrl(c.fileUrl)}
@@ -237,9 +262,10 @@ function CommunicationsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn"
-                      style={{ background: "rgba(255,255,255,0.1)", color: "white", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "8px" }}
-                    >                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                      Voir la pièce jointe
+                      style={{ background: "rgba(255,255,255,0.1)", color: "white", fontSize: "0.8rem", width: "100%", justifyContent: "center" }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "8px" }}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                      Pièce jointe
                     </a>
                   </div>
                 )}

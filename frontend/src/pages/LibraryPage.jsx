@@ -95,95 +95,76 @@ function LibraryPage() {
   return (
     <>
       <Navbar />
-      <main className="container">
-        <div style={{ textAlign: "center", padding: "2rem 0" }}>
-          <h1 style={{ fontSize: "2.5rem", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+      <main className="container" style={{ padding: "1.5rem" }}>
+        <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+          <h1 style={{ fontSize: "clamp(1.8rem, 6vw, 2.5rem)", fontWeight: "800", background: "linear-gradient(to right, #fff, #888)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
             Bibliothèque Numérique
           </h1>
-          <p style={{ opacity: 0.6 }}>Accédez aux livres, exercices et fiches de révision</p>
+          <p style={{ opacity: 0.6, fontSize: "0.95rem" }}>Accédez aux livres et fiches de révision</p>
         </div>
 
         {["teacher", "admin", "director", "super_admin"].includes(user?.role) && (
-          <div style={{ marginBottom: "2rem", textAlign: "right" }}>
-            <button onClick={() => setShowAddForm(!showAddForm)} className={`btn ${showAddForm ? 'btn-danger' : 'btn-primary'}`}>
+          <div style={{ marginBottom: "1.5rem", textAlign: "right" }}>
+            <button onClick={() => setShowAddForm(!showAddForm)} className={`btn ${showAddForm ? 'btn-danger' : 'btn-primary'}`} style={{ padding: "10px 20px", fontSize: "0.85rem" }}>
               {showAddForm ? "Annuler" : "Ajouter une ressource"}
             </button>
           </div>
         )}
 
         {showAddForm && (
-          <form onSubmit={handleSubmit} className="form" style={{ marginBottom: "3rem", maxWidth: "100%" }}>
-            <h3 style={{ marginBottom: "1.5rem" }}>Publier une ressource</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-              <input type="text" placeholder="Titre du document" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
-              <input 
-                type="text" 
-                list="subjects-list"
-                placeholder="Matière" 
-                value={formData.subject} 
-                onChange={e => setFormData({...formData, subject: e.target.value})} 
-                required 
-              />
-              <datalist id="subjects-list">
-                <option value="Mathématiques" />
-                <option value="Français" />
-                <option value="Anglais" />
-                <option value="Histoire" />
-                <option value="Géographie" />
-                <option value="Sciences" />
-                <option value="Informatique" />
-                <option value="Éducation Physique" />
-                <option value="Arts Plastiques" />
-                <option value="Musique" />
-                <option value="Citoyenneté" />
-              </datalist>
-              <input type="text" placeholder="Niveau (ex: 6ème Primaire)" value={formData.level} onChange={e => setFormData({...formData, level: e.target.value})} required />
-              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
+          <form onSubmit={handleSubmit} className="form" style={{ marginBottom: "2.5rem", maxWidth: "700px", padding: "1.5rem" }}>
+            <h3 style={{ marginBottom: "1.2rem", fontSize: "1.2rem" }}>Publier une ressource</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "1rem" }}>
+              <input type="text" placeholder="Titre du document" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} required />
+              <input type="text" list="subjects-list" placeholder="Matière" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} required />
+              <input type="text" placeholder="Niveau" value={formData.level} onChange={e => setFormData({...formData, level: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} required />
+              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }}>
                 <option value="Livre">Livre / Manuel</option>
                 <option value="Exercice">Exercice / TP</option>
                 <option value="Fiche de révision">Fiche de révision</option>
                 <option value="Vidéo">Lien Vidéo</option>
               </select>
             </div>
-            <textarea placeholder="Brève description du contenu..." value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={{ minHeight: "100px" }} />
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem" }}>
-              <input type="file" onChange={e => setFile(e.target.files[0])} style={{ width: "auto", background: "transparent", border: "none", color: "white" }} />
-              <button type="submit" className="btn btn-primary" style={{ padding: "0.8rem 3rem" }}>Publier la ressource</button>
+            <textarea placeholder="Description..." value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={{ minHeight: "80px", padding: "10px", fontSize: "0.9rem", marginBottom: "1rem" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+              <input type="file" onChange={e => setFile(e.target.files[0])} style={{ width: "auto", background: "transparent", border: "none", color: "white", fontSize: "0.8rem", padding: 0 }} />
+              <button type="submit" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "0.9rem" }}>Publier</button>
             </div>
           </form>
         )}
 
         {loading ? <Loader /> : (
-          <div className="grid">
+          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
             {resources.length > 0 ? resources.map(r => (
               <div key={r._id} style={{ 
-                background: "transparent", 
-                padding: "1.5rem", 
-                borderRadius: "15px", 
-                border: "3px solid rgba(255, 255, 255, 0.1)",
+                background: "rgba(255,255,255,0.02)", 
+                padding: "1.2rem", 
+                borderRadius: "16px", 
+                border: "1px solid rgba(255, 255, 255, 0.08)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between"
               }}>
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span style={{ fontSize: "0.65rem", padding: "3px 8px", borderRadius: "50px", background: "rgba(255,255,255,0.1)", fontWeight: "bold" }}>{r.type}</span>
+                    <span style={{ fontSize: "0.6rem", padding: "2px 8px", borderRadius: "50px", background: "rgba(255,255,255,0.1)", fontWeight: "bold", textTransform: "uppercase" }}>{r.type}</span>
                     <span style={{ fontSize: "0.65rem", opacity: 0.5 }}>{r.level}</span>
                   </div>
-                  <h3 style={{ marginBottom: "0.8rem", fontSize: "1.2rem" }}>{r.title}</h3>
-                  <p style={{ fontSize: "0.85rem", opacity: 0.6, marginBottom: "1.5rem" }}>{r.subject} • {r.description}</p>
+                  <h3 style={{ marginBottom: "0.5rem", fontSize: "1.1rem", fontWeight: "700" }}>{r.title}</h3>
+                  <p style={{ fontSize: "0.85rem", opacity: 0.6, marginBottom: "1.2rem", lineHeight: "1.4" }}>{r.subject} • {r.description}</p>
                 </div>
 
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <a href={getFileUrl(r.fileUrl)} download target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ flex: 1, textAlign: "center", fontSize: "0.8rem" }}>Télécharger</a>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <a href={getFileUrl(r.fileUrl)} download target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ flex: 1, textAlign: "center", fontSize: "0.8rem", padding: "8px" }}>Télécharger</a>
                   {["admin", "director", "super_admin"].includes(user?.role) && (
                     <button onClick={() => handleDelete(r._id)} className="btn btn-danger" style={{ padding: "8px", borderRadius: "8px" }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     </button>
                   )}
-                </div>              </div>
+                </div>
+              </div>
             )) : (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", opacity: 0.3, padding: "4rem" }}>Aucune ressource disponible.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", opacity: 0.3, padding: "3rem", fontSize: "0.9rem" }}>Aucune ressource disponible.</p>
             )}
           </div>
         )}

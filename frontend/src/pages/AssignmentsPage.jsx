@@ -84,166 +84,114 @@ function AssignmentsPage() {
   return (
     <>
       <Navbar />
-      <main className="container">
-        <div style={{ textAlign: "center", padding: "3rem 0" }}>
-          <h1 style={{ fontSize: "3rem", fontWeight: "900", background: "linear-gradient(to right, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "1rem" }}>
+      <main className="container" style={{ padding: "1.5rem" }}>
+        <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+          <h1 style={{ fontSize: "clamp(1.8rem, 6vw, 2.5rem)", fontWeight: "900", background: "linear-gradient(to right, #fff, #aaa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
             Gestion des Devoirs
           </h1>
-          <p style={{ opacity: 0.6, fontSize: "1.2rem" }}>Planifiez et diffusez les travaux pédagogiques</p>
+          <p style={{ opacity: 0.6, fontSize: "1rem" }}>Planifiez et diffusez les travaux pédagogiques</p>
         </div>
 
         {user?.role === "teacher" && (
-          <div className="form" style={{ maxWidth: "100%", marginBottom: "4rem" }}>
-            <h2 style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: "15px" }}>
-              <div style={{ background: "var(--primary)", width: "12px", height: "12px", borderRadius: "50%" }}></div>
+          <div className="form" style={{ maxWidth: "700px", marginBottom: "3rem", padding: "1.5rem" }}>
+            <h2 style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "12px", fontSize: "1.3rem" }}>
+              <div style={{ background: "var(--primary)", width: "10px", height: "10px", borderRadius: "50%" }}></div>
               Publier un nouveau travail
             </h2>
             
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Titre du devoir</label>
-                  <input 
-                    placeholder="Ex: Analyse de texte - Le Petit Prince" 
-                    value={formData.title} 
-                    onChange={e => setFormData({...formData, title: e.target.value})} 
-                    required 
-                  />
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.8 }}>Titre du devoir</label>
+                  <input placeholder="Ex: Analyse de texte..." value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} required />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Matière</label>
-                  <input
-                    placeholder="Ex: Français"
-                    list="subjects-list"
-                    value={formData.subject}
-                    onChange={e => setFormData({...formData, subject: e.target.value})}
-                    required
-                  />
-                  <datalist id="subjects-list">
-                    <option value="Mathématiques" />
-                    <option value="Français" />
-                    <option value="Anglais" />
-                    <option value="Histoire" />
-                    <option value="Géographie" />
-                    <option value="Sciences" />
-                    <option value="Informatique" />
-                    <option value="Éducation Physique" />
-                    <option value="Arts Plastiques" />
-                    <option value="Musique" />
-                    <option value="Citoyenneté" />
-                  </datalist>                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Classe destinataire</label>
-                  <select 
-                    value={formData.classroom} 
-                    onChange={e => setFormData({...formData, classroom: e.target.value})} 
-                    required
-                  >
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.8 }}>Matière</label>
+                  <input placeholder="Ex: Français" list="subjects-list" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} required />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.8 }}>Classe</label>
+                  <select value={formData.classroom} onChange={e => setFormData({...formData, classroom: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} required>
                     <option value="">Sélectionner une classe</option>
-                    {classrooms.map(c => <option key={c._id} value={c._id}>{c.name} ({c.level})</option>)}
+                    {classrooms.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                   </select>
                 </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Instructions détaillées</label>
-                <textarea 
-                  placeholder="Expliquez ici le contenu du devoir, les pages à lire ou les exercices à faire..." 
-                  value={formData.description} 
-                  onChange={e => setFormData({...formData, description: e.target.value})} 
-                  style={{ minHeight: "150px" }}
-                  required 
-                />
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.8 }}>Instructions</label>
+                <textarea placeholder="Contenu du devoir..." value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={{ minHeight: "100px", padding: "10px", fontSize: "0.9rem" }} required />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Date limite (Optionnel)</label>
-                  <input 
-                    type="date" 
-                    value={formData.dueDate} 
-                    onChange={e => setFormData({...formData, dueDate: e.target.value})} 
-                  />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.8 }}>Date limite</label>
+                  <input type="date" value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})} style={{ padding: "10px", fontSize: "0.9rem" }} />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <label style={{ fontSize: "0.9rem", fontWeight: "600", opacity: 0.8 }}>Fichier joint</label>
-                  <input 
-                    type="file" 
-                    onChange={e => setFile(e.target.files[0])}
-                    style={{ background: "transparent", border: "none", color: "white" }}
-                  />
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.8rem", fontWeight: "600", opacity: 0.8 }}>Fichier joint</label>
+                  <input type="file" onChange={e => setFile(e.target.files[0])} style={{ background: "transparent", border: "none", color: "white", fontSize: "0.8rem" }} />
                 </div>
               </div>
 
-              <button className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "1.2rem 4rem" }} disabled={saving}>
+              <button className="btn btn-primary" style={{ padding: "0.8rem 2rem", width: "100%", maxWidth: "250px", alignSelf: "center" }} disabled={saving}>
                 {saving ? "Publication..." : "PUBLIER LE DEVOIR"}
               </button>
             </form>
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: "800" }}>Flux des publications</h2>
-          <div style={{ background: "rgba(255,255,255,0.05)", padding: "8px 20px", borderRadius: "50px", fontSize: "0.9rem", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <strong>{assignments.length}</strong> devoirs actifs
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.5rem" }}>
+          <h2 style={{ fontSize: "1.3rem", fontWeight: "800" }}>Flux des publications</h2>
+          <div style={{ background: "rgba(255,255,255,0.05)", padding: "6px 15px", borderRadius: "50px", fontSize: "0.8rem", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <strong>{assignments.length}</strong> devoirs
           </div>
         </div>
 
         {loading ? <Loader /> : (
-          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "2rem" }}>
+          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
             {assignments.length === 0 ? (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "5rem", opacity: 0.4 }}>Aucun devoir publié pour le moment.</p>
+              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "3rem", opacity: 0.4 }}>Aucun devoir publié.</p>
             ) : (
               assignments.map(a => (
                 <div key={a._id} style={{ 
                   background: "rgba(255,255,255,0.02)", 
-                  padding: "2rem", 
-                  borderRadius: "25px", 
+                  padding: "1.2rem", 
+                  borderRadius: "16px", 
                   border: "1px solid rgba(255, 255, 255, 0.08)",
                   display: "flex",
                   flexDirection: "column",
-                  transition: "all 0.3s ease",
                   position: "relative",
                   overflow: "hidden"
                 }}>
-                  {/* Accent de couleur sur le côté */}
-                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "6px", background: getSubjectColor(a.subject) }}></div>
+                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: getSubjectColor(a.subject) }}></div>
 
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-                    <div style={{ 
-                      fontSize: "0.7rem", 
-                      padding: "5px 12px", 
-                      borderRadius: "50px", 
-                      background: `${getSubjectColor(a.subject)}20`, 
-                      color: getSubjectColor(a.subject),
-                      fontWeight: "900",
-                      textTransform: "uppercase",
-                      letterSpacing: "1px"
-                    }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
+                    <div style={{ fontSize: "0.6rem", padding: "3px 10px", borderRadius: "50px", background: `${getSubjectColor(a.subject)}20`, color: getSubjectColor(a.subject), fontWeight: "900", textTransform: "uppercase" }}>
                       {a.subject}
                     </div>
-                    <span style={{ fontSize: "0.75rem", opacity: 0.4 }}>{formatDate(a.createdAt)}</span>
+                    <span style={{ fontSize: "0.7rem", opacity: 0.4 }}>{formatDate(a.createdAt)}</span>
                   </div>
 
-                  <h3 style={{ marginBottom: "1rem", fontSize: "1.4rem", fontWeight: "800", lineHeight: "1.3" }}>{a.title}</h3>
-                  <p style={{ fontSize: "0.95rem", opacity: 0.6, lineHeight: "1.6", marginBottom: "2rem", flex: 1 }}>
-                    {a.description.length > 150 ? a.description.substring(0, 150) + "..." : a.description}
+                  <h3 style={{ marginBottom: "0.8rem", fontSize: "1.2rem", fontWeight: "800" }}>{a.title}</h3>
+                  <p style={{ fontSize: "0.9rem", opacity: 0.6, lineHeight: "1.5", marginBottom: "1.5rem", flex: 1 }}>
+                    {a.description.length > 120 ? a.description.substring(0, 120) + "..." : a.description}
                   </p>
 
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ width: "35px", height: "35px", borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "bold" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: "bold" }}>
                         {a.teacher?.fullName?.charAt(0)}
                       </div>
-                      <div style={{ fontSize: "0.8rem" }}>
+                      <div style={{ fontSize: "0.75rem" }}>
                         <div style={{ fontWeight: "bold" }}>{a.teacher?.fullName}</div>
                         <div style={{ opacity: 0.4 }}>{a.classroom?.name}</div>
                       </div>
                     </div>
                     
                     {a.fileUrl && (
-                      <a href={getFileUrl(a.fileUrl)} download target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "5px", textDecoration: "none", fontSize: "0.85rem", fontWeight: "bold" }}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                      <a href={getFileUrl(a.fileUrl)} download target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)", display: "flex", alignItems: "center", gap: "4px", textDecoration: "none", fontSize: "0.8rem", fontWeight: "bold" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                         Fichier
                       </a>
                     )}

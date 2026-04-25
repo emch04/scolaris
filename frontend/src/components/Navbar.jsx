@@ -69,8 +69,23 @@ function Navbar() {
         </div>
 
         {/* Liens de navigation avec rendu conditionnel par rôle */}
-        <div className={isOpen ? "nav-links active" : "nav-links"}>
+        <div className={isOpen ? "nav-links active" : "nav-links"} style={{ 
+          backdropFilter: "blur(20px)", 
+          background: "rgba(10, 10, 10, 0.95)",
+          display: "flex",
+          flexDirection: "column",
+          padding: "2rem 0"
+        }}>
+          {isAuthenticated && (
+            <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.7rem", opacity: 0.5, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>Connecté en tant que</div>
+              <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{user?.fullName}</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: "bold", textTransform: "capitalize" }}>{user?.role?.replace('_', ' ')}</div>
+            </div>
+          )}
+
           <Link to="/" onClick={closeMenu}>Accueil</Link>
+          
           {isAuthenticated ? (
             <>
               {/* LIENS SUPER ADMIN */}
@@ -96,7 +111,6 @@ function Navbar() {
                   <Link to="/calendar" onClick={closeMenu}>Calendrier</Link>
                   <Link to="/library" onClick={closeMenu}>Bibliothèque</Link>
                   <Link to="/messages" onClick={closeMenu}>Messagerie</Link>
-                  <Link to="/network-contacts" onClick={closeMenu}>Contacts Réseau</Link>
                 </>
               )}
 
@@ -110,7 +124,6 @@ function Navbar() {
                   <Link to="/calendar" onClick={closeMenu}>Calendrier</Link>
                   <Link to="/library" onClick={closeMenu}>Bibliothèque</Link>
                   <Link to="/messages" onClick={closeMenu}>Messagerie</Link>
-                  <Link to="/network-contacts" onClick={closeMenu}>Contacts Réseau</Link>
                 </>
               )}
 
@@ -136,12 +149,16 @@ function Navbar() {
                 </>
               )}
 
-              <button onClick={handleLogout} className="logout-btn" style={{ margin: "1rem 1.5rem", padding: "10px", borderRadius: "8px", background: "rgba(255,82,82,0.1)", color: "#ff5252", border: "1px solid #ff5252", cursor: "pointer", fontWeight: "bold" }}>
-                Déconnexion
-              </button>
+              <div style={{ marginTop: "auto", padding: "1rem 1.5rem" }}>
+                <button onClick={handleLogout} style={{ width: "100%", padding: "12px", borderRadius: "12px", background: "#ff5252", color: "white", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem", boxShadow: "0 10px 20px rgba(255,82,82,0.2)" }}>
+                  Déconnexion
+                </button>
+              </div>
             </>
           ) : (
-            <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ margin: "1rem 1.5rem", textAlign: "center", color: "white" }}>Se connecter</Link>
+            <div style={{ marginTop: "auto", padding: "1rem 1.5rem" }}>
+              <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: "12px" }}>Se connecter</Link>
+            </div>
           )}
         </div>
       </div>

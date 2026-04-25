@@ -102,41 +102,50 @@ function ReportCardPage() {
           <div style={{ 
             background: "linear-gradient(135deg, #1A73E8 0%, #004d99 100%)", 
             borderRadius: "20px", 
-            padding: "2.5rem", 
+            padding: "clamp(1.2rem, 5vw, 2.5rem)", 
             color: "white", 
             marginBottom: "2rem",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: "2rem"
+            gap: "1.5rem"
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "clamp(10px, 4vw, 20px)" }}>
               <div style={{ 
-                width: "80px", 
-                height: "80px", 
+                width: "clamp(50px, 12vw, 80px)", 
+                height: "clamp(50px, 12vw, 80px)", 
                 background: "rgba(255,255,255,0.2)", 
                 borderRadius: "50%", 
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center",
-                fontSize: "2rem",
-                fontWeight: "bold"
+                fontSize: "clamp(1.2rem, 5vw, 2rem)",
+                fontWeight: "bold",
+                flexShrink: 0
               }}>
                 {student?.fullName?.charAt(0)}
               </div>
               <div>
-                <h1 style={{ fontSize: "1.8rem", margin: 0, color: "white" }}>{student?.fullName}</h1>
-                <p style={{ opacity: 0.8, margin: "5px 0 0" }}>
+                <h1 style={{ fontSize: "clamp(1.2rem, 5vw, 1.8rem)", margin: 0, color: "white" }}>{student?.fullName}</h1>
+                <p style={{ opacity: 0.8, margin: "5px 0 0", fontSize: "0.85rem" }}>
                   {student?.classroom?.name} • {student?.matricule}
                 </p>
-                {printing && <p style={{ fontSize: "0.7rem", marginTop: "10px", opacity: 0.5 }}>Document certifié numérique • {new Date().toLocaleDateString()}</p>}
+                {printing && <p style={{ fontSize: "0.6rem", marginTop: "10px", opacity: 0.5 }}>Document certifié numérique • {new Date().toLocaleDateString()}</p>}
               </div>
             </div>
             
-            <div style={{ textAlign: "right", background: "rgba(255,255,255,0.1)", padding: "1rem 2rem", borderRadius: "15px", backdropFilter: "blur(10px)" }}>
-              <p style={{ fontSize: "0.8rem", textTransform: "uppercase", opacity: 0.8, margin: 0 }}>Moyenne ({activePeriod})</p>
-              <p style={{ fontSize: "2.5rem", fontWeight: "900", margin: 0 }}>
+            <div style={{ 
+              textAlign: "center", 
+              background: "rgba(255,255,255,0.1)", 
+              padding: "0.8rem 1.5rem", 
+              borderRadius: "15px", 
+              backdropFilter: "blur(10px)",
+              flex: "1 1 auto",
+              minWidth: "150px"
+            }}>
+              <p style={{ fontSize: "0.7rem", textTransform: "uppercase", opacity: 0.8, margin: 0 }}>Moyenne ({activePeriod})</p>
+              <p style={{ fontSize: "clamp(1.8rem, 8vw, 2.5rem)", fontWeight: "900", margin: 0 }}>
                 {average ? `${average}/20` : "--/20"}
               </p>
             </div>
@@ -149,16 +158,21 @@ function ReportCardPage() {
                 background: "rgba(255,255,255,0.03)", 
                 border: "1px solid rgba(255,255,255,0.1)", 
                 borderRadius: "15px", 
-                padding: "1.5rem",
+                padding: "1.2rem",
                 display: "flex",
+                flexDirection: window.innerWidth < 768 ? "column" : "row",
                 justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "nowrap",
+                alignItems: window.innerWidth < 768 ? "flex-start" : "center",
                 gap: "1rem"
               }}>
-                <div style={{ flex: 2 }}>
-                  <h3 style={{ margin: "0 0 10px 0", fontSize: "1.1rem" }}>{r.subject}</h3>
-                  <div style={{ width: "100%", height: "8px", background: "rgba(255,255,255,0.1)", borderRadius: "10px", overflow: "hidden" }}>
+                <div style={{ flex: 2, width: "100%" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <h3 style={{ margin: 0, fontSize: "1rem" }}>{r.subject}</h3>
+                    {window.innerWidth < 768 && (
+                      <p style={{ fontSize: "1.2rem", fontWeight: "bold", margin: 0 }}>{r.score}<small style={{ fontSize: "0.7rem", opacity: 0.4 }}>/{r.maxScore}</small></p>
+                    )}
+                  </div>
+                  <div style={{ width: "100%", height: "6px", background: "rgba(255,255,255,0.1)", borderRadius: "10px", overflow: "hidden" }}>
                     <div style={{ 
                       width: `${(r.score / r.maxScore) * 100}%`, 
                       height: "100%", 
@@ -167,23 +181,33 @@ function ReportCardPage() {
                   </div>
                 </div>
                 
-                <div style={{ flex: 1, textAlign: "center", minWidth: "80px" }}>
-                  <p style={{ fontSize: "0.7rem", opacity: 0.5, textTransform: "uppercase", margin: 0 }}>Note</p>
-                  <p style={{ fontSize: "1.4rem", fontWeight: "bold", margin: 0 }}>{r.score}<small style={{ fontSize: "0.8rem", opacity: 0.4 }}>/{r.maxScore}</small></p>
-                </div>
+                {window.innerWidth >= 768 && (
+                  <div style={{ flex: 0.5, textAlign: "center", minWidth: "60px" }}>
+                    <p style={{ fontSize: "0.6rem", opacity: 0.5, textTransform: "uppercase", margin: 0 }}>Note</p>
+                    <p style={{ fontSize: "1.2rem", fontWeight: "bold", margin: 0 }}>{r.score}<small style={{ fontSize: "0.7rem", opacity: 0.4 }}>/{r.maxScore}</small></p>
+                  </div>
+                )}
 
                 {!printing && (
-                  <div style={{ flex: 2, borderLeft: "1px solid rgba(255,255,255,0.1)", paddingLeft: "1.5rem" }}>
-                    <p style={{ fontSize: "0.7rem", opacity: 0.5, textTransform: "uppercase", margin: 0 }}>Appréciation</p>
-                    <p style={{ fontSize: "0.9rem", fontStyle: "italic", margin: "5px 0 0" }}>
+                  <div style={{ 
+                    flex: 2, 
+                    width: "100%",
+                    borderLeft: window.innerWidth < 768 ? "none" : "1px solid rgba(255,255,255,0.1)", 
+                    paddingLeft: window.innerWidth < 768 ? "0" : "1.5rem",
+                    marginTop: window.innerWidth < 768 ? "5px" : "0",
+                    paddingTop: window.innerWidth < 768 ? "10px" : "0",
+                    borderTop: window.innerWidth < 768 ? "1px dashed rgba(255,255,255,0.05)" : "none"
+                  }}>
+                    <p style={{ fontSize: "0.6rem", opacity: 0.5, textTransform: "uppercase", margin: 0 }}>Appréciation</p>
+                    <p style={{ fontSize: "0.85rem", fontStyle: "italic", margin: "3px 0 0", opacity: 0.8 }}>
                       {r.appreciation || "Pas de commentaire."}
                     </p>
                   </div>
                 )}
               </div>
             )) : (
-              <div style={{ textAlign: "center", padding: "4rem", opacity: 0.3 }}>
-                <h3>Pas encore de notes pour cette période</h3>
+              <div style={{ textAlign: "center", padding: "3rem", opacity: 0.3 }}>
+                <h3 style={{ fontSize: "1rem" }}>Pas encore de notes pour cette période</h3>
               </div>
             )}
           </div>

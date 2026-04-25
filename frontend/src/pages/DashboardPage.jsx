@@ -231,20 +231,20 @@ function DashboardPage() {
             <Link key={i} to={s.path} style={{ textDecoration: "none", color: "inherit" }}>
               <div style={{ 
                 background: `${s.color}15`, 
-                padding: "2rem 1.5rem", 
-                borderRadius: "25px", 
+                padding: "1.5rem 1rem", 
+                borderRadius: "20px", 
                 border: `2px solid ${s.color}40`,
                 textAlign: "left",
                 display: "flex",
                 flexDirection: "column",
-                gap: "15px",
+                gap: "10px",
                 transition: "all 0.3s ease",
                 cursor: "pointer",
                 height: "100%"
               }}
               onMouseOver={e => {
                 e.currentTarget.style.background = `${s.color}25`;
-                e.currentTarget.style.transform = "translateY(-8px)";
+                e.currentTarget.style.transform = "translateY(-5px)";
               }}
               onMouseOut={e => {
                 e.currentTarget.style.background = `${s.color}15`;
@@ -256,19 +256,19 @@ function DashboardPage() {
                   color: "white", 
                   width: "45px", 
                   height: "45px", 
-                  borderRadius: "14px", 
+                  borderRadius: "10px", 
                   display: "flex", 
                   alignItems: "center", 
                   justifyContent: "center",
-                  boxShadow: `0 5px 15px ${s.color}40`
+                  boxShadow: `0 4px 10px ${s.color}40`
                 }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d={s.icon}></path>
                   </svg>
                 </div>
                 <div>
-                  <h4 style={{ fontSize: "0.85rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px", color: s.color }}>{s.label}</h4>
-                  <p style={{ fontSize: "1.8rem", fontWeight: "900", marginTop: "5px" }}>{s.value}</p>
+                  <h4 style={{ fontSize: "0.75rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px", color: s.color }}>{s.label}</h4>
+                  <p style={{ fontSize: "1.5rem", fontWeight: "900", marginTop: "2px" }}>{s.value}</p>
                 </div>
               </div>
             </Link>

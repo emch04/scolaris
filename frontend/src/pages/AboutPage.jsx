@@ -28,53 +28,57 @@ function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className="container" style={{ padding: "4rem 1.5rem" }}>
+      <main className="container" style={{ padding: "clamp(2rem, 8vw, 4rem) 1.5rem" }}>
         
         {/* Section Titre */}
-        <section style={{ marginBottom: "6rem", textAlign: "center" }}>
+        <section style={{ marginBottom: "clamp(3rem, 10vw, 6rem)", textAlign: "center" }}>
           <h1 style={{ 
-            fontSize: "clamp(2.5rem, 6vw, 4rem)", 
+            fontSize: "clamp(2rem, 8vw, 4rem)", 
             fontWeight: "900", 
-            marginBottom: "1.5rem",
+            marginBottom: "1.2rem",
             background: "linear-gradient(to right, #fff, #888)",
             WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent"
+            WebkitTextFillColor: "transparent",
+            lineHeight: "1.1"
           }}>
             L'excellence à portée de clic
           </h1>
-          <p style={{ fontSize: "1.2rem", opacity: 0.7, maxWidth: "800px", margin: "0 auto", lineHeight: "1.8" }}>
+          <p style={{ fontSize: "clamp(1rem, 4vw, 1.2rem)", opacity: 0.7, maxWidth: "800px", margin: "0 auto", lineHeight: "1.7" }}>
             Scolaris n'est pas qu'un logiciel de gestion scolaire. C'est un pont numérique qui connecte les directeurs, les professeurs, les parents et les élèves dans un seul écosystème fluide et bienveillant.
           </p>
         </section>
 
         {/* Timeline */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "4rem", maxWidth: "800px", margin: "0 auto 8rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "750px", margin: "0 auto clamp(4rem, 15vw, 8rem)" }}>
           {steps.map((step, i) => (
             <div key={i} style={{ 
               display: "flex", 
-              gap: "2rem", 
-              alignItems: "center",
+              flexDirection: window.innerWidth < 640 ? "column" : "row",
+              gap: "1.5rem", 
+              alignItems: window.innerWidth < 640 ? "flex-start" : "center",
               background: "rgba(255,255,255,0.02)",
-              padding: "2rem",
-              borderRadius: "30px",
-              border: "1px solid rgba(255,255,255,0.05)"
+              padding: "1.5rem",
+              borderRadius: "25px",
+              border: "1px solid rgba(255,255,255,0.08)",
+              transition: "transform 0.3s ease"
             }}>
               <div style={{ 
                 background: "var(--primary)", 
                 color: "white", 
-                padding: "12px 24px", 
-                borderRadius: "15px", 
+                padding: "10px 20px", 
+                borderRadius: "12px", 
                 fontWeight: "900",
-                fontSize: "1rem",
+                fontSize: "0.85rem",
                 textTransform: "uppercase",
-                minWidth: "120px",
-                textAlign: "center"
+                minWidth: "110px",
+                textAlign: "center",
+                boxShadow: "0 10px 20px rgba(26, 115, 232, 0.2)"
               }}>
                 {step.year}
               </div>
-              <div>
-                <h3 style={{ fontSize: "1.6rem", marginBottom: "0.8rem", color: "var(--primary)" }}>{step.title}</h3>
-                <p style={{ opacity: 0.7, lineHeight: "1.7", fontSize: "1.05rem" }}>{step.desc}</p>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: "1.25rem", marginBottom: "0.5rem", color: "var(--primary)", fontWeight: "800" }}>{step.title}</h3>
+                <p style={{ opacity: 0.7, lineHeight: "1.6", fontSize: "0.95rem", margin: 0 }}>{step.desc}</p>
               </div>
             </div>
           ))}
@@ -82,38 +86,37 @@ function AboutPage() {
 
         {/* Nos 3 Piliers */}
         <section style={{ 
-          background: "linear-gradient(135deg, rgba(26, 115, 232, 0.1) 0%, transparent 100%)", 
-          padding: "6rem 2rem", 
-          borderRadius: "50px", 
+          background: "linear-gradient(135deg, rgba(26, 115, 232, 0.08) 0%, rgba(10,10,10,0.5) 100%)", 
+          padding: "clamp(3rem, 10vw, 5rem) 1.5rem", 
+          borderRadius: "35px", 
           border: "1px solid rgba(255,255,255,0.08)",
           textAlign: "center"
         }}>
-          <h2 style={{ fontSize: "2.5rem", marginBottom: "4rem" }}>Pourquoi choisir Scolaris ?</h2>
+          <h2 style={{ fontSize: "clamp(1.8rem, 8vw, 2.5rem)", marginBottom: "clamp(2rem, 8vw, 4rem)", fontWeight: "900" }}>Pourquoi Scolaris ?</h2>
           
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "3rem" }}>
-            <div style={{ padding: "1rem" }}>
-              <div style={{ color: "var(--primary)", marginBottom: "1.5rem" }}>
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "2rem" }}>
+            {[
+              { title: "Fiabilité Totale", desc: "Vos documents sont en sécurité dans le cloud et téléchargeables en PDF.", icon: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3" },
+              { title: "Sécurité Maximale", desc: "Protection de la vie privée avec les dernières technologies de cryptage.", icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" },
+              { title: "Accessibilité", desc: "Restez connecté sur smartphone, même avec une connexion limitée.", icon: "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z M2 12h20" }
+            ].map((pillar, i) => (
+              <div key={i} style={{ 
+                padding: "1.5rem", 
+                borderRadius: "20px", 
+                background: "rgba(255,255,255,0.02)", 
+                border: "1px solid rgba(255,255,255,0.05)",
+                transition: "all 0.3s ease"
+              }}
+              onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.transform = "translateY(-5px)"; }}
+              onMouseOut={e => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.transform = "translateY(0)"; }}
+              >
+                <div style={{ color: "var(--primary)", marginBottom: "1.2rem" }}>
+                  <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={pillar.icon}></path></svg>
+                </div>
+                <h3 style={{ marginBottom: "0.8rem", fontSize: "1.2rem", fontWeight: "800" }}>{pillar.title}</h3>
+                <p style={{ opacity: 0.6, fontSize: "0.9rem", lineHeight: "1.5", margin: 0 }}>{pillar.desc}</p>
               </div>
-              <h3 style={{ marginBottom: "1rem" }}>Fiabilité Totale</h3>
-              <p style={{ opacity: 0.6 }}>Vos documents (bulletins, horaires) sont toujours en sécurité dans le cloud et téléchargeables en PDF professionnel.</p>
-            </div>
-            
-            <div style={{ padding: "1rem" }}>
-              <div style={{ color: "var(--primary)", marginBottom: "1.5rem" }}>
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-              </div>
-              <h3 style={{ marginBottom: "1rem" }}>Sécurité Maximale</h3>
-              <p style={{ opacity: 0.6 }}>Nous utilisons les mêmes technologies que les banques pour protéger la vie privée de vos élèves et de vos enfants.</p>
-            </div>
-
-            <div style={{ padding: "1rem" }}>
-              <div style={{ color: "var(--primary)", marginBottom: "1.5rem" }}>
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-              </div>
-              <h3 style={{ marginBottom: "1rem" }}>Accessibilité</h3>
-              <p style={{ opacity: 0.6 }}>Installez l'app sur votre smartphone et restez connecté à votre école, même sans internet stable.</p>
-            </div>
+            ))}
           </div>
         </section>
 
