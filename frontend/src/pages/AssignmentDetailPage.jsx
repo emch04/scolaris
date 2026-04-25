@@ -1,3 +1,8 @@
+/**
+ * @file AssignmentDetailPage.jsx
+ * @description Page affichant les détails d'un devoir spécifique, incluant les instructions et les soumissions.
+ */
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";

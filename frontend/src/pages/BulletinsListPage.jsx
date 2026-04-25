@@ -1,3 +1,8 @@
+/**
+ * @file BulletinsListPage.jsx
+ * @description Page listant les bulletins scolaires disponibles pour consultation.
+ */
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";

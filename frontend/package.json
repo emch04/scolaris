@@ -8,6 +8,11 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "scripts_info": {
+    "dev": "Lance le serveur de développement Vite",
+    "build": "Génère les fichiers de production optimisés dans le dossier /dist",
+    "preview": "Prévisualise localement la version de production générée"
+  },
   "dependencies": {
     "axios": "^1.8.1",
     "html2canvas": "^1.4.1",

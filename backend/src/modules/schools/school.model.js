@@ -1,6 +1,9 @@
 // Import de mongoose
 const mongoose = require("mongoose");
-// Schéma School
+/**
+ * Schéma School
+ * Gère les établissements scolaires enregistrés sur la plateforme Scolaris.
+ */
 const schoolSchema = new mongoose.Schema(
   {
     // Nom de l'école

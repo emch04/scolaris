@@ -1,3 +1,8 @@
+/**
+ * @file NetworkContactPage.jsx
+ * @description Page listant les contacts du réseau scolaire (enseignants, administration).
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

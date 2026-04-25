@@ -1,3 +1,8 @@
+/**
+ * @file TimetablePage.jsx
+ * @description Page d'affichage et de gestion de l'emploi du temps scolaire.
+ */
+
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";

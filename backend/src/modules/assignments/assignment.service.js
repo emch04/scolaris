@@ -1,19 +1,35 @@
-// Import modèle
+/**
+ * @module Assignments/Service
+ * @description Service gérant la logique métier des devoirs (création, récupération).
+ */
+
 const Assignment = require("./assignment.model");
-// Créer un devoir
+
+/**
+ * Crée un nouveau devoir.
+ * @async
+ * @function createAssignment
+ * @param {Object} payload - Données du devoir.
+ * @returns {Promise<Object>} Le devoir créé.
+ */
 const createAssignment = async (payload) => {
-  // Création en base
   return await Assignment.create(payload);
 };
-// Lister devoirs
+
+/**
+ * Récupère tous les devoirs correspondant à un filtre.
+ * @async
+ * @function getAllAssignments
+ * @param {Object} [filter={}] - Critères de recherche.
+ * @returns {Promise<Array>} Liste des devoirs avec détails de la classe et de l'enseignant.
+ */
 const getAllAssignments = async (filter = {}) => {
-  // On charge les relations utiles
   return await Assignment.find(filter)
     .populate("classroom", "name level")
     .populate("teacher", "fullName email")
     .sort({ createdAt: -1 });
 };
-// Export
+
 module.exports = {
   createAssignment,
   getAllAssignments

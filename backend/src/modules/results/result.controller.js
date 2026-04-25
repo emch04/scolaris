@@ -7,6 +7,9 @@ const create = asyncHandler(async (req, res) => {
   return apiResponse(res, 201, "Note ajoutée avec succès.", result);
 });
 
+/**
+ * Récupère le bulletin de notes complet d'un étudiant.
+ */
 const getBulletin = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
   const results = await getStudentResults(studentId);

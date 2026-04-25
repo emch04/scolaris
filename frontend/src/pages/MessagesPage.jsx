@@ -1,3 +1,8 @@
+/**
+ * @file MessagesPage.jsx
+ * @description Page de messagerie privée pour les échanges entre utilisateurs.
+ */
+
 import { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

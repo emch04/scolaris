@@ -1,3 +1,8 @@
+/**
+ * @file create_test_parent.js
+ * @description Script utilitaire pour créer un compte Parent de test avec des enfants associés.
+ */
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();

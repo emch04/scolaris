@@ -1,3 +1,8 @@
+/**
+ * @file create_teacher.js
+ * @description Script utilitaire pour créer un compte utilisateur avec le rôle d'Enseignant dans le système.
+ */
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();

@@ -1,3 +1,8 @@
+/**
+ * @file App.jsx
+ * @description Composant racine de l'application React. Gère l'état de la connexion réseau et définit la structure globale avec le routeur.
+ */
+
 import { useState, useEffect } from "react";
 import AppRouter from "./app/router.jsx";
 

@@ -1,0 +1,113 @@
+Tu dois ajouter un commentaire d'en-tête à chaque fichier dans 'backend/src/modules' et 'frontend/src/pages' qui n'en possède pas encore.
+Le commentaire doit être en français, au format JSDoc (/** ... */), et expliquer brièvement le rôle du fichier dans le projet Scolaris.
+
+Exemple :
+/**
+ * @file example.js
+ * @description [Description du rôle du fichier dans Scolaris]
+ */
+
+Fichiers Backend :
+backend/src/modules/attendance/attendance.controller.js
+backend/src/modules/attendance/attendance.routes.js
+backend/src/modules/attendance/attendance.model.js
+backend/src/modules/parents/parent.service.js
+backend/src/modules/parents/parent.model.js
+backend/src/modules/parents/parent.controller.js
+backend/src/modules/parents/parent.routes.js
+backend/src/modules/messages/message.routes.js
+backend/src/modules/messages/message.controller.js
+backend/src/modules/messages/message.model.js
+backend/src/modules/assignments/assignment.service.js
+backend/src/modules/assignments/assignment.model.js
+backend/src/modules/assignments/assignment.controller.js
+backend/src/modules/assignments/assignment.routes.js
+backend/src/modules/assignments/assignment.validator.js
+backend/src/modules/calendar/calendar.routes.js
+backend/src/modules/calendar/calendar.controller.js
+backend/src/modules/calendar/calendar.model.js
+backend/src/modules/auth/auth.validator.js
+backend/src/modules/auth/auth.routes.js
+backend/src/modules/auth/token.model.js
+backend/src/modules/auth/otp.model.js
+backend/src/modules/auth/auth.service.js
+backend/src/modules/auth/auth.controller.js
+backend/src/modules/resources/resource.routes.js
+backend/src/modules/resources/resource.controller.js
+backend/src/modules/resources/resource.model.js
+backend/src/modules/teachers/teacher.model.js
+backend/src/modules/teachers/teacher.service.js
+backend/src/modules/teachers/teacher.controller.js
+backend/src/modules/teachers/teacher.routes.js
+backend/src/modules/students/student.service.js
+backend/src/modules/students/student.model.js
+backend/src/modules/students/student.controller.js
+backend/src/modules/students/student.validator.js
+backend/src/modules/students/student.routes.js
+backend/src/modules/courseplan/courseplan.controller.js
+backend/src/modules/courseplan/courseplan.routes.js
+backend/src/modules/courseplan/courseplan.model.js
+backend/src/modules/results/result.service.js
+backend/src/modules/results/result.model.js
+backend/src/modules/results/result.routes.js
+backend/src/modules/results/result.controller.js
+backend/src/modules/classrooms/classroom.model.js
+backend/src/modules/classrooms/classroom.routes.js
+backend/src/modules/classrooms/classroom.service.js
+backend/src/modules/classrooms/classroom.controller.js
+backend/src/modules/submissions/submission.controller.js
+backend/src/modules/submissions/otp.service.js
+backend/src/modules/submissions/submission.service.js
+backend/src/modules/submissions/submission.model.js
+backend/src/modules/submissions/submission.routes.js
+backend/src/modules/schools/school.service.js
+backend/src/modules/schools/school.model.js
+backend/src/modules/schools/school.controller.js
+backend/src/modules/schools/school.routes.js
+backend/src/modules/stats/stats.routes.js
+backend/src/modules/stats/stats.controller.js
+backend/src/modules/communications/communication.model.js
+backend/src/modules/communications/communication.routes.js
+backend/src/modules/communications/communication.service.js
+backend/src/modules/communications/communication.controller.js
+backend/src/modules/timetable/timetable.model.js
+backend/src/modules/timetable/timetable.service.js
+backend/src/modules/timetable/timetable.controller.js
+backend/src/modules/timetable/timetable.routes.js
+
+Fichiers Frontend :
+frontend/src/pages/ViewDevoirPage.jsx
+frontend/src/pages/StudentsPage.jsx
+frontend/src/pages/AssignmentsPage.jsx
+frontend/src/pages/ParentDashboardPage.jsx
+frontend/src/pages/CommunicationsPage.jsx
+frontend/src/pages/ContactPage.jsx
+frontend/src/pages/AttendancePage.jsx
+frontend/src/pages/HomePage.jsx
+frontend/src/pages/DashboardPage.jsx
+frontend/src/pages/LibraryPage.jsx
+frontend/src/pages/ClassroomsPage.jsx
+frontend/src/pages/PrivacyPage.jsx
+frontend/src/pages/SchoolsPage.jsx
+frontend/src/pages/TimetablePage.jsx
+frontend/src/pages/StudentDashboardPage.jsx
+frontend/src/pages/CoursePlanPage.jsx
+frontend/src/pages/CalendarPage.jsx
+frontend/src/pages/SchoolRegistrationPage.jsx
+frontend/src/pages/AssignmentDetailPage.jsx
+frontend/src/pages/GradesPage.jsx
+frontend/src/pages/ClassroomChatPage.jsx
+frontend/src/pages/LoginPage.jsx
+frontend/src/pages/BulletinsListPage.jsx
+frontend/src/pages/NetworkContactPage.jsx
+frontend/src/pages/TermsPage.jsx
+frontend/src/pages/MessagesPage.jsx
+frontend/src/pages/TeachersPage.jsx
+frontend/src/pages/ReportCardPage.jsx
+frontend/src/pages/AboutPage.jsx
+frontend/src/pages/ParentsPage.jsx
+
+Pour chaque fichier :
+1. Vérifie s'il commence déjà par un commentaire (/** ou //).
+2. Si non, ajoute l'en-tête approprié.
+3. Ne modifie pas le code existant.

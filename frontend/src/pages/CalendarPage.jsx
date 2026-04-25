@@ -1,3 +1,8 @@
+/**
+ * @file CalendarPage.jsx
+ * @description Page affichant le calendrier des événements scolaires et des échéances.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

@@ -1,0 +1,30 @@
+{
+  "short_name": "Scolaris",
+  "name": "Scolaris - Gestion Scolaire",
+  "description": "Application de gestion scolaire complète et moderne.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "assets/image.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/image.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1a0b5e",
+  "background_color": "#050505",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"]
+}

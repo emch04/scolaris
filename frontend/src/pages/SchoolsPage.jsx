@@ -1,3 +1,8 @@
+/**
+ * @file SchoolsPage.jsx
+ * @description Page de gestion et d'affichage de la liste des écoles enregistrées.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Card from "../components/Card";

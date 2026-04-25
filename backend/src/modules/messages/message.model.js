@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * Schéma Message
+ * Gère les communications privées entre utilisateurs et les discussions de groupe par classe.
+ */
 const messageSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,

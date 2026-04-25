@@ -1,9 +1,15 @@
 const Result = require("./result.model");
 
+/**
+ * Enregistre une nouvelle note pour un élève.
+ */
 const addResult = async (payload) => {
   return await Result.create(payload);
 };
 
+/**
+ * Récupère tous les résultats scolaires d'un étudiant.
+ */
 const getStudentResults = async (studentId) => {
   return await Result.find({ student: studentId })
     .populate({

@@ -15,6 +15,10 @@ const addCoursePlan = asyncHandler(async (req, res) => {
   return apiResponse(res, 201, "Plan de cours enregistré.", plan);
 });
 
+/**
+ * Récupère tous les plans de cours pour une classe donnée.
+ * Filtré par classroomId passé en paramètre.
+ */
 const getCoursePlans = asyncHandler(async (req, res) => {
   const { classroomId } = req.params;
   const userRole = req.user.role;

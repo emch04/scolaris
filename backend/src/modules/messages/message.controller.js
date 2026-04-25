@@ -62,6 +62,9 @@ const getClassroomMessages = asyncHandler(async (req, res) => {
 });
 
 // Récupérer les messages reçus
+/**
+ * Récupère tous les messages privés reçus par l'utilisateur connecté.
+ */
 const getMyMessages = asyncHandler(async (req, res) => {
   const messages = await Message.find({ recipient: req.user.id })
     .sort({ createdAt: -1 })

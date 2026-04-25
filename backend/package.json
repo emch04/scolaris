@@ -7,6 +7,10 @@
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
+  "scripts_info": {
+    "dev": "Lance le serveur de développement avec rechargement automatique (nodemon)",
+    "start": "Lance le serveur de production"
+  },
   "dependencies": {
     "axios": "^1.15.2",
     "bcryptjs": "^2.4.3",

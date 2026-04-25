@@ -1,3 +1,8 @@
+/**
+ * @file main.jsx
+ * @description Point d'entrée de l'application React. Initialise le rendu DOM et configure les différents contextes (Auth, Toast, Theme).
+ */
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";

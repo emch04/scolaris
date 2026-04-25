@@ -1,7 +1,18 @@
+/**
+ * @fileoverview Configuration et connexion à la base de données MongoDB via Mongoose.
+ */
+
 // On importe mongoose pour se connecter à MongoDB
 const mongoose = require("mongoose");
 
-// Fonction asynchrone de connexion à la base
+/**
+ * Fonction asynchrone pour établir la connexion à la base de données MongoDB.
+ * 
+ * @async
+ * @function connectDB
+ * @throws {Error} Si la variable d'environnement MONGODB_URI est manquante.
+ * @returns {Promise<void>} Résout quand la connexion est établie.
+ */
 const connectDB = async () => {
   // On récupère l'URL MongoDB depuis les variables d'environnement
   const mongoURI = process.env.MONGODB_URI;

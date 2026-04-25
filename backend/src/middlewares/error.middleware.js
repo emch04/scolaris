@@ -1,4 +1,16 @@
-// Middleware global de gestion des erreurs
+/**
+ * @fileoverview Middleware global pour la gestion centralisée des erreurs dans Express.
+ */
+
+/**
+ * Capture toutes les erreurs et renvoie une réponse JSON standardisée.
+ * 
+ * @function errorMiddleware
+ * @param {Error} err - L'objet d'erreur capturé.
+ * @param {Object} req - Objet de requête Express.
+ * @param {Object} res - Objet de réponse Express.
+ * @param {Function} next - Fonction suivante du middleware.
+ */
 const errorMiddleware = (err, req, res, next) => {
   // Code HTTP par défaut si l'erreur n'en précise pas
   const statusCode = err.statusCode || 500;
@@ -12,5 +24,6 @@ const errorMiddleware = (err, req, res, next) => {
     stack: process.env.NODE_ENV === "development" ? err.stack : undefined
   });
 };
+
 // Export
 module.exports = errorMiddleware;

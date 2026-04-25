@@ -20,6 +20,10 @@ const addResource = asyncHandler(async (req, res) => {
 });
 
 // Lister les ressources
+/**
+ * Récupère les ressources de la bibliothèque.
+ * Filtre par matière, niveau et type, en incluant les ressources partagées au réseau.
+ */
 const getResources = asyncHandler(async (req, res) => {
   const { subject, level, type } = req.query;
   const filter = {};

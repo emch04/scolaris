@@ -1,6 +1,9 @@
 // Import de mongoose
 const mongoose = require("mongoose");
-// Schéma Student
+/**
+ * Schéma Student
+ * Représente un élève inscrit dans un établissement scolaire du réseau Scolaris.
+ */
 const studentSchema = new mongoose.Schema(
   {
     // Matricule unique

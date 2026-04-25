@@ -1,10 +1,27 @@
 import { createContext, useState, useContext, useCallback } from "react";
 
+/**
+ * Contexte pour la gestion globale des notifications (toasts).
+ */
 const ToastContext = createContext();
 
+/**
+ * Composant fournisseur (Provider) pour ToastContext.
+ * Gère une file de notifications et les affiche à l'écran.
+ * 
+ * @param {Object} props - Les propriétés du composant.
+ * @param {React.ReactNode} props.children - Les composants enfants à envelopper.
+ */
 export const ToastProvider = ({ children }) => {
+  // Liste des notifications actives
   const [toasts, setToasts] = useState([]);
 
+  /**
+   * Affiche une nouvelle notification.
+   * 
+   * @param {string} message - Le message à afficher.
+   * @param {string} [type="success"] - Le type de notification (success, error, info).
+   */
   const showToast = useCallback((message, type = "success") => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
@@ -15,6 +32,10 @@ export const ToastProvider = ({ children }) => {
     }, 4000);
   }, []);
 
+  /**
+   * Supprime manuellement une notification par son ID.
+   * @param {number} id - L'identifiant unique de la notification.
+   */
   const removeToast = (id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
@@ -22,6 +43,7 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
+      {/* Conteneur fixe pour l'affichage des toasts */}
       <div style={{
         position: "fixed",
         top: "20px",
@@ -53,6 +75,7 @@ export const ToastProvider = ({ children }) => {
               minWidth: "250px"
             }}
           >
+            {/* Icônes SVG basées sur le type de toast */}
             {toast.type === "success" && (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             )}
@@ -73,4 +96,8 @@ export const ToastProvider = ({ children }) => {
   );
 };
 
+/**
+ * Hook personnalisé pour accéder à la fonction d'affichage des toasts.
+ * @returns {Object} Un objet contenant la fonction showToast.
+ */
 export const useToast = () => useContext(ToastContext);

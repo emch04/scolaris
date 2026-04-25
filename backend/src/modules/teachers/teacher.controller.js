@@ -2,7 +2,7 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 // Import service
-const { getAllTeachers, deleteTeacherById } = require("./teacher.service");
+const { getAllTeachers, getTeacherById, updateTeacherById, deleteTeacherById } = require("./teacher.service");
 
 const Student = require("../students/student.model");
 const Parent = require("../parents/parent.model");
@@ -32,6 +32,30 @@ const getTeachers = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Liste des enseignants récupérée avec succès.", teachers);
 });
 
+// Récupérer un enseignant
+const getTeacher = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const teacher = await getTeacherById(id);
+  
+  if (!teacher) {
+    return apiResponse(res, 404, "Enseignant non trouvé.");
+  }
+
+  return apiResponse(res, 200, "Détails de l'enseignant récupérés.", teacher);
+});
+
+// Mettre à jour un enseignant
+const updateTeacher = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const teacher = await updateTeacherById(id, req.body);
+  
+  if (!teacher) {
+    return apiResponse(res, 404, "Enseignant non trouvé.");
+  }
+
+  return apiResponse(res, 200, "Enseignant mis à jour avec succès.", teacher);
+});
+
 // Supprimer un enseignant
 const deleteTeacher = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -47,5 +71,7 @@ const deleteTeacher = asyncHandler(async (req, res) => {
 // Export
 module.exports = {
   getTeachers,
+  getTeacher,
+  updateTeacher,
   deleteTeacher
 };

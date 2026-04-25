@@ -11,4 +11,14 @@ const getAssignmentSubmissions = async (assignmentId) => {
     .sort({ createdAt: -1 });
 };
 
-module.exports = { createSubmission, getAssignmentSubmissions };
+const getStudentSubmissions = async (studentId) => {
+  return await Submission.find({ student: studentId })
+    .populate("assignment", "title subject dueDate")
+    .sort({ createdAt: -1 });
+};
+
+const updateSubmissionById = async (id, data) => {
+  return await Submission.findByIdAndUpdate(id, data, { new: true });
+};
+
+module.exports = { createSubmission, getAssignmentSubmissions, getStudentSubmissions, updateSubmissionById };

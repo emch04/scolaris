@@ -1,3 +1,8 @@
+/**
+ * @file seed.js
+ * @description Script de peuplement (seeding) de la base de données avec des données initiales de test pour le projet Scolaris.
+ */
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();

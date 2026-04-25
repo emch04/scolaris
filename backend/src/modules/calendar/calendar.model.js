@@ -1,5 +1,18 @@
+/**
+ * @module Calendar/Model
+ * @description Modèle Mongoose représentant un événement dans le calendrier scolaire.
+ */
+
 const mongoose = require("mongoose");
 
+/**
+ * Schéma Calendar (Calendrier)
+ * @typedef {Object} Calendar
+ * @property {string} title - Titre de l'événement
+ * @property {Date} date - Date de l'événement
+ * @property {string} type - Type d'événement (Événement, Congé, Examen, Réunion, Autre)
+ * @property {mongoose.Schema.Types.ObjectId} [school] - Référence vers l'école (null si global)
+ */
 const calendarSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -18,7 +31,7 @@ const calendarSchema = new mongoose.Schema({
   school: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "School",
-    required: false // Si null, événement national/global
+    required: false
   }
 }, { timestamps: true });
 

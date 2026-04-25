@@ -1,3 +1,8 @@
+/**
+ * @file AttendancePage.jsx
+ * @description Page de gestion des présences (appels) pour une classe donnée.
+ */
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -9,33 +14,48 @@ import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
 import formatDate from "../utils/formatDate";
 
+/**
+ * AttendancePage.jsx
+ * Rôle : Gestion du pointage quotidien (Appel) et suivi de l'assiduité.
+ * Double fonctionnalité : 
+ * 1. Vue Staff : Marquer les présences pour une classe et une date donnée.
+ * 2. Vue Parent/Élève : Consulter l'historique des absences et retards.
+ */
 function AttendancePage() {
   const { studentId } = useParams();
   const { user } = useAuth();
   const [classrooms, setClassrooms] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [students, setStudents] = useState([]);
-  const [attendance, setAttendance] = useState({}); // { studentId: "present" | "absent" | "late" }
+  const [attendance, setAttendance] = useState({}); // État local des présences : { studentId: "present" | "absent" | "late" }
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const { showToast } = useToast();
 
+  /**
+   * useEffect : Logique de branchement selon le contexte.
+   * - Si studentId est présent : Récupère l'historique d'un élève.
+   * - Sinon : Récupère la liste des classes pour faire l'appel.
+   */
   useEffect(() => {
     if (studentId) {
-      // Vue Parent/Élève : Historique
       getStudentAttendanceRequest(studentId)
         .then(res => setHistory(res?.data || []))
         .finally(() => setLoading(false));
     } else {
-      // Vue Staff : Faire l'appel
       getClassroomsRequest()
         .then(res => setClassrooms(res?.data || []))
         .finally(() => setLoading(false));
     }
   }, [studentId]);
 
+  /**
+   * handleClassChange
+   * Logique : Charge les élèves de la classe sélectionnée ET les présences déjà enregistrées 
+   * pour la date choisie (permet la modification d'un appel déjà fait).
+   */
   const handleClassChange = async (classId) => {
     setSelectedClass(classId);
     if (!classId) {
@@ -45,19 +65,16 @@ function AttendancePage() {
 
     setLoading(true);
     try {
-      // 1. Charger les élèves de la classe
       const resStudents = await getStudentsRequest();
       const filtered = resStudents?.data?.filter(s => s.classroom?._id === classId || s.classroom === classId) || [];
       setStudents(filtered);
 
-      // 2. Charger les présences existantes pour cette date
       const resAttendance = await getClassroomAttendanceRequest(classId, date);
       const existing = {};
       resAttendance?.data?.forEach(record => {
         existing[record.student._id || record.student] = record.status;
       });
       
-      // Initialiser avec les présences existantes ou "present" par défaut
       const initialAttendance = {};
       filtered.forEach(s => {
         initialAttendance[s._id] = existing[s._id] || "present";
@@ -74,6 +91,10 @@ function AttendancePage() {
     setAttendance(prev => ({ ...prev, [studentId]: status }));
   };
 
+  /**
+   * handleSubmit
+   * Logique : Envoie la liste complète des statuts de présence pour la classe au serveur.
+   */
   const handleSubmit = async () => {
     setSaving(true);
     try {
@@ -106,6 +127,7 @@ function AttendancePage() {
           <p style={{ opacity: 0.6 }}>{studentId ? "Consultez l'historique des absences et retards" : "Sélectionnez une classe et marquez les absences du jour"}</p>
         </div>
 
+        {/* Sélecteurs (Vue Staff uniquement) */}
         {!studentId && (
           <div style={{ 
             background: "rgba(255,255,255,0.03)", 
@@ -143,6 +165,7 @@ function AttendancePage() {
 
         {loading ? <Loader /> : (
           studentId ? (
+            /* Affichage de l'historique pour Parent/Élève */
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {history.length > 0 ? history.map(h => (
                 <div key={h._id} style={{ 
@@ -165,6 +188,7 @@ function AttendancePage() {
               )}
             </div>
           ) : (
+            /* Tableau de pointage pour le Staff */
             students.length > 0 ? (
               <div style={{ 
                 background: "rgba(255,255,255,0.03)", 

@@ -40,6 +40,9 @@ const getParentById = async (id) => {
   return await Parent.findById(id).populate("children", "fullName matricule classroom");
 };
 
+/**
+ * Récupère tous les devoirs assignés aux classes des enfants d'un parent.
+ */
 const getChildrenAssignments = async (childIds) => {
   if (!childIds || childIds.length === 0) return [];
 

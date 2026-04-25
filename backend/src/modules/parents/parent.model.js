@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const ROLES = require("../../constants/roles");
 
+/**
+ * Schéma Parent
+ * Gère les comptes des parents d'élèves et leurs liens avec les étudiants.
+ */
 const parentSchema = new mongoose.Schema(
   {
     fullName: {

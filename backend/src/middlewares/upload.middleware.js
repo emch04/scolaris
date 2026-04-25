@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Middleware de gestion des téléchargements de fichiers utilisant Multer.
+ * Supporte le stockage local ou Cloudinary selon la configuration.
+ */
+
 const multer = require("multer");
 const path = require("path");
 const cloudinary = require("cloudinary").v2;
@@ -41,7 +46,14 @@ if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && proce
   console.log("📁 Stockage local activé (Cloudinary non configuré).");
 }
 
-// Filtre pour n'accepter que certains types de fichiers (optionnel)
+/**
+ * Filtre les fichiers pour n'accepter que certains formats.
+ * 
+ * @function fileFilter
+ * @param {Object} req - Objet de requête Express.
+ * @param {Object} file - Objet de fichier Multer.
+ * @param {Function} cb - Callback de Multer.
+ */
 const fileFilter = (req, file, cb) => {
   const allowedTypes = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
   const ext = path.extname(file.originalname).toLowerCase();
@@ -52,6 +64,11 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+/**
+ * Instance Multer configurée pour le téléchargement de fichiers.
+ * 
+ * @constant {multer.Instance} upload
+ */
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,

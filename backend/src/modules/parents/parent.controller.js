@@ -45,6 +45,10 @@ const getOneParent = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Détails du parent récupérés.", parent);
 });
 
+/**
+ * Récupère les données du tableau de bord d'un parent.
+ * Inclut ses enfants, leurs devoirs et les statistiques de signature.
+ */
 const getMyDashboard = asyncHandler(async (req, res) => {
   const children = await getParentChildren(req.user.id);
   const childIds = children.map(c => c._id);

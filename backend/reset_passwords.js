@@ -1,3 +1,8 @@
+/**
+ * @file reset_passwords.js
+ * @description Script utilitaire pour réinitialiser les mots de passe des utilisateurs en masse (généralement à des fins de test).
+ */
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();

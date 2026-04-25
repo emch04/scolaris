@@ -1,4 +1,14 @@
-// Fonction pour générer un matricule élève simple et lisible
+/**
+ * @fileoverview Utilitaire pour générer des matricules uniques pour les élèves.
+ */
+
+/**
+ * Génère un matricule élève simple et lisible basé sur l'année actuelle et un nombre aléatoire.
+ * Format : TEDP-[ANNÉE]-[RANDOM_6_DIGITS]
+ * 
+ * @function generateMatricule
+ * @returns {string} Le matricule généré.
+ */
 const generateMatricule = () => {
   // On récupère l'année actuelle
   const year = new Date().getFullYear();

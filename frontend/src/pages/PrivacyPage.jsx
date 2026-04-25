@@ -1,3 +1,8 @@
+/**
+ * @file PrivacyPage.jsx
+ * @description Page détaillant la politique de confidentialité et la protection des données personnelles.
+ */
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 

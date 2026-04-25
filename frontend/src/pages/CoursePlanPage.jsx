@@ -1,3 +1,8 @@
+/**
+ * @file CoursePlanPage.jsx
+ * @description Page de consultation et de gestion du plan de cours et du programme pédagogique.
+ */
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";

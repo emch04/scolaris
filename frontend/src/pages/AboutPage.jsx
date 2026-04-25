@@ -1,3 +1,8 @@
+/**
+ * @file AboutPage.jsx
+ * @description Page de présentation "À propos" du projet Scolaris.
+ */
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 

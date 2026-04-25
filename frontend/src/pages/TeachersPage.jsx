@@ -1,3 +1,8 @@
+/**
+ * @file TeachersPage.jsx
+ * @description Page de gestion de la liste des enseignants.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
@@ -6,6 +11,11 @@ import { getSchoolsRequest } from "../services/school.api";
 import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
 
+/**
+ * TeachersPage.jsx
+ * Rôle : Administration du personnel enseignant et de direction du réseau.
+ * Affiche la liste des membres du staff et permet la suppression de comptes (Super Admin).
+ */
 function TeachersPage() {
   const { user } = useAuth();
   const [teachers, setTeachers] = useState([]);
@@ -13,6 +23,10 @@ function TeachersPage() {
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
+  /**
+   * fetchData
+   * Logique : Récupère la liste exhaustive des enseignants et des écoles partenaires.
+   */
   const fetchData = async () => {
     try {
       const [resTeachers, resSchools] = await Promise.all([
@@ -28,12 +42,20 @@ function TeachersPage() {
     }
   };
 
+  /**
+   * useEffect : Chargement initial et rafraîchissement périodique (10s).
+   */
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
   }, []);
 
+  /**
+   * handleDelete
+   * Logique : Supprime un compte utilisateur après confirmation. 
+   * Action critique réservée au Super Administrateur.
+   */
   const handleDelete = async (id) => {
     if (!window.confirm("Supprimer ce compte personnel ?")) return;
     try {
@@ -57,6 +79,7 @@ function TeachersPage() {
           <p style={{ opacity: 0.6 }}>Administrez les comptes enseignants et directeurs du réseau</p>
         </div>
 
+        {/* Panel récapitulatif */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "3rem" }}>
           <div style={{ 
             background: "rgba(0, 102, 204, 0.1)", 
@@ -102,6 +125,7 @@ function TeachersPage() {
                   </div>
                 </div>
 
+                {/* Actions réservées au Super Admin */}
                 {user.role === "super_admin" && (
                   <div style={{ marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                     <button 

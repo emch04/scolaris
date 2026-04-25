@@ -1,3 +1,8 @@
+/**
+ * @file GradesPage.jsx
+ * @description Page de consultation et de saisie des notes des élèves.
+ */
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";

@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * Schéma Resource
+ * Gère les supports pédagogiques numériques (livres, fiches, vidéos) de la bibliothèque.
+ */
 const resourceSchema = new mongoose.Schema({
   title: {
     type: String,

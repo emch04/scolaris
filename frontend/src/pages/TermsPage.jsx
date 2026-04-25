@@ -1,3 +1,8 @@
+/**
+ * @file TermsPage.jsx
+ * @description Page affichant les conditions générales d'utilisation (CGU) du service.
+ */
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 

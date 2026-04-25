@@ -1,3 +1,8 @@
+/**
+ * @file ParentDashboardPage.jsx
+ * @description Tableau de bord spécifique pour les parents, affichant le suivi de leurs enfants.
+ */
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";

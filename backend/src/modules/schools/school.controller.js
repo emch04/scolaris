@@ -12,7 +12,9 @@ const getSchools = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Liste des écoles récupérée.", schools);
 });
 
-// Récupérer une école par son ID
+/**
+ * Récupère les détails complets d'une école.
+ */
 const getOne = asyncHandler(async (req, res) => {
   const school = await getSchoolById(req.params.id);
   if (!school) return apiResponse(res, 404, "École non trouvée.");

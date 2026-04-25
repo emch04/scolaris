@@ -1,3 +1,8 @@
+/**
+ * @file app.js
+ * @description Configuration principale de l'application Express, incluant les middlewares, les routes et la gestion des erreurs.
+ */
+
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");

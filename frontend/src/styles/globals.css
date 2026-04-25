@@ -1,21 +1,42 @@
-/* ========== VARIABLES ========== */
+/**
+ * @file globals.css
+ * @description Styles globaux de l'application Scolaris.
+ * Ce fichier définit la charte graphique, les variables de thème, et assure 
+ * la stabilité de l'interface sur les appareils mobiles (PWA).
+ * 
+ * Choix techniques pour la stabilité mobile :
+ * - Utilisation de '100dvh' pour éviter les sauts de mise en page dus aux barres d'adresse mobiles.
+ * - 'overscroll-behavior: none' pour empêcher le pull-to-refresh accidentel sur PWA.
+ * - 'user-select: none' (si pertinent) ou '-webkit-tap-highlight-color' pour une sensation native.
+ * - Flexbox/Grid fluides pour s'adapter à toutes les tailles d'écran (iPhone SE à tablettes).
+ */
+
+/* ========== 1. VARIABLES & THÈMES ========== */
 :root {
+  /* Couleurs principales */
   --primary: #1a73e8;
   --primary-dark: #1557b0;
   --white: #ffffff;
+  
+  /* Thème Sombre (Défaut) */
   --bg-gradient: linear-gradient(135deg, #050505 0%, #0c0533 50%, #1a0b5e 100%);
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-border: rgba(255, 255, 255, 0.12);
   --text-color: #f8f9fa;
   --text-muted: #adb5bd;
+
+  /* Typographie */
   --input-bg: #ffffff;
   --input-text: #1a1a1a;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Structure et Effets */
   --border-radius: 16px;
   --box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Thème Sombre (Activé via la classe .dark-mode sur le body) */
 body.dark-mode {
   --bg-gradient: linear-gradient(135deg, #020202 0%, #05021a 50%, #0a042e 100%);
   --card-bg: rgba(0, 0, 0, 0.3);
@@ -23,23 +44,47 @@ body.dark-mode {
   --text-color: #f1f3f4;
 }
 
-/* ========== RESET & BASE ========== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-a { text-decoration: none; color: inherit; }
+/* ========== 2. RESET & STYLES DE BASE (OPTIMISATION MOBILE) ========== */
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+a { 
+  text-decoration: none; 
+  color: inherit; 
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  /* 100dvh (Dynamic Viewport Height) : S'adapte dynamiquement à la hauteur réelle disponible, 
+     prenant en compte les barres de navigation du navigateur mobile. */
+  min-height: 100dvh;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  /* Désactive le comportement de rebond et le pull-to-refresh pour une sensation d'application native */
+  overscroll-behavior: none;
+}
+
 body {
   font-family: var(--font-family);
-  font-size: 17px;
+  font-size: 17px; /* Taille de base légèrement plus grande pour la lisibilité sur mobile */
   line-height: 1.7;
   color: var(--text-color);
   background: var(--bg-gradient);
   background-attachment: fixed;
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background 0.4s ease;
+  overflow-x: hidden; /* Sécurité contre les débordements horizontaux */
+  /* Supprime le halo gris au clic sur les éléments interactifs sous iOS/Android */
+  -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+/* Typographie des titres */
 h1, h2, h3, h4, h5, h6 {
   color: #ffffff;
   line-height: 1.3;
@@ -51,22 +96,26 @@ h1 { font-size: 2.5rem; letter-spacing: -0.02em; }
 h2 { font-size: 1.8rem; }
 h3 { font-size: 1.4rem; }
 
-#root { min-height: 100vh; display: flex; flex-direction: column; }
+/* Conteneur principal React */
+#root { 
+  min-height: 100dvh; 
+  display: flex; 
+  flex-direction: column; 
+}
 
-/* ========== LAYOUT ========== */
+/* ========== 3. LAYOUT (MISE EN PAGE) ========== */
 .container {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
 }
 
-/* ========== NAVBAR ========== */
+/* ========== 4. NAVIGATION (NAVBAR) ========== */
 .navbar {
   padding: 0.5rem 0;
   background: rgba(10, 10, 10, 0.7);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px); /* Effet flou derrière la barre */
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: sticky;
   top: 0;
@@ -93,6 +142,7 @@ h3 { font-size: 1.4rem; }
   z-index: 1100;
 }
 
+/* Badge utilisateur connecté */
 .user-badge {
   font-size: 0.9rem;
   font-weight: 600;
@@ -103,7 +153,7 @@ h3 { font-size: 1.4rem; }
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Bouton Burger Permanent */
+/* Menu Burger (Mobile & Permanent Desktop) */
 .navbar-toggle {
   display: block;
   background: none;
@@ -113,6 +163,7 @@ h3 { font-size: 1.4rem; }
   z-index: 1100;
 }
 
+/* Lignes de l'icône burger */
 .navbar-toggle .icon {
   display: block;
   width: 24px;
@@ -136,18 +187,20 @@ h3 { font-size: 1.4rem; }
 .navbar-toggle .icon::before { top: -8px; }
 .navbar-toggle .icon::after { bottom: -8px; }
 
+/* Animation du burger en 'X' quand ouvert */
 .navbar-toggle .icon.open { background: transparent; }
 .navbar-toggle .icon.open::before { top: 0; transform: rotate(45deg); }
 .navbar-toggle .icon.open::after { bottom: 0; transform: rotate(-45deg); }
 
-/* Menu coulissant Permanent (Sidebar) */
+/* Sidebar latérale (Menu de navigation) */
 .nav-links {
   position: fixed;
   top: 0;
-  right: -100%;
+  right: -100%; /* Caché par défaut */
   width: 320px;
   height: 100vh;
   background: rgba(8, 8, 8, 0.98);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(25px);
   display: flex;
   flex-direction: column;
@@ -158,7 +211,7 @@ h3 { font-size: 1.4rem; }
 }
 
 .nav-links.active {
-  right: 0;
+  right: 0; /* Affiché */
 }
 
 .nav-links a {
@@ -175,6 +228,7 @@ h3 { font-size: 1.4rem; }
   padding-left: 1.5rem;
 }
 
+/* Couche sombre en arrière-plan quand le menu est ouvert */
 .menu-overlay {
   position: fixed;
   top: 0;
@@ -185,7 +239,7 @@ h3 { font-size: 1.4rem; }
   z-index: 1040;
 }
 
-/* ========== CARDS & GRIDS ========== */
+/* ========== 5. GRILLES ET CARTES (UI COMPONENTS) ========== */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -206,7 +260,7 @@ h3 { font-size: 1.4rem; }
   background: rgba(255, 255, 255, 0.07);
 }
 
-/* ========== FORMS ========== */
+/* ========== 6. FORMULAIRES ========== */
 .form {
   background: rgba(255, 255, 255, 0.05);
   padding: 2.5rem;
@@ -236,7 +290,7 @@ input:focus, select:focus, textarea:focus {
   background: #ffffff;
 }
 
-/* ========== BUTTONS ========== */
+/* ========== 7. BOUTONS ========== */
 .btn {
   display: inline-flex;
   align-items: center;

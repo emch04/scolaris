@@ -1,3 +1,8 @@
+/**
+ * @file ParentsPage.jsx
+ * @description Page de gestion de la liste des parents d'élèves.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

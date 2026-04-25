@@ -1,3 +1,8 @@
+/**
+ * @file ClassroomChatPage.jsx
+ * @description Page de messagerie en temps réel dédiée aux discussions au sein d'une classe.
+ */
+
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";

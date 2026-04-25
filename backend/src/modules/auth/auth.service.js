@@ -1,3 +1,8 @@
+/**
+ * @module Auth/Service
+ * @description Service gérant la logique métier de l'authentification (inscription, connexion, réinitialisation de mot de passe).
+ */
+
 const Teacher = require("../teachers/teacher.model");
 const Parent = require("../parents/parent.model");
 const Student = require("../students/student.model");
@@ -10,7 +15,17 @@ const jwt = require("jsonwebtoken");
 const generateMatricule = require("../../utils/generateMatricule");
 const sendEmail = require("../../utils/email.service");
 
-// Inscription Enseignant (Public)
+/**
+ * Inscrit un enseignant via le formulaire public.
+ * @async
+ * @param {Object} payload - Données de l'enseignant.
+ * @param {string} payload.fullName - Nom complet.
+ * @param {string} payload.email - Email unique.
+ * @param {string} payload.password - Mot de passe en clair.
+ * @param {string} [payload.phone] - Numéro de téléphone.
+ * @returns {Promise<Object>} L'enseignant créé en statut 'pending'.
+ * @throws {Error} Si l'email est déjà utilisé.
+ */
 const registerTeacherPublic = async (payload) => {
   const { fullName, email, password, phone } = payload;
   const existing = await Teacher.findOne({ email });
@@ -28,7 +43,16 @@ const registerTeacherPublic = async (payload) => {
   });
 };
 
-// Inscription Élève (Public)
+/**
+ * Inscrit un élève via le formulaire public.
+ * @async
+ * @param {Object} payload - Données de l'élève.
+ * @param {string} payload.fullName - Nom complet.
+ * @param {string} payload.schoolCode - Code unique de l'école.
+ * @param {string} payload.password - Mot de passe en clair.
+ * @returns {Promise<Object>} L'élève créé avec un matricule généré.
+ * @throws {Error} Si le code école est invalide.
+ */
 const registerStudentPublic = async (payload) => {
   const { fullName, schoolCode, password } = payload;
   
@@ -48,7 +72,18 @@ const registerStudentPublic = async (payload) => {
   });
 };
 
-// Inscription Parent (Public)
+/**
+ * Inscrit un parent via le formulaire public.
+ * @async
+ * @param {Object} payload - Données du parent.
+ * @param {string} payload.fullName - Nom complet.
+ * @param {string} payload.email - Email unique.
+ * @param {string} payload.studentMatricule - Matricule de l'enfant à lier.
+ * @param {string} payload.password - Mot de passe en clair.
+ * @param {string} [payload.phone] - Numéro de téléphone.
+ * @returns {Promise<Object>} Le parent créé avec le lien vers l'élève.
+ * @throws {Error} Si l'enfant n'est pas trouvé ou l'email déjà utilisé.
+ */
 const registerParentPublic = async (payload) => {
   const { fullName, email, studentMatricule, password, phone } = payload;
 
@@ -71,6 +106,12 @@ const registerParentPublic = async (payload) => {
   });
 };
 
+/**
+ * Crée un enseignant par un administrateur.
+ * @async
+ * @param {Object} payload - Données complètes.
+ * @returns {Promise<Object>}
+ */
 const registerTeacher = async (payload) => {
   const { fullName, email, password, phone, role, school } = payload;
   const existing = await Teacher.findOne({ email });
@@ -79,6 +120,13 @@ const registerTeacher = async (payload) => {
   return await Teacher.create({ fullName, email, password: hashedPassword, phone, role, school });
 };
 
+/**
+ * Initie la procédure de récupération de mot de passe en envoyant un OTP par email.
+ * @async
+ * @param {string} identifier - Email ou Matricule de l'utilisateur.
+ * @returns {Promise<boolean>}
+ * @throws {Error} Si l'identifiant ne correspond à aucun compte.
+ */
 const forgotPassword = async (identifier) => {
   const id = identifier ? identifier.trim() : "";
   
@@ -140,12 +188,18 @@ const forgotPassword = async (identifier) => {
     );
   }
 
-  // Fallback console pour le dev
-  // console.log(`[AUTH SIMULATION] Code de réinitialisation pour ${emailDest || user.matricule} : ${code}`);
-
   return true;
 };
 
+/**
+ * Réinitialise le mot de passe après validation de l'OTP.
+ * @async
+ * @param {string} identifier - Email ou Matricule.
+ * @param {string} code - Le code OTP reçu.
+ * @param {string} newPassword - Le nouveau mot de passe.
+ * @returns {Promise<boolean>}
+ * @throws {Error} Si l'OTP est invalide ou expiré.
+ */
 const resetPassword = async (identifier, code, newPassword) => {
   const id = identifier ? identifier.trim() : "";
   
@@ -185,6 +239,14 @@ const resetPassword = async (identifier, code, newPassword) => {
   return true;
 };
 
+/**
+ * Connecte un utilisateur et génère les tokens JWT et Refresh.
+ * @async
+ * @param {string} identifier - Email ou Matricule.
+ * @param {string} password - Mot de passe.
+ * @returns {Promise<Object>} Objet contenant l'utilisateur, le token d'accès et le refresh token.
+ * @throws {Error} Si les identifiants sont incorrects ou le compte est suspendu/en attente.
+ */
 const loginUser = async (identifier, password) => {
   const id = identifier ? identifier.trim() : "";
   const pwd = password ? password.trim() : "";

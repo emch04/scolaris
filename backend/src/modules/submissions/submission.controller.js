@@ -1,6 +1,6 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-const { createSubmission, getAssignmentSubmissions } = require("./submission.service");
+const { createSubmission, getAssignmentSubmissions, getStudentSubmissions, updateSubmissionById } = require("./submission.service");
 const { verifySignatureOtp } = require("./otp.service");
 
 const submitHomework = asyncHandler(async (req, res) => {
@@ -18,4 +18,19 @@ const getSubmissions = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Liste des signatures récupérée.", submissions);
 });
 
-module.exports = { submitHomework, getSubmissions };
+const getStudentSubmissionsList = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+  const submissions = await getStudentSubmissions(studentId);
+  return apiResponse(res, 200, "Liste des signatures de l'élève récupérée.", submissions);
+});
+
+const updateSubmission = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const submission = await updateSubmissionById(id, req.body);
+  if (!submission) {
+    return apiResponse(res, 404, "Soumission non trouvée.");
+  }
+  return apiResponse(res, 200, "Soumission mise à jour.", submission);
+});
+
+module.exports = { submitHomework, getSubmissions, getStudentSubmissionsList, updateSubmission };

@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * Schéma Communication
+ * Gère les communiqués et convocations envoyés par l'administration ou les enseignants.
+ */
 const communicationSchema = new mongoose.Schema(
   {
     title: {

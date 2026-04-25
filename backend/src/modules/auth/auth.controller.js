@@ -1,3 +1,8 @@
+/**
+ * @module Auth/Controller
+ * @description Contrôleurs gérant les requêtes HTTP d'authentification.
+ */
+
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { 
@@ -10,6 +15,13 @@ const {
   loginUser 
 } = require("./auth.service");
 
+/**
+ * Gère l'inscription des différents types d'utilisateurs.
+ * @route POST /api/auth/register
+ * @param {Object} req - Requête Express.
+ * @param {Object} req.body - Données d'inscription incluant le champ 'type'.
+ * @param {Object} res - Réponse Express.
+ */
 const register = asyncHandler(async (req, res) => {
   const { type } = req.body; // "teacher", "student", "parent"
   let user;
@@ -28,6 +40,12 @@ const register = asyncHandler(async (req, res) => {
   return apiResponse(res, 201, "Inscription réussie.", { id: user._id, fullName: user.fullName, role: user.role, matricule: user.matricule });
 });
 
+/**
+ * Connecte un utilisateur et définit les cookies JWT.
+ * @route POST /api/auth/login
+ * @param {Object} req - Requête Express.
+ * @param {Object} res - Réponse Express.
+ */
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const result = await loginUser(email, password);
@@ -62,6 +80,10 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * Déconnecte l'utilisateur en supprimant les cookies et le refresh token en base.
+ * @route POST /api/auth/logout
+ */
 const logout = asyncHandler(async (req, res) => {
   const { refreshToken } = req.cookies;
   if (refreshToken) {
@@ -82,6 +104,10 @@ const logout = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Déconnexion réussie.");
 });
 
+/**
+ * Renouvelle l'Access Token en utilisant le Refresh Token.
+ * @route POST /api/auth/refresh
+ */
 const refresh = asyncHandler(async (req, res) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken) throw new Error("Refresh Token manquant.");
@@ -113,18 +139,28 @@ const refresh = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Session renouvelée.");
 });
 
+/**
+ * Retourne les informations de l'utilisateur connecté (vérification de session).
+ * @route GET /api/auth/me
+ */
 const getMe = asyncHandler(async (req, res) => {
-  // Cette fonction sera appelée au chargement du frontend pour vérifier si le cookie est valide
-  // Le middleware authMiddleware aura déjà mis user dans req.user
   return apiResponse(res, 200, "Session active.", { user: req.user });
 });
 
+/**
+ * Demande une réinitialisation de mot de passe (envoi d'OTP).
+ * @route POST /api/auth/forgot-password
+ */
 const requestPasswordReset = asyncHandler(async (req, res) => {
   const { identifier } = req.body;
   await forgotPassword(identifier);
   return apiResponse(res, 200, "Si un compte existe pour cet identifiant, un code de réinitialisation a été envoyé.");
 });
 
+/**
+ * Exécute la réinitialisation du mot de passe avec l'OTP.
+ * @route POST /api/auth/reset-password
+ */
 const executePasswordReset = asyncHandler(async (req, res) => {
   const { identifier, code, newPassword } = req.body;
   await resetPassword(identifier, code, newPassword);

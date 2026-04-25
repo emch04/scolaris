@@ -1,3 +1,8 @@
+/**
+ * @file server.js
+ * @description Point d'entrée principal du serveur Node.js. Initialise la connexion à la base de données et démarre le serveur Express.
+ */
+
 // On charge les variables d'environnement depuis le fichier .env
 require("dotenv").config();
 

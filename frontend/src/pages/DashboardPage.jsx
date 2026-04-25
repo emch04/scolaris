@@ -1,24 +1,40 @@
+/**
+ * @file DashboardPage.jsx
+ * @description Tableau de bord principal offrant une vue d'ensemble selon le rôle de l'utilisateur.
+ */
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useAuth from "../hooks/useAuth";
 import { getGlobalStatsRequest, getTeacherStatsRequest } from "../services/stats.api";
 
+/**
+ * DashboardPage.jsx
+ * Rôle : Portail principal de l'utilisateur après connexion.
+ * Affiche des statistiques et des raccourcis de navigation adaptés au rôle.
+ * Intègre une gestion de cache local pour un fonctionnement en mode PWA/Hors-ligne.
+ */
 function DashboardPage() {
   const { user } = useAuth();
+  
+  // Initialisation des stats depuis le localStorage pour un affichage immédiat (optimiste)
   const [statsData, setStatsData] = useState(() => {
-    // Charger les données depuis le cache local au démarrage
     const cached = localStorage.getItem(`stats_cache_${user?.id}`);
     return cached ? JSON.parse(cached) : null;
   });
+  
   const [loading, setLoading] = useState(!statsData);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [fetchError, setFetchError] = useState(null);
 
-  // ... (handleOnline / handleOffline identiques)
-
+  /**
+   * fetchStats
+   * Logique : Récupère les statistiques depuis l'API selon le rôle (Global pour Super Admin vs Spécifique).
+   * Met à jour le cache local après chaque récupération réussie.
+   */
   const fetchStats = () => {
-    if (!navigator.onLine) return; // Ne pas tenter si offline
+    if (!navigator.onLine) return;
     
     setLoading(true);
     const request = user?.role === "super_admin" ? getGlobalStatsRequest() : getTeacherStatsRequest();
@@ -27,14 +43,12 @@ function DashboardPage() {
       .then(res => {
         if (res?.data) {
           setStatsData(res.data);
-          // Sauvegarder dans le cache local
           localStorage.setItem(`stats_cache_${user?.id}`, JSON.stringify(res.data));
           setFetchError(null);
         }
       })
       .catch(err => {
         console.error("Erreur stats:", err);
-        // On ne met une erreur que si on n'a vraiment aucune donnée (ni cache, ni live)
         if (!statsData) {
           setFetchError("Connexion impossible au serveur");
         }
@@ -42,14 +56,35 @@ function DashboardPage() {
       .finally(() => setLoading(false));
   };
 
+  /**
+   * useEffect : Cycle de vie du tableau de bord.
+   * - Déclenche le premier chargement des données.
+   * - Met en place un polling (toutes les 30s) pour garder les chiffres à jour.
+   * - Gère les événements système de connectivité (online/offline).
+   */
   useEffect(() => {
     fetchStats();
-    const interval = setInterval(fetchStats, 30000); // Augmenté à 30 secondes pour économiser la batterie en PWA
-    return () => clearInterval(interval);
+    
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    const interval = setInterval(fetchStats, 30000); // Polling toutes les 30 secondes
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, [user]);
 
-  // ... (reste du code identique jusqu'au return)
-
+  /**
+   * getStatsConfig
+   * Logique : Définit dynamiquement les cartes affichées (libellé, icône, couleur, lien) 
+   * en fonction des permissions du rôle de l'utilisateur.
+   */
   const getStatsConfig = () => {
     const role = user?.role;
     const base = [
@@ -77,7 +112,6 @@ function DashboardPage() {
         { label: "Bibliothèque", value: "Ouvrir", color: "#F9AB00", path: "/library", icon: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" }
       ];
 
-      // Seuls les admins et directeurs voient "Mes Classes"
       if (["admin", "director"].includes(role)) {
         teacherCards.splice(1, 0, { label: "Mes Classes", value: "Gérer", color: "#1abc9c", path: "/classrooms", icon: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" });
       }
@@ -170,7 +204,6 @@ function DashboardPage() {
                   animation: loading ? "spin 1s linear infinite" : "none",
                 }}
               >
-                <path d="M23 4v6h-6"></path>
                 <path d="M1 20v-6h6"></path>
                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
               </svg>

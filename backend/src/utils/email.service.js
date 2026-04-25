@@ -1,7 +1,19 @@
+/**
+ * @fileoverview Service d'envoi d'emails via Nodemailer.
+ */
+
 const nodemailer = require("nodemailer");
 
 /**
- * Service d'envoi d'emails Scolaris
+ * Envoie un email en utilisant le transporteur configuré.
+ * 
+ * @async
+ * @function sendEmail
+ * @param {string} to - Adresse email du destinataire.
+ * @param {string} subject - Objet de l'email.
+ * @param {string} text - Contenu au format texte brut.
+ * @param {string} html - Contenu au format HTML.
+ * @returns {Promise<boolean>} Retourne true si l'email a été envoyé, sinon false.
  */
 const sendEmail = async (to, subject, text, html) => {
   try {

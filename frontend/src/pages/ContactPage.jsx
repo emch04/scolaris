@@ -1,3 +1,8 @@
+/**
+ * @file ContactPage.jsx
+ * @description Page de contact pour joindre l'administration ou le support technique.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

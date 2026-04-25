@@ -49,7 +49,9 @@ const getStudentDashboardData = async (studentId) => {
   return { student, assignments, results, communications };
 };
 
-// Récupérer tous les élèves
+/**
+ * Récupère la liste de tous les élèves selon les critères de filtrage.
+ */
 const getAllStudents = async (filter = {}) => {
   // On retourne la liste avec les relations utiles
   return await Student.find(filter)

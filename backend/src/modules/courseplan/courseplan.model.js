@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 
+/**
+ * Schéma CoursePlan
+ * Définit la progression pédagogique ou le plan de cours pour une matière et une classe.
+ */
 const coursePlanSchema = new mongoose.Schema({
   subject: {
     type: String,

@@ -1,28 +1,43 @@
-// Import utilitaires
+/**
+ * @module Classrooms/Controller
+ * @description Contrôleur gérant les requêtes HTTP liées aux salles de classe.
+ */
+
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-// Import services
 const { createClassroom, getAllClassrooms } = require("./classroom.service");
-// Créer classe
+
+/**
+ * Crée une nouvelle classe.
+ * @async
+ * @function create
+ * @param {import('express').Request} req - Requête Express.
+ * @param {import('express').Response} res - Réponse Express.
+ * @returns {Promise<void>}
+ */
 const create = asyncHandler(async (req, res) => {
-  // Appel service
   const classroom = await createClassroom(req.body);
-  // Réponse
   return apiResponse(res, 201, "Classe créée avec succès.", classroom);
 });
-// Lister classes
+
+/**
+ * Récupère la liste des classes, filtrée par école si l'utilisateur n'est pas super-admin.
+ * @async
+ * @function getClassrooms
+ * @param {import('express').Request} req - Requête Express.
+ * @param {import('express').Response} res - Réponse Express.
+ * @returns {Promise<void>}
+ */
 const getClassrooms = asyncHandler(async (req, res) => {
   const filter = {};
   if (req.user.role !== "super_admin") {
     filter.school = req.user.school;
   }
 
-  // Appel service
   const classrooms = await getAllClassrooms(filter);
-  // Réponse
   return apiResponse(res, 200, "Liste des classes récupérée avec succès.", classrooms);
 });
-// Export
+
 module.exports = {
   create,
   getClassrooms

@@ -1,3 +1,8 @@
+/**
+ * @file LibraryPage.jsx
+ * @description Page de la bibliothèque numérique, listant les ressources et documents partagés.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

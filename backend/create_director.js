@@ -1,3 +1,8 @@
+/**
+ * @file create_director.js
+ * @description Script utilitaire pour créer un compte utilisateur avec le rôle de Directeur dans le système.
+ */
+
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const Teacher = require("./src/modules/teachers/teacher.model");

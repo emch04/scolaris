@@ -1,3 +1,8 @@
+/**
+ * @file CommunicationsPage.jsx
+ * @description Page regroupant les communications officielles et les annonces de l'école.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

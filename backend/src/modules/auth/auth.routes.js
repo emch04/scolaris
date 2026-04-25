@@ -1,35 +1,62 @@
-// Import d'Express
+/**
+ * @module Auth/Routes
+ * @description Définition des routes d'authentification (Inscription, Connexion, Password Reset).
+ */
+
 const express = require("express");
-// Création du routeur
 const router = express.Router();
-// Import des contrôleurs
 const { register, login, logout, getMe, refresh, requestPasswordReset, executePasswordReset } = require("./auth.controller");
-// Import des validateurs
 const { registerValidator, loginValidator } = require("./auth.validator");
-// Import des middlewares
 const validateMiddleware = require("../../middlewares/validate.middleware");
 const authMiddleware = require("../../middlewares/auth.middleware");
 
-// Route pour inscrire un enseignant
+/**
+ * @route POST /api/auth/register
+ * @desc Inscription d'un utilisateur (Enseignant, Parent ou Élève)
+ * @access Public / Admin
+ */
 router.post("/register", registerValidator, validateMiddleware, register);
 
-// Route pour connecter un utilisateur
+/**
+ * @route POST /api/auth/login
+ * @desc Connexion d'un utilisateur
+ * @access Public
+ */
 router.post("/login", loginValidator, validateMiddleware, login);
 
-// Route pour déconnecter (efface le cookie)
+/**
+ * @route POST /api/auth/logout
+ * @desc Déconnexion et suppression des cookies
+ * @access Public
+ */
 router.post("/logout", logout);
 
-// Route pour rafraîchir la session
+/**
+ * @route POST /api/auth/refresh
+ * @desc Renouvellement du token d'accès via le refresh token
+ * @access Public (via cookie)
+ */
 router.post("/refresh", refresh);
 
-// Route pour vérifier la session actuelle
+/**
+ * @route GET /api/auth/me
+ * @desc Récupération des infos de l'utilisateur connecté
+ * @access Privé (Authentifié)
+ */
 router.get("/me", authMiddleware, getMe);
 
-// Route pour demander la réinitialisation
+/**
+ * @route POST /api/auth/forgot-password
+ * @desc Demande de réinitialisation de mot de passe (envoi OTP)
+ * @access Public
+ */
 router.post("/forgot-password", requestPasswordReset);
 
-// Route pour exécuter la réinitialisation
+/**
+ * @route POST /api/auth/reset-password
+ * @desc Réinitialisation effective du mot de passe
+ * @access Public
+ */
 router.post("/reset-password", executePasswordReset);
 
-// Export du routeur
 module.exports = router;

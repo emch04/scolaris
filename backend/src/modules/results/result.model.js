@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
-const resultSchema = new mongoose.Schema(
-  {
+/**
+ * Schéma Result
+ * Gère les notes et évaluations académiques des élèves par matière et par période.
+ */
+const resultSchema = new mongoose.Schema({
     student: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",

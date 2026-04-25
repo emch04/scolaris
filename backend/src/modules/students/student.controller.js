@@ -10,7 +10,9 @@ const create = asyncHandler(async (req, res) => {
   // Réponse de succès
   return apiResponse(res, 201, "Élève créé avec succès.", student);
 });
-// Lister les élèves
+/**
+ * Récupère la liste des étudiants, filtrée par école pour les directeurs.
+ */
 const getStudents = asyncHandler(async (req, res) => {
   const filter = {};
   

@@ -1,3 +1,8 @@
+/**
+ * @file SchoolRegistrationPage.jsx
+ * @description Page permettant l'enregistrement de nouveaux établissements scolaires sur la plateforme.
+ */
+
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";

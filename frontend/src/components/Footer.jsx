@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom";
 
+/**
+ * Footer.jsx
+ * Rôle : Pied de page informatif.
+ * Contient les informations de contact, les liens sociaux et la navigation secondaire.
+ * Reflète l'identité visuelle moderne de Scolaris.
+ */
 function Footer() {
   return (
     <footer style={{ 
@@ -15,7 +21,7 @@ function Footer() {
         gap: "4rem",
         marginBottom: "4rem"
       }}>
-        {/* Colonne 1: Brand & Bio */}
+        {/* Colonne 1 : Identité & Bio */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div style={{ 
@@ -36,6 +42,8 @@ function Footer() {
             Scolaris est l'outil indispensable pour une école moderne et connectée. 
             Une création signée <strong>Emch</strong> pour accompagner la réussite de chaque élève.
           </p>
+          
+          {/* Icônes Sociales */}
           <div style={{ display: "flex", gap: "1rem" }}>
             {[
               { id: 'fb', icon: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" },
@@ -66,7 +74,7 @@ function Footer() {
           </div>
         </div>
 
-        {/* Colonne 2: Liens Rapides */}
+        {/* Colonne 2 : Liens Rapides */}
         <div>
           <h4 style={{ marginBottom: "1.5rem", fontSize: "1.1rem", fontWeight: "700" }}>Navigation</h4>
           <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -78,7 +86,7 @@ function Footer() {
           </ul>
         </div>
 
-        {/* Colonne 3: Contact */}
+        {/* Colonne 3 : Contact Direct */}
         <div>
           <h4 style={{ marginBottom: "1.5rem", fontSize: "1.1rem", fontWeight: "700" }}>Contact</h4>
           <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1.2rem", fontSize: "0.95rem", opacity: 0.6 }}>
@@ -98,7 +106,7 @@ function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Barre Inférieure : Droits & Légales */}
       <div style={{ 
         borderTop: "1px solid rgba(255, 255, 255, 0.05)", 
         paddingTop: "2rem", 

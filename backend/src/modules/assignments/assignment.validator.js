@@ -1,5 +1,14 @@
+/**
+ * @module Assignments/Validator
+ * @description Validateurs pour les données des devoirs.
+ */
+
 const { body } = require("express-validator");
 
+/**
+ * Validateur pour la création d'un devoir.
+ * @type {Array<import('express-validator').ValidationChain>}
+ */
 const createAssignmentValidator = [
   body("title")
     .notEmpty()

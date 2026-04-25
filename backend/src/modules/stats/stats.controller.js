@@ -66,6 +66,10 @@ const getGlobalStats = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * Récupère les statistiques de performance d'un enseignant spécifique.
+ * Calcule la moyenne des notes données et le taux de réussite des élèves.
+ */
 const getTeacherStats = asyncHandler(async (req, res) => {
   const teacherId = req.user.id;
 
@@ -96,3 +100,4 @@ const getTeacherStats = asyncHandler(async (req, res) => {
 });
 
 module.exports = { getGlobalStats, getTeacherStats };
+;

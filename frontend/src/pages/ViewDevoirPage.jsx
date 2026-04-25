@@ -1,3 +1,8 @@
+/**
+ * @file ViewDevoirPage.jsx
+ * @description Page permettant de visualiser le contenu détaillé d'un devoir assigné.
+ */
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";

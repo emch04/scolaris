@@ -15,7 +15,9 @@ const createSchool = async (payload) => {
   return await School.create(payload);
 };
 
-// Valider une école
+/**
+ * Met à jour le statut (approuvé/rejeté) d'une école.
+ */
 const updateSchoolStatus = async (id, status) => {
   return await School.findByIdAndUpdate(id, { status }, { new: true });
 };

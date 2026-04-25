@@ -3,6 +3,12 @@ import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
 
+/**
+ * Navbar.jsx
+ * Rôle : Barre de navigation globale.
+ * Gère le menu mobile, le basculement du thème (clair/sombre), 
+ * et affiche les liens de navigation conditionnels selon le rôle de l'utilisateur.
+ */
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
@@ -12,6 +18,10 @@ function Navbar() {
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
+  /**
+   * handleLogout
+   * Logique : Appelle la fonction de déconnexion et ferme le menu mobile.
+   */
   const handleLogout = () => {
     if (window.confirm("Voulez-vous vous déconnecter ?")) {
       logout();
@@ -22,12 +32,14 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="container" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Bouton retour intelligent : Masqué sur la page d'accueil */}
         {!isHome && (
           <button onClick={() => window.history.back()} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "8px", width: "35px", height: "35px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
         )}
 
+        {/* Brand / Logo */}
         <Link to="/" className="brand" onClick={closeMenu} style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
           <div style={{ background: "white", width: "40px", height: "40px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
             <img src="/assets/image.jpg" alt="S" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
@@ -36,10 +48,12 @@ function Navbar() {
         </Link>
         
         <div className="navbar-right" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          {/* Toggle Thème Sombre/Clair */}
           <button onClick={toggleTheme} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: "35px", height: "35px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}>
             {isDarkMode ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg> : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>}
           </button>
 
+          {/* Badge utilisateur et Déconnexion rapide */}
           {isAuthenticated && (
             <button className="user-badge hide-on-mobile" onClick={handleLogout} style={{ fontSize: "0.8rem", padding: "6px 12px", background: "rgba(255,255,255,0.1)", borderRadius: "50px", display: "flex", alignItems: "center", gap: "8px", border: "1px solid rgba(255,255,255,0.1)", color: "white", cursor: "pointer" }}>
               <div style={{ width: "8px", height: "8px", background: "#34A853", borderRadius: "50%" }}></div>
@@ -48,11 +62,13 @@ function Navbar() {
             </button>
           )}
 
+          {/* Toggle Menu Mobile (Hamburger) */}
           <button className="navbar-toggle" onClick={toggleMenu} style={{ padding: "10px", marginRight: "-10px" }}>
             <span className={isOpen ? "icon open" : "icon"}></span>
           </button>
         </div>
 
+        {/* Liens de navigation avec rendu conditionnel par rôle */}
         <div className={isOpen ? "nav-links active" : "nav-links"}>
           <Link to="/" onClick={closeMenu}>Accueil</Link>
           {isAuthenticated ? (

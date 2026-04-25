@@ -55,6 +55,10 @@ const create = asyncHandler(async (req, res) => {
   return apiResponse(res, 201, "Communication créée avec succès.", communication);
 });
 
+/**
+ * Liste les communications filtrées selon le rôle de l'utilisateur.
+ * Super Admin voit le réseau, les autres voient leur école.
+ */
 const list = asyncHandler(async (req, res) => {
   const { classroom, type } = req.query;
   const userRole = req.user.role;
@@ -82,6 +86,10 @@ const list = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  create,
+  list
+};
+ports = {
   create,
   list
 };

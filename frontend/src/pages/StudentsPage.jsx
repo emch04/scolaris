@@ -1,3 +1,8 @@
+/**
+ * @file StudentsPage.jsx
+ * @description Page de gestion de la liste des élèves de l'établissement.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
@@ -8,6 +13,12 @@ import { addStudentResultRequest } from "../services/result.api";
 import formatDate from "../utils/formatDate";
 import useAuth from "../hooks/useAuth";
 
+/**
+ * StudentsPage.jsx
+ * Rôle : Gestion centrale des élèves du réseau ou de l'école.
+ * Permet l'inscription de nouveaux élèves (Admin/Directeur) 
+ * et la saisie des notes (Enseignants/Staff).
+ */
 function StudentsPage() {
   const { user } = useAuth();
   const [students, setStudents] = useState([]);
@@ -18,7 +29,7 @@ function StudentsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Pour la saisie des notes
+  // Gestion du formulaire de saisie des notes
   const [showScoreForm, setShowScoreForm] = useState(null);
   const [scoreData, setScoreForm] = useState({
     subject: "",
@@ -28,7 +39,7 @@ function StudentsPage() {
     period: "Trimestre 1"
   });
 
-  // État du formulaire d'inscription
+  // État du formulaire d'inscription (Admin uniquement)
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "M",
@@ -39,6 +50,10 @@ function StudentsPage() {
     classroom: ""
   });
 
+  /**
+   * fetchData
+   * Logique : Charge en parallèle les élèves, les écoles et les classes disponibles.
+   */
   const fetchData = async () => {
     try {
       const [resStudents, resSchools, resClassrooms] = await Promise.all([
@@ -56,6 +71,9 @@ function StudentsPage() {
     }
   };
 
+  /**
+   * useEffect : Initialisation et rafraîchissement automatique toutes les 10s.
+   */
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 10000);
@@ -66,6 +84,10 @@ function StudentsPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  /**
+   * handleSubmit
+   * Logique : Crée un nouvel élève en base de données.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -89,6 +111,10 @@ function StudentsPage() {
     }
   };
 
+  /**
+   * handleAddScore
+   * Logique : Enregistre une note d'évaluation pour un élève spécifique.
+   */
   const handleAddScore = async (e, studentId) => {
     e.preventDefault();
     try {
@@ -117,7 +143,7 @@ function StudentsPage() {
           <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Inscrivez et gérez le suivi des élèves du réseau</p>
         </div>
 
-        {/* Mini Tableau de Bord */}
+        {/* Mini Stats Panel */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "3rem" }}>
           <div style={{ 
             background: "rgba(52, 168, 83, 0.1)", 
@@ -135,63 +161,64 @@ function StudentsPage() {
             </div>
           </div>
         </div>
-{/* Formulaire d'inscription épuré - Réservé Admin / Directeur */}
-{["admin", "director"].includes(user?.role) && (
-  <div style={{ 
-    background: "transparent", 
-    padding: "2rem", 
-    borderRadius: "20px", 
-    border: "3px solid rgba(255, 255, 255, 0.1)",
-    marginBottom: "3rem"
-  }}>
-    <h3 style={{ marginBottom: "1.5rem" }}>Inscrire un nouvel élève</h3>
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-          <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom complet</label>
-          <input type="text" name="fullName" placeholder="Ex: Jean Mukendi" value={formData.fullName} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} required />
-        </div>
-...
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Sexe</label>
-                <select name="gender" value={formData.gender} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
-                  <option value="M" style={{ background: "white", color: "#222" }}>Masculin</option>
-                  <option value="F" style={{ background: "white", color: "#222" }}>Féminin</option>
-                </select>
+
+        {/* Formulaire d'inscription (Réservé Admin / Directeur) */}
+        {["admin", "director"].includes(user?.role) && (
+          <div style={{ 
+            background: "transparent", 
+            padding: "2rem", 
+            borderRadius: "20px", 
+            border: "3px solid rgba(255, 255, 255, 0.1)",
+            marginBottom: "3rem"
+          }}>
+            <h3 style={{ marginBottom: "1.5rem" }}>Inscrire un nouvel élève</h3>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom complet</label>
+                  <input type="text" name="fullName" placeholder="Ex: Jean Mukendi" value={formData.fullName} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} required />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Sexe</label>
+                  <select name="gender" value={formData.gender} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
+                    <option value="M" style={{ background: "white", color: "#222" }}>Masculin</option>
+                    <option value="F" style={{ background: "white", color: "#222" }}>Féminin</option>
+                  </select>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Date de naissance</label>
+                  <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom du parent</label>
+                  <input type="text" name="parentName" placeholder="Ex: Marie Kabange" value={formData.parentName} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Téléphone parent</label>
+                  <input type="text" name="parentPhone" placeholder="Ex: +243..." value={formData.parentPhone} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Établissement</label>
+                  <select name="school" value={formData.school} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
+                    <option value="" style={{ background: "white", color: "#222" }}>Sélectionner une école</option>
+                    {schools.map(s => <option key={s._id} value={s._id} style={{ background: "white", color: "#222" }}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Classe</label>
+                  <select name="classroom" value={formData.classroom} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
+                    <option value="" style={{ background: "white", color: "#222" }}>Sélectionner une classe</option>
+                    {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "white", color: "#222" }}>{c.name} ({c.level})</option>)}
+                  </select>
+                </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Date de naissance</label>
-                <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Nom du parent</label>
-                <input type="text" name="parentName" placeholder="Ex: Marie Kabange" value={formData.parentName} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Téléphone parent</label>
-                <input type="text" name="parentPhone" placeholder="Ex: +243..." value={formData.parentPhone} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222" }} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Établissement</label>
-                <select name="school" value={formData.school} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
-                  <option value="" style={{ background: "white", color: "#222" }}>Sélectionner une école</option>
-                  {schools.map(s => <option key={s._id} value={s._id} style={{ background: "white", color: "#222" }}>{s.name}</option>)}
-                </select>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Classe</label>
-                <select name="classroom" value={formData.classroom} onChange={handleChange} style={{ background: "white", border: "2px solid #ccc", padding: "0.8rem", borderRadius: "8px", color: "#222", cursor: "pointer" }} required>
-                  <option value="" style={{ background: "white", color: "#222" }}>Sélectionner une classe</option>
-                  {classrooms.map(c => <option key={c._id} value={c._id} style={{ background: "white", color: "#222" }}>{c.name} ({c.level})</option>)}
-                </select>
-              </div>            </div>
-            {error && <p style={{ color: "#ff5252", fontSize: "0.9rem" }}>{error}</p>}
-            <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }} disabled={saving}>
-              {saving ? "Enregistrement..." : "Inscrire l'élève"}
-            </button>
-          </form>
-        </div>
-      )}
+              {error && <p style={{ color: "#ff5252", fontSize: "0.9rem" }}>{error}</p>}
+              <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.8rem 2rem" }} disabled={saving}>
+                {saving ? "Enregistrement..." : "Inscrire l'élève"}
+              </button>
+            </form>
+          </div>
+        )}
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "1.5rem" }}>Élèves inscrits</h2>
@@ -260,7 +287,7 @@ function StudentsPage() {
                           alignItems: "center",
                           justifyContent: "center",
                           gap: "8px",
-                          background: s.parentPhone ? "#25D366" : "#333", 
+                          background: s.parentPhone ? "#25D356" : "#333", 
                           color: "white", 
                           padding: "0.7rem", 
                           borderRadius: "8px", 

@@ -1,3 +1,8 @@
+/**
+ * @file AssignmentsPage.jsx
+ * @description Page de gestion et de consultation des devoirs pour les enseignants et les élèves.
+ */
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";

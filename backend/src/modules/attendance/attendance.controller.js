@@ -1,8 +1,20 @@
+/**
+ * @module Attendance/Controller
+ * @description Contrôleur gérant les requêtes HTTP liées aux présences.
+ */
+
 const Attendance = require("./attendance.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 
-// Enregistrer une liste de présences
+/**
+ * Enregistre ou met à jour la liste des présences pour une classe et une date données.
+ * @async
+ * @function markAttendance
+ * @param {import('express').Request} req - Requête Express.
+ * @param {import('express').Response} res - Réponse Express.
+ * @returns {Promise<void>}
+ */
 const markAttendance = asyncHandler(async (req, res) => {
   const { classroom, date, attendanceList } = req.body; // attendanceList: [{ student, status, reason }]
 
@@ -19,7 +31,6 @@ const markAttendance = asyncHandler(async (req, res) => {
     reason: item.reason || ""
   }));
 
-  // On nettoie les anciennes entrées pour cette date et cette classe pour éviter les doublons
   const startOfDay = new Date(date || new Date());
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date(date || new Date());
@@ -35,7 +46,14 @@ const markAttendance = asyncHandler(async (req, res) => {
   return apiResponse(res, 201, "Présences enregistrées avec succès.", savedAttendance);
 });
 
-// Récupérer les absences d'un élève (pour le parent/élève)
+/**
+ * Récupère l'historique des présences d'un élève spécifique.
+ * @async
+ * @function getStudentAttendance
+ * @param {import('express').Request} req - Requête Express.
+ * @param {import('express').Response} res - Réponse Express.
+ * @returns {Promise<void>}
+ */
 const getStudentAttendance = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
   const attendance = await Attendance.find({ student: studentId })
@@ -45,7 +63,14 @@ const getStudentAttendance = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Historique récupéré.", attendance);
 });
 
-// Récupérer les présences d'une classe pour une date donnée
+/**
+ * Récupère les présences d'une classe pour une date spécifique.
+ * @async
+ * @function getClassroomAttendance
+ * @param {import('express').Request} req - Requête Express.
+ * @param {import('express').Response} res - Réponse Express.
+ * @returns {Promise<void>}
+ */
 const getClassroomAttendance = asyncHandler(async (req, res) => {
   const { classroomId } = req.params;
   const { date } = req.query;
