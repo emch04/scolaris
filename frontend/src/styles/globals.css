@@ -106,8 +106,22 @@ h3 { font-size: 1.4rem; }
 /* ========== 3. LAYOUT (MISE EN PAGE) ========== */
 .container {
   width: 100%;
+  max-width: 100vw; /* Force la largeur à ne jamais dépasser l'écran */
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 2rem 1rem; /* Padding réduit pour gagner de l'espace sur mobile */
+  box-sizing: border-box;
+}
+
+/* Optimisation spécifique pour les très petits écrans */
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr; /* Une seule colonne sur petit mobile pour éviter le débordement */
+    gap: 1rem;
+  }
 }
 
 /* ========== 4. NAVIGATION (NAVBAR) ========== */
