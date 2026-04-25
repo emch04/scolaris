@@ -56,17 +56,17 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
-// Configuration CORS dynamique
+// Configuration CORS plus souple pour le déploiement et le mobile
 app.use(
   cors({
-    origin: [
-      "https://scolaris2.vercel.app",
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://localhost:5174",
-      "http://127.0.0.1:5174"
-    ],
+    origin: function (origin, callback) {
+      // On autorise tout temporairement pour débloquer le client mobile et diagnostiquer
+      return callback(null, true);
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Cookie"],
+    exposedHeaders: ["Set-Cookie"]
   }),
 );
 
