@@ -38,7 +38,12 @@ const app = express();
 
 // 1. CONFIGURATION CORS (Doit être en premier)
 app.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://scolaris-fucv.onrender.com"],
+  origin: [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://scolaris-fucv.onrender.com",
+    "https://scolaris2.vercel.app"
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Cookie"]
