@@ -29,14 +29,15 @@ function App() {
           background: "#D93025", 
           color: "white", 
           textAlign: "center", 
-          padding: "5px", 
-          fontSize: "0.8rem", 
+          padding: "8px", 
+          fontSize: "0.85rem", 
           fontWeight: "bold",
           position: "fixed",
-          top: 0,
+          bottom: 0, /* Déplacé en bas */
           left: 0,
           right: 0,
-          zIndex: 9999
+          zIndex: 9999,
+          boxShadow: "0 -2px 10px rgba(0,0,0,0.3)"
         }}>
           Mode hors-ligne : les données affichées peuvent ne pas être à jour.
         </div>

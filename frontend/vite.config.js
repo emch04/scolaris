@@ -17,41 +17,60 @@ export default defineConfig({
     // Configuration de la PWA pour une installation facile sur mobile
     VitePWA({
       registerType: 'autoUpdate',
-      manifest: {
-        name: 'Scolaris - Gestion Scolaire',
-        short_name: 'Scolaris',
-        description: 'La plateforme de gestion scolaire moderne pour la RDC',
-        theme_color: '#0a0a0a',
-        background_color: '#0a0a0a',
-        display: 'standalone',
-        icons: [
-          {
-            src: '/assets/image.jpg',
-            sizes: '192x192',
-            type: 'image/jpeg'
-          },
-          {
-            src: '/assets/image.jpg',
-            sizes: '512x512',
-            type: 'image/jpeg'
-          }
-        ]
-      },
+      injectRegister: 'auto',
       workbox: {
-        // Mise en cache des ressources statiques pour l'usage hors-ligne
+        // Mise en cache exhaustive des ressources statiques
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg}'],
         
-        // Stratégie de mise en cache pour l'API (Réseau d'abord, puis cache)
+        // Autorise la synchronisation en arrière-plan
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+
+        // Stratégies de mise en cache dynamique (Offline Mode)
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/scolaris-fucv\.onrender\.com\/api\/.*/i,
-            handler: 'NetworkFirst',
+            // STRATÉGIE CACHE FIRST : Pour les images et médias (chargement instantané)
+            urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp|ico)$/,
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'api-cache',
-              networkTimeoutSeconds: 15, 
+              cacheName: 'images-cache',
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // Durée de rétention : 1 semaine
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 jours
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            },
+          },
+          {
+            // STRATÉGIE CACHE FIRST : Pour les polices d'écriture
+            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 an
+              },
+            },
+          },
+          {
+            // API : Stratégie StaleWhileRevalidate + Background Sync (pour les données métier)
+            urlPattern: /^https:\/\/scolaris-fucv\.onrender\.com\/api\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'api-data-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+              backgroundSync: {
+                name: 'api-sync-queue',
+                options: {
+                  maxRetentionTime: 60 * 24
+                }
               },
               cacheableResponse: {
                 statuses: [0, 200]
