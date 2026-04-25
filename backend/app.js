@@ -7,9 +7,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
 const compression = require("compression");
-const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const path = require("path");
 
@@ -38,39 +36,17 @@ const errorMiddleware = require("./src/middlewares/error.middleware");
 
 const app = express();
 
-// Optimisation : Compression des réponses
+// 1. CONFIGURATION CORS (Doit être en premier)
+app.use(cors({
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://scolaris-fucv.onrender.com"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Cookie"]
+}));
+
+// 2. AUTRES MIDDLEWARES
 app.use(compression());
-
-// Sécurisation des headers HTTP (configuré pour permettre l'affichage des uploads)
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  }),
-);
-
-// Prévention des injections NoSQL
 app.use(mongoSanitize());
-
-// Limitation du taux de requêtes
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: "Trop de requêtes, veuillez réessayer plus tard.",
-});
-app.use("/api", limiter);
-
-// Configuration CORS ultra-souple pour le développement local
-app.use(
-  cors({
-    origin: true, // Autorise l'origine de la requête entrante (très utile en local)
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Cookie"],
-  }),
-);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

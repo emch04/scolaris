@@ -10,6 +10,7 @@ import { getCommunicationsRequest, createCommunicationRequest } from "../service
 import { getClassroomsRequest } from "../services/classroom.api";
 import { getStudentsRequest } from "../services/student.api";
 import { getTeachersRequest } from "../services/teacher.api";
+import { getSchoolsRequest } from "../services/school.api";
 import formatDate from "../utils/formatDate";
 import useAuth from "../hooks/useAuth";
 import { useToast } from "../context/ToastContext";
@@ -21,6 +22,7 @@ function CommunicationsPage() {
   const [classrooms, setClassrooms] = useState([]);
   const [students, setStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
+  const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [file, setFile] = useState(null);
@@ -33,7 +35,8 @@ function CommunicationsPage() {
     classroom: "",
     targetStudent: "",
     targetTeacher: "",
-    targetType: "classe" // "classe", "eleve", "prof"
+    targetSchool: "",
+    targetType: "classe" // "classe", "eleve", "prof", "ecole"
   });
 
   const fetchData = async () => {
@@ -43,27 +46,36 @@ function CommunicationsPage() {
       setCommunications(resComm?.data || []);
 
       if (["teacher", "admin", "director", "super_admin"].includes(user?.role)) {
-        const [resClassrooms, resStudents, resTeachers] = await Promise.all([
+        const fetchPromises = [
           getClassroomsRequest(),
           getStudentsRequest(),
           getTeachersRequest()
-        ]);
-        setClassrooms(resClassrooms?.data || []);
-        setStudents(resStudents?.data || []);
-        setTeachers(resTeachers?.data || []);
+        ];
+
+        if (user.role === "super_admin") {
+          fetchPromises.push(getSchoolsRequest());
+        }
+
+        const results = await Promise.all(fetchPromises);
+        
+        setClassrooms(results[0]?.data || []);
+        setStudents(results[1]?.data?.students || results[1]?.data || []);
+        setTeachers(results[2]?.data || []);
+        
+        if (user.role === "super_admin" && results[3]) {
+          setSchools(results[3]?.data || []);
+        }
       }
     } catch (err) {
       console.error("Erreur de chargement", err);
-      showToast("Erreur de chargement des communications.", "error");
+      showToast("Erreur de chargement des données.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { 
-    fetchData(); 
-    const interval = setInterval(fetchData, 15000);
-    return () => clearInterval(interval);
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -78,11 +90,12 @@ function CommunicationsPage() {
       if (formData.classroom) data.append("classroom", formData.classroom);
       if (formData.targetStudent) data.append("targetStudent", formData.targetStudent);
       if (formData.targetTeacher) data.append("targetTeacher", formData.targetTeacher);
+      if (formData.targetSchool) data.append("targetSchool", formData.targetSchool);
       if (file) data.append("file", file);
 
       await createCommunicationRequest(data);
-      showToast("Message publié et alertes envoyées !");
-      setFormData({ title: "", content: "", type: "communique", classroom: "", targetStudent: "", targetTeacher: "", targetType: "classe" });
+      showToast("Message publié !");
+      setFormData({ title: "", content: "", type: "communique", classroom: "", targetStudent: "", targetTeacher: "", targetSchool: "", targetType: "classe" });
       setFile(null);
       fetchData();
     } catch (err) {
@@ -136,32 +149,42 @@ function CommunicationsPage() {
                 
                 <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem", flexWrap: "wrap" }}>
                   <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
-                    <input type="radio" checked={formData.targetType === "classe"} onChange={() => setFormData({...formData, targetType: "classe", targetTeacher: "", targetStudent: ""})} style={{ width: "16px", height: "16px" }} /> Toute la classe
+                    <input type="radio" checked={formData.targetType === "classe"} onChange={() => setFormData({...formData, targetType: "classe", targetTeacher: "", targetStudent: "", targetSchool: ""})} style={{ width: "16px", height: "16px" }} /> {user.role === 'super_admin' ? 'Toute la plateforme' : 'Toute la classe'}
                   </label>
+                  
+                  {user.role === "super_admin" ? (
+                    <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
+                      <input type="radio" checked={formData.targetType === "ecole"} onChange={() => setFormData({...formData, targetType: "ecole", targetTeacher: "", targetStudent: "", classroom: "", targetSchool: ""})} style={{ width: "16px", height: "16px" }} /> Une école précise
+                    </label>
+                  ) : (
+                    <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
+                      <input type="radio" checked={formData.targetType === "eleve"} onChange={() => setFormData({...formData, targetType: "eleve", targetTeacher: "", targetSchool: ""})} style={{ width: "16px", height: "16px" }} /> Un élève précis
+                    </label>
+                  )}
+
                   <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
-                    <input type="radio" checked={formData.targetType === "eleve"} onChange={() => setFormData({...formData, targetType: "eleve", targetTeacher: ""})} style={{ width: "16px", height: "16px" }} /> Un élève précis
-                  </label>
-                  <label style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem" }}>
-                    <input type="radio" checked={formData.targetType === "prof"} onChange={() => setFormData({...formData, targetType: "prof", targetStudent: "", classroom: ""})} style={{ width: "16px", height: "16px" }} /> Un professeur
+                    <input type="radio" checked={formData.targetType === "prof"} onChange={() => setFormData({...formData, targetType: "prof", targetStudent: "", classroom: "", targetSchool: ""})} style={{ width: "16px", height: "16px" }} /> Un professeur
                   </label>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.8rem" }}>
-                  {(user?.role === "teacher" || formData.targetType === "classe" || formData.targetType === "eleve") && (
+                  {/* Sélection de la classe */}
+                  {(user?.role !== "super_admin" && (formData.targetType === "classe" || formData.targetType === "eleve")) && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                       <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>Classe</label>
                       <select 
                         value={formData.classroom} 
                         onChange={e => setFormData({...formData, classroom: e.target.value, targetStudent: ""})} 
-                        required={user?.role === "teacher" || formData.targetType === "eleve"}
+                        required={formData.targetType === "eleve" || user.role === "teacher"}
                         style={{ padding: "0.5rem 0.7rem", fontSize: "0.85rem" }}
                       >
-                        <option value="">{user?.role === "teacher" ? "Choisir votre classe" : "Toute l'école (Global)"}</option>
+                        <option value="">{user.role === "teacher" ? "Choisir votre classe" : "Toute l'école"}</option>
                         {classrooms.map(c => <option key={c._id} value={c._id}>{c.name} ({c.level})</option>)}
                       </select>
                     </div>
                   )}
                   
+                  {/* Sélection de l'élève */}
                   {formData.targetType === "eleve" && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                       <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>Élève</label>
@@ -178,12 +201,24 @@ function CommunicationsPage() {
                     </div>
                   )}
 
+                  {/* Sélection du professeur */}
                   {formData.targetType === "prof" && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                       <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>Enseignant</label>
                       <select value={formData.targetTeacher} onChange={e => setFormData({...formData, targetTeacher: e.target.value})} required style={{ padding: "0.5rem 0.7rem", fontSize: "0.85rem" }}>
                         <option value="">Choisir l'enseignant</option>
                         {teachers.filter(t => t.role === "teacher").map(t => <option key={t._id} value={t._id}>{t.fullName}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Sélection de l'école (Super Admin uniquement) */}
+                  {formData.targetType === "ecole" && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "0.7rem", opacity: 0.6 }}>École cible</label>
+                      <select value={formData.targetSchool} onChange={e => setFormData({...formData, targetSchool: e.target.value})} required style={{ padding: "0.5rem 0.7rem", fontSize: "0.85rem" }}>
+                        <option value="">Choisir l'école</option>
+                        {schools.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
                       </select>
                     </div>
                   )}
@@ -246,6 +281,7 @@ function CommunicationsPage() {
                   <span>Par {c.author?.fullName}</span>
                   {c.targetStudent && <span style={{ color: "#ff5252", fontWeight: "bold" }}> • Pour: {c.targetStudent?.fullName}</span>}
                   {c.targetTeacher && <span style={{ color: "#F9AB00", fontWeight: "bold" }}> • Pour: {c.targetTeacher?.fullName}</span>}
+                  {c.targetSchool && <span style={{ color: "var(--primary)", fontWeight: "bold" }}> • École: {c.targetSchool?.name}</span>}
                 </div>
                 <p style={{ fontSize: "1rem", lineHeight: "1.6", opacity: 0.8, whiteSpace: "pre-wrap", marginBottom: c.fileUrl ? "1.5rem" : "0" }}>{c.content}</p>
                 

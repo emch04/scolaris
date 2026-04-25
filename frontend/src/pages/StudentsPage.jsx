@@ -29,6 +29,14 @@ function StudentsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // États pour la pagination
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 0,
+    limit: 20
+  });
+
   // Gestion du formulaire de saisie des notes
   const [showScoreForm, setShowScoreForm] = useState(null);
   const [scoreData, setScoreForm] = useState({
@@ -52,16 +60,21 @@ function StudentsPage() {
 
   /**
    * fetchData
-   * Logique : Charge en parallèle les élèves, les écoles et les classes disponibles.
+   * Logique : Charge les données paginées.
    */
-  const fetchData = async () => {
+  const fetchData = async (pageNum = 1) => {
     try {
       const [resStudents, resSchools, resClassrooms] = await Promise.all([
-        getStudentsRequest(),
+        getStudentsRequest(pageNum, 20),
         getSchoolsRequest(),
         getClassroomsRequest()
       ]);
-      setStudents(resStudents?.data || []);
+      
+      const studentsData = resStudents?.data?.students || [];
+      const pagin = resStudents?.data?.pagination || { total: 0, totalPages: 0, limit: 20, page: pageNum };
+      
+      setStudents(studentsData);
+      setPagination(pagin);
       setSchools(resSchools?.data || []);
       setClassrooms(resClassrooms?.data || []);
     } catch (err) {
@@ -71,14 +84,16 @@ function StudentsPage() {
     }
   };
 
-  /**
-   * useEffect : Initialisation et rafraîchissement automatique toutes les 10s.
-   */
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    fetchData(page);
+  }, [page]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -103,7 +118,7 @@ function StudentsPage() {
         school: "",
         classroom: ""
       });
-      fetchData();
+      fetchData(1);
     } catch (err) {
       setError(err?.response?.data?.message || "Erreur lors de la création.");
     } finally {
@@ -154,7 +169,7 @@ function StudentsPage() {
             alignItems: "center",
             gap: "15px"
           }}>
-            <div style={{ fontSize: "2rem", fontWeight: "900", color: "#34A853" }}>{students.length}</div>
+            <div style={{ fontSize: "2rem", fontWeight: "900", color: "#34A853" }}>{pagination.total}</div>
             <div style={{ textAlign: "left" }}>
               <div style={{ fontSize: "0.8rem", fontWeight: "bold", textTransform: "uppercase", opacity: 0.7 }}>Élèves</div>
               <div style={{ fontSize: "0.7rem", opacity: 0.5 }}>Effectif total actuel</div>
@@ -222,152 +237,179 @@ function StudentsPage() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem" }}>
           <h2 style={{ fontSize: "1.3rem" }}>Élèves inscrits</h2>
-          <span style={{ opacity: 0.5, fontSize: "0.85rem" }}>{students.length} élèves au total</span>
+          <span style={{ opacity: 0.5, fontSize: "0.85rem" }}>{pagination.total} élèves au total</span>
         </div>
 
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", padding: "2rem" }}><Loader /></div>
         ) : (
-          <div className="grid">
-            {students.length === 0 ? (
-              <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "2rem", opacity: 0.5 }}>Aucun élève trouvé.</p>
-            ) : (
-              students.map(s => (
-                <div key={s._id} style={{ 
-                  background: "transparent", 
-                  padding: "1.2rem", 
-                  borderRadius: "15px", 
-                  border: "1px solid rgba(255, 255, 255, 0.12)"
-                }}>
-                  <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.4rem" }}>{s.matricule}</div>
-                  <h3 style={{ marginBottom: "0.8rem", fontSize: "1.1rem" }}>{s.fullName}</h3>
-                  <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>
-                    <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                      <strong>Classe:</strong> {s.classroom?.name || "N/A"}
-                    </p>
-                    <p style={{ marginTop: "0.3rem", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                      <strong>Parent:</strong> {s.parentName || "N/A"}
-                    </p>
-                    <p style={{ marginTop: "0.3rem", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                      <strong>Tél:</strong> {s.parentPhone || "N/A"}
-                    </p>
-                  </div>
-                  <div style={{ 
-                    marginTop: "1.2rem", 
-                    paddingTop: "0.8rem", 
-                    borderTop: "1px solid rgba(255,255,255,0.1)" 
+          <>
+            <div className="grid">
+              {students.length === 0 ? (
+                <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "2rem", opacity: 0.5 }}>Aucun élève trouvé.</p>
+              ) : (
+                students.map(s => (
+                  <div key={s._id} style={{ 
+                    background: "transparent", 
+                    padding: "1.2rem", 
+                    borderRadius: "15px", 
+                    border: "1px solid rgba(255, 255, 255, 0.12)"
                   }}>
-                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                      <a 
-                        href={s.parentPhone ? `https://wa.me/${s.parentPhone.replace(/\s+/g, '')}` : "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ 
-                          flex: 1,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "6px",
-                          background: s.parentPhone ? "#25D356" : "#333", 
-                          color: "white", 
-                          padding: "0.5rem", 
-                          borderRadius: "8px", 
-                          fontSize: "0.65rem",
-                          fontWeight: "bold",
-                          textDecoration: "none",
-                          opacity: s.parentPhone ? 1 : 0.3
-                        }}
-                      >
-                        WhatsApp
-                      </a>
-                      <button 
-                        onClick={() => setShowScoreForm(showScoreForm === s._id ? null : s._id)}
-                        style={{ 
-                          flex: 1,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "6px",
-                          background: "#34A853", 
-                          color: "white", 
-                          border: "none",
-                          padding: "0.5rem", 
-                          borderRadius: "8px", 
-                          fontSize: "0.65rem",
-                          fontWeight: "bold",
-                          cursor: "pointer"
-                        }}
-                      >
-                        Note
-                      </button>
+                    <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", marginBottom: "0.4rem" }}>{s.matricule}</div>
+                    <h3 style={{ marginBottom: "0.8rem", fontSize: "1.1rem" }}>{s.fullName}</h3>
+                    <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+                      <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        <strong>Classe:</strong> {s.classroom?.name || "N/A"}
+                      </p>
+                      <p style={{ marginTop: "0.3rem", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <strong>Parent:</strong> {s.parentName || "N/A"}
+                      </p>
+                      <p style={{ marginTop: "0.3rem", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        <strong>Tél:</strong> {s.parentPhone || "N/A"}
+                      </p>
                     </div>
-
-                    {showScoreForm === s._id && (
-                      <form onSubmit={(e) => handleAddScore(e, s._id)} style={{ 
-                        marginTop: "15px", 
-                        background: "rgba(255,255,255,0.05)", 
-                        padding: "15px", 
-                        borderRadius: "12px",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px"
-                      }}>
-                        <div style={{ fontSize: "0.75rem", fontWeight: "bold", marginBottom: "2px", color: "var(--primary)" }}>NOTES</div>
-                        
-                        <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                          <input
-                            placeholder="Matière"
-                            list="subjects-list"
-                            value={scoreData.subject}
-                            onChange={e => setScoreForm({...scoreData, subject: e.target.value})}
-                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
-                            required
-                          />
-                        </div>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                          <input 
-                            type="number"
-                            placeholder="Note" 
-                            value={scoreData.score}
-                            onChange={e => setScoreForm({...scoreData, score: e.target.value})}
-                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
-                            required
-                          />
-                          <input 
-                            type="number"
-                            placeholder="Max" 
-                            value={scoreData.maxScore}
-                            onChange={e => setScoreForm({...scoreData, maxScore: e.target.value})}
-                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
-                            required
-                          />
-                        </div>
-
-                        <select 
-                          value={scoreData.period}
-                          onChange={e => setScoreForm({...scoreData, period: e.target.value})}
-                          style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
+                    <div style={{ 
+                      marginTop: "1.2rem", 
+                      paddingTop: "0.8rem", 
+                      borderTop: "1px solid rgba(255,255,255,0.1)" 
+                    }}>
+                      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                        <a 
+                          href={s.parentPhone ? `https://wa.me/${s.parentPhone.replace(/\s+/g, '')}` : "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ 
+                            flex: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "6px",
+                            background: s.parentPhone ? "#25D356" : "#333", 
+                            color: "white", 
+                            padding: "0.5rem", 
+                            borderRadius: "8px", 
+                            fontSize: "0.65rem",
+                            fontWeight: "bold",
+                            textDecoration: "none",
+                            opacity: s.parentPhone ? 1 : 0.3
+                          }}
                         >
-                          <option value="Trimestre 1">T1</option>
-                          <option value="Trimestre 2">T2</option>
-                          <option value="Trimestre 3">T3</option>
-                          <option value="Examen État">Examen</option>
-                        </select>
-
-                        <button type="submit" className="btn btn-primary" style={{ padding: "10px", fontSize: "0.8rem", fontWeight: "bold" }}>
-                          ENREGISTRER
+                          WhatsApp
+                        </a>
+                        <button 
+                          onClick={() => setShowScoreForm(showScoreForm === s._id ? null : s._id)}
+                          style={{ 
+                            flex: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "6px",
+                            background: "#34A853", 
+                            color: "white", 
+                            border: "none",
+                            padding: "0.5rem", 
+                            borderRadius: "8px", 
+                            fontSize: "0.65rem",
+                            fontWeight: "bold",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Note
                         </button>
-                      </form>
-                    )}
+                      </div>
+
+                      {showScoreForm === s._id && (
+                        <form onSubmit={(e) => handleAddScore(e, s._id)} style={{ 
+                          marginTop: "15px", 
+                          background: "rgba(255,255,255,0.05)", 
+                          padding: "15px", 
+                          borderRadius: "12px",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "10px"
+                        }}>
+                          <div style={{ fontSize: "0.75rem", fontWeight: "bold", marginBottom: "2px", color: "var(--primary)" }}>NOTES</div>
+                          
+                          <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                            <input
+                              placeholder="Matière"
+                              list="subjects-list"
+                              value={scoreData.subject}
+                              onChange={e => setScoreForm({...scoreData, subject: e.target.value})}
+                              style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
+                              required
+                            />
+                          </div>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                            <input 
+                              type="number"
+                              placeholder="Note" 
+                              value={scoreData.score}
+                              onChange={e => setScoreForm({...scoreData, score: e.target.value})}
+                              style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
+                              required
+                            />
+                            <input 
+                              type="number"
+                              placeholder="Max" 
+                              value={scoreData.maxScore}
+                              onChange={e => setScoreForm({...scoreData, maxScore: e.target.value})}
+                              style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
+                              required
+                            />
+                          </div>
+
+                          <select 
+                            value={scoreData.period}
+                            onChange={e => setScoreForm({...scoreData, period: e.target.value})}
+                            style={{ background: "white", color: "#222", border: "1px solid #ccc", padding: "8px", fontSize: "0.85rem", borderRadius: "6px" }}
+                          >
+                            <option value="Trimestre 1">T1</option>
+                            <option value="Trimestre 2">T2</option>
+                            <option value="Trimestre 3">T3</option>
+                            <option value="Examen État">Examen</option>
+                          </select>
+
+                          <button type="submit" className="btn btn-primary" style={{ padding: "10px", fontSize: "0.8rem", fontWeight: "bold" }}>
+                            ENREGISTRER
+                          </button>
+                        </form>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                ))
+              )}
+            </div>
+
+            {/* Contrôles de Pagination */}
+            {pagination.totalPages > 1 && (
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", marginTop: "3rem", paddingBottom: "2rem" }}>
+                <button 
+                  onClick={() => handlePageChange(page - 1)} 
+                  disabled={page === 1}
+                  className="btn"
+                  style={{ background: "rgba(255,255,255,0.05)", color: "white", padding: "8px 15px", borderRadius: "10px", opacity: page === 1 ? 0.3 : 1 }}
+                >
+                  ← Précédent
+                </button>
+                <span style={{ fontSize: "0.9rem", fontWeight: "bold", opacity: 0.7 }}>
+                  Page {page} sur {pagination.totalPages}
+                </span>
+                <button 
+                  onClick={() => handlePageChange(page + 1)} 
+                  disabled={page === pagination.totalPages}
+                  className="btn"
+                  style={{ background: "rgba(255,255,255,0.05)", color: "white", padding: "8px 15px", borderRadius: "10px", opacity: page === pagination.totalPages ? 0.3 : 1 }}
+                >
+                  Suivant →
+                </button>
+              </div>
             )}
-          </div>
+          </>
         )}
       </main>
     </>

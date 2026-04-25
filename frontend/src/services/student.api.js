@@ -1,10 +1,11 @@
 import apiClient from "./apiClient";
 
 /**
- * Récupère la liste des élèves de l'école (pour le directeur).
- * @returns {Promise<Array>} Liste des élèves.
+ * Récupère la liste des élèves de l'école (paginée).
+ * @param {number} page - Numéro de la page.
+ * @param {number} limit - Nombre d'éléments par page.
  */
-export const getStudentsRequest = async () => (await apiClient.get("/students")).data;
+export const getStudentsRequest = async (page = 1, limit = 20) => (await apiClient.get(`/students?page=${page}&limit=${limit}`)).data;
 
 /**
  * Récupère les données du tableau de bord d'un élève.

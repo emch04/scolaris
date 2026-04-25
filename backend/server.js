@@ -11,6 +11,7 @@ const app = require("./app");
 
 // On importe la fonction de connexion à MongoDB
 const connectDB = require("./src/config/db");
+const { initCache } = require("./src/utils/cache.service");
 
 // On récupère le port depuis les variables d'environnement
 const PORT = process.env.PORT || 5001;
@@ -25,6 +26,9 @@ const PORT = process.env.PORT || 5001;
 
     // On se connecte d'abord à la base de données
     await connectDB();
+
+    // Initialisation du cache
+    await initCache();
 
     // Une fois MongoDB connecté, on démarre le serveur HTTP
     app.listen(PORT, () => {

@@ -7,8 +7,16 @@ const Classroom = require("../classrooms/classroom.model");
 const Result = require("../results/result.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
+const { getCache, setCache } = require("../../utils/cache.service");
 
 const getGlobalStats = asyncHandler(async (req, res) => {
+  const cacheKey = "global_stats";
+  const cachedData = await getCache(cacheKey);
+
+  if (cachedData) {
+    return apiResponse(res, 200, "Statistiques globales récupérées (cache).", cachedData);
+  }
+
   const [
     totalSchools,
     totalStudents,
@@ -25,12 +33,6 @@ const getGlobalStats = asyncHandler(async (req, res) => {
     Classroom.countDocuments()
   ]);
 
-  // Calcul des tendances (6 derniers mois) en une seule fois pour plus de rapidité
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-  sixMonthsAgo.setDate(1);
-
-  // Statistiques de croissance (6 derniers mois) - Version Robuste et Parallèle
   const months = [];
   const trendPromises = [];
   
@@ -50,7 +52,7 @@ const getGlobalStats = asyncHandler(async (req, res) => {
 
   const enrollmentTrend = await Promise.all(trendPromises);
 
-  return apiResponse(res, 200, "Statistiques globales récupérées.", {
+  const statsData = {
     counts: {
       schools: totalSchools,
       students: totalStudents,
@@ -63,7 +65,12 @@ const getGlobalStats = asyncHandler(async (req, res) => {
       labels: months,
       data: enrollmentTrend
     }
-  });
+  };
+
+  // Mise en cache pour 15 minutes (900 secondes)
+  await setCache(cacheKey, statsData, 900);
+
+  return apiResponse(res, 200, "Statistiques globales récupérées.", statsData);
 });
 
 /**
@@ -72,16 +79,24 @@ const getGlobalStats = asyncHandler(async (req, res) => {
  */
 const getTeacherStats = asyncHandler(async (req, res) => {
   const teacherId = req.user.id;
+  const cacheKey = `teacher_stats_${teacherId}`;
+  
+  const cachedData = await getCache(cacheKey);
+  if (cachedData) {
+    return apiResponse(res, 200, "Statistiques enseignant récupérées (cache).", cachedData);
+  }
 
   // Récupérer tous les résultats saisis par ce professeur
   const results = await Result.find({ teacher: teacherId });
 
   if (!results || results.length === 0) {
-    return apiResponse(res, 200, "Aucune donnée disponible pour ce professeur.", {
+    const emptyStats = {
       average: 0,
       successRate: 0,
       totalGrades: 0
-    });
+    };
+    await setCache(cacheKey, emptyStats, 300);
+    return apiResponse(res, 200, "Aucune donnée disponible pour ce professeur.", emptyStats);
   }
 
   // Calculer la moyenne globale (ramenée sur 20)
@@ -92,12 +107,16 @@ const getTeacherStats = asyncHandler(async (req, res) => {
   const successCount = results.filter(r => (r.score / r.maxScore) >= 0.5).length;
   const successRate = ((successCount / results.length) * 100).toFixed(0);
 
-  return apiResponse(res, 200, "Statistiques enseignant récupérées.", {
+  const statsData = {
     average: parseFloat(average),
     successRate: parseInt(successRate),
     totalGrades: results.length
-  });
+  };
+
+  // Mise en cache pour 5 minutes (300 secondes)
+  await setCache(cacheKey, statsData, 300);
+
+  return apiResponse(res, 200, "Statistiques enseignant récupérées.", statsData);
 });
 
 module.exports = { getGlobalStats, getTeacherStats };
-;

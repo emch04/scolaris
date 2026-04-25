@@ -2,7 +2,8 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 // Import des services
-const { createStudent, getAllStudents, getStudentDashboardData } = require("./student.service");
+const { createStudent, getAllStudents, getStudentDashboardData, countStudents } = require("./student.service");
+
 // Créer un élève
 const create = asyncHandler(async (req, res) => {
   // On appelle le service de création
@@ -10,8 +11,10 @@ const create = asyncHandler(async (req, res) => {
   // Réponse de succès
   return apiResponse(res, 201, "Élève créé avec succès.", student);
 });
+
 /**
  * Récupère la liste des étudiants, filtrée par école pour les directeurs.
+ * Supporte la pagination via les query params 'page' et 'limit'.
  */
 const getStudents = asyncHandler(async (req, res) => {
   const filter = {};
@@ -21,10 +24,27 @@ const getStudents = asyncHandler(async (req, res) => {
     filter.school = req.user.school;
   }
 
-  // On récupère les élèves selon le filtre
-  const students = await getAllStudents(filter);
-  // Réponse
-  return apiResponse(res, 200, "Liste des élèves récupérée avec succès.", students);
+  // Paramètres de pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  // On récupère les élèves paginés et le total
+  const [students, total] = await Promise.all([
+    getAllStudents(filter, skip, limit),
+    countStudents(filter)
+  ]);
+
+  // Réponse enrichie avec métadonnées de pagination
+  return apiResponse(res, 200, "Liste des élèves récupérée avec succès.", {
+    students,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  });
 });
 
 // Récupérer le dashboard d'un élève

@@ -50,18 +50,29 @@ const getStudentDashboardData = async (studentId) => {
 };
 
 /**
- * Récupère la liste de tous les élèves selon les critères de filtrage.
+ * Récupère la liste des élèves selon les critères de filtrage et pagination.
  */
-const getAllStudents = async (filter = {}) => {
+const getAllStudents = async (filter = {}, skip = 0, limit = 20) => {
   // On retourne la liste avec les relations utiles
   return await Student.find(filter)
     .populate("school", "name code")
     .populate("classroom", "name level")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
 };
+
+/**
+ * Compte le nombre total d'élèves selon un filtre.
+ */
+const countStudents = async (filter = {}) => {
+  return await Student.countDocuments(filter);
+};
+
 // Export
 module.exports = {
   createStudent,
   getAllStudents,
-  getStudentDashboardData
+  getStudentDashboardData,
+  countStudents
 };
