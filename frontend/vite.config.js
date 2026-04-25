@@ -35,7 +35,7 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
-              networkTimeoutSeconds: 5, // Si internet ne répond pas en 5s, utilise le cache
+              networkTimeoutSeconds: 10, 
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 1 semaine
