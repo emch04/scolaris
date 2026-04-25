@@ -32,12 +32,16 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/scolaris-fucv\.onrender\.com\/api\/.*/i,
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
+              networkTimeoutSeconds: 5, // Si internet ne répond pas en 5s, utilise le cache
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 1 semaine
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           }

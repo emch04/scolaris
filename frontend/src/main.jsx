@@ -6,6 +6,10 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import { ToastProvider } from "./context/ToastContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import "./styles/globals.css";
+import { registerSW } from 'virtual:pwa-register';
+
+// Enregistrement du Service Worker pour la PWA
+registerSW({ immediate: true });
 
 const rootElement = document.getElementById("root");
 

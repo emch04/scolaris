@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const checkSession = async () => {
-      // Si on n'a pas d'utilisateur du tout dans le storage, on ne fait rien (évite les requêtes inutiles)
       if (!getUser()) {
         setLoading(false);
         return;
@@ -27,9 +26,15 @@ export function AuthProvider({ children }) {
           setCurrentUser(receivedUser);
         }
       } catch (error) {
-        console.log("Session non active.");
-        clearAuthStorage();
-        setCurrentUser(null);
+        // Ne déconnecter que si le serveur répond explicitement que le token est invalide
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          console.log("Session expirée ou invalide.");
+          clearAuthStorage();
+          setCurrentUser(null);
+        } else {
+          // Erreur réseau ou serveur injoignable, on garde la session locale
+          console.log("Serveur injoignable ou erreur réseau, conservation de la session locale.");
+        }
       } finally {
         setLoading(false);
       }

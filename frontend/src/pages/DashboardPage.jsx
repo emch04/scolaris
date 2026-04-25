@@ -8,30 +8,46 @@ function DashboardPage() {
   const { user } = useAuth();
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    const fetchStats = () => {
-      if (user?.role === "super_admin") {
-        getGlobalStatsRequest()
-          .then(res => setStatsData(res?.data))
-          .catch(err => console.error("Erreur stats:", err))
-          .finally(() => setLoading(false));
-      } else if (["admin", "director", "teacher"].includes(user?.role)) {
-        getTeacherStatsRequest()
-          .then(res => setStatsData(res?.data))
-          .catch(err => console.error("Erreur stats enseignant:", err))
-          .finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    };
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  const fetchStats = () => {
+    setLoading(true);
+    if (user?.role === "super_admin") {
+      getGlobalStatsRequest()
+        .then(res => setStatsData(res?.data))
+        .catch(err => console.error("Erreur stats:", err))
+        .finally(() => setLoading(false));
+    } else if (["admin", "director", "teacher"].includes(user?.role)) {
+      getTeacherStatsRequest()
+        .then(res => setStatsData(res?.data))
+        .catch(err => console.error("Erreur stats enseignant:", err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStats();
-    const interval = setInterval(fetchStats, 10000); // 10 secondes
+    const interval = setInterval(fetchStats, 30000); // Augmenté à 30 secondes pour économiser la batterie en PWA
     return () => clearInterval(interval);
   }, [user]);
 
-  // Configuration dynamique des cartes selon le rôle
+  // ... (reste du code identique jusqu'au return)
+
   const getStatsConfig = () => {
     const role = user?.role;
     const base = [
@@ -89,6 +105,45 @@ function DashboardPage() {
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <h1 style={{ fontSize: "2.8rem", fontWeight: "900", marginBottom: "0.5rem" }}>Tableau de Bord</h1>
           <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Bienvenue, <strong>{user?.fullName}</strong>. Voici vos outils de gestion.</p>
+          
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "center", 
+            gap: "10px", 
+            marginTop: "1rem",
+            alignItems: "center"
+          }}>
+            <span style={{ 
+              padding: "5px 12px", 
+              borderRadius: "20px", 
+              fontSize: "0.8rem", 
+              background: isOnline ? "rgba(52, 168, 83, 0.1)" : "rgba(234, 67, 53, 0.1)",
+              color: isOnline ? "#34A853" : "#EA4335",
+              border: `1px solid ${isOnline ? "#34A85340" : "#EA433540"}`,
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }}>
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: isOnline ? "#34A853" : "#EA4335" }}></div>
+              {isOnline ? "En ligne" : "Hors-ligne (Données en cache)"}
+            </span>
+
+            <button 
+              onClick={fetchStats}
+              disabled={loading || !isOnline}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--primary)",
+                cursor: "pointer",
+                fontSize: "0.8rem",
+                textDecoration: "underline",
+                opacity: loading ? 0.5 : 1
+              }}
+            >
+              {loading ? "Mise à jour..." : "Actualiser"}
+            </button>
+          </div>
         </div>
 
         {/* Section Cartes de Couleur */}
