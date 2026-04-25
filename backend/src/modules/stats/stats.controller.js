@@ -30,26 +30,9 @@ const getGlobalStats = asyncHandler(async (req, res) => {
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
   sixMonthsAgo.setDate(1);
 
-  const studentsTrend = await Student.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: sixMonthsAgo }
-      }
-    },
-    {
-      $group: {
-        _id: {
-          month: { $month: "$createdAt" },
-          year: { $year: "$createdAt" }
-        },
-        count: { $sum: 1 }
-      }
-    },
-    { $sort: { "_id.year": 1, "_id.month": 1 } }
-  ]);
-
+  // Statistiques de croissance (6 derniers mois) - Version Robuste et Parallèle
   const months = [];
-  const enrollmentTrend = [];
+  const trendPromises = [];
   
   for (let i = 5; i >= 0; i--) {
     const d = new Date();
@@ -57,11 +40,15 @@ const getGlobalStats = asyncHandler(async (req, res) => {
     const monthLabel = d.toLocaleString('fr-FR', { month: 'short' });
     months.push(monthLabel);
     
-    const m = d.getMonth() + 1;
-    const y = d.getFullYear();
-    const match = studentsTrend.find(t => t._id.month === m && t._id.year === y);
-    enrollmentTrend.push(match ? match.count : 0);
+    const startOfMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+    const endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+    
+    trendPromises.push(Student.countDocuments({
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+    }));
   }
+
+  const enrollmentTrend = await Promise.all(trendPromises);
 
   return apiResponse(res, 200, "Statistiques globales récupérées.", {
     counts: {
