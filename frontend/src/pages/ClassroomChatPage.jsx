@@ -34,10 +34,14 @@ function ClassroomChatPage() {
   };
 
   const fetchMessages = async () => {
+    if (!user) return; // Ne pas charger si pas d'utilisateur
     try {
       const res = await getClassroomMessagesRequest(classroomId);
       setMessages(res?.data || []);
     } catch (err) {
+      if (err.response?.status === 401) {
+        console.warn("Session expirée dans le chat.");
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -45,10 +49,15 @@ function ClassroomChatPage() {
   };
 
   useEffect(() => {
+    if (!user) return;
     fetchMessages();
-    const interval = setInterval(fetchMessages, 5000); // Rafraîchissement auto
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchMessages();
+      }
+    }, 5000);
     return () => clearInterval(interval);
-  }, [classroomId]);
+  }, [classroomId, user]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
