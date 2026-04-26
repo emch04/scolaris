@@ -62,5 +62,10 @@ const studentSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+studentSchema.index({ school: 1 });
+studentSchema.index({ classroom: 1 });
+studentSchema.index({ createdAt: -1 });
+
 // Export
 module.exports = mongoose.model("Student", studentSchema);

@@ -4,8 +4,11 @@ const { addResource, getResources, deleteResource } = require("./resource.contro
 const authMiddleware = require("../../middlewares/auth.middleware");
 const { authorizeRoles } = require("../../middlewares/auth.middleware");
 const upload = require("../../middlewares/upload.middleware");
+const featureGuard = require("../../middlewares/featureGuard");
 
-router.get("/", authMiddleware, getResources);
+// On bloque l'accès à la bibliothèque si l'interrupteur est sur OFF
+router.get("/", authMiddleware, featureGuard("library_access"), getResources);
+
 router.post("/", authMiddleware, authorizeRoles("teacher", "admin", "director", "super_admin"), upload.single("file"), addResource);
 router.delete("/:id", authMiddleware, authorizeRoles("admin", "director", "super_admin"), deleteResource);
 

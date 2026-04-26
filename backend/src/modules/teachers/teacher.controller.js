@@ -1,77 +1,63 @@
 // Import utilitaires
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-// Import service
-const { getAllTeachers, getTeacherById, updateTeacherById, deleteTeacherById } = require("./teacher.service");
+const { getAllTeachers, countTeachers, getTeacherById, updateTeacherById, deleteTeacherById } = require("./teacher.service");
+const ROLES = require("../../constants/roles");
 
 const Student = require("../students/student.model");
 const Parent = require("../parents/parent.model");
 
-// Liste enseignants
 const getTeachers = asyncHandler(async (req, res) => {
   const filter = {};
+  const requesterRole = req.user.role;
   
-  if (req.user.role === "super_admin") {
-    // Voit tout
-  } else if (req.user.role === "parent") {
-    // Un parent voit les profs des écoles de ses enfants
+  if ([ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN].includes(requesterRole)) {
+    // Voit tout (sous réserve du filtre d'invisibilité dans le service)
+  } else if (requesterRole === ROLES.PARENT) {
     const parent = await Parent.findById(req.user.id);
     if (!parent) return apiResponse(res, 404, "Parent non trouvé.");
-    
     const students = await Student.find({ _id: { $in: parent.children } });
     const schoolIds = students.map(s => s.school).filter(s => s != null);
     filter.school = { $in: schoolIds };
   } else {
-    // Admin/Directeur/Enseignant voit son école
     filter.school = req.user.school;
   }
 
-  // On récupère les enseignants
-  const teachers = await getAllTeachers(filter);
-  // Réponse
-  return apiResponse(res, 200, "Liste des enseignants récupérée avec succès.", teachers);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  const [teachers, total] = await Promise.all([
+    getAllTeachers(filter, skip, limit, search, requesterRole),
+    countTeachers(filter, search, requesterRole)
+  ]);
+
+  return apiResponse(res, 200, "Liste récupérée.", {
+    teachers,
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
+  });
 });
 
-// Récupérer un enseignant
 const getTeacher = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const teacher = await getTeacherById(id);
-  
-  if (!teacher) {
-    return apiResponse(res, 404, "Enseignant non trouvé.");
-  }
-
-  return apiResponse(res, 200, "Détails de l'enseignant récupérés.", teacher);
+  if (!teacher) return apiResponse(res, 404, "Non trouvé.");
+  return apiResponse(res, 200, "Détails récupérés.", teacher);
 });
 
-// Mettre à jour un enseignant
 const updateTeacher = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const teacher = await updateTeacherById(id, req.body);
-  
-  if (!teacher) {
-    return apiResponse(res, 404, "Enseignant non trouvé.");
-  }
-
-  return apiResponse(res, 200, "Enseignant mis à jour avec succès.", teacher);
+  if (!teacher) return apiResponse(res, 404, "Non trouvé.");
+  return apiResponse(res, 200, "Mis à jour.", teacher);
 });
 
-// Supprimer un enseignant
 const deleteTeacher = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const deleted = await deleteTeacherById(id);
-  
-  if (!deleted) {
-    return apiResponse(res, 404, "Membre du personnel non trouvé.");
-  }
-
-  return apiResponse(res, 200, "Membre du personnel supprimé avec succès.");
+  if (!deleted) return apiResponse(res, 404, "Non trouvé.");
+  return apiResponse(res, 200, "Supprimé.");
 });
 
-// Export
-module.exports = {
-  getTeachers,
-  getTeacher,
-  updateTeacher,
-  deleteTeacher
-};
+module.exports = { getTeachers, getTeacher, updateTeacher, deleteTeacher };

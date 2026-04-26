@@ -19,9 +19,9 @@ const getParentChildren = async (parentId) => {
 };
 
 /**
- * Récupère tous les parents (avec leurs enfants)
+ * Récupère tous les parents (avec leurs enfants) - Paginé
  */
-const getAllParents = async (filter = {}) => {
+const getAllParents = async (filter = {}, skip = 0, limit = 20) => {
   let query = {};
   
   // Si un filtrage par école est demandé
@@ -30,7 +30,23 @@ const getAllParents = async (filter = {}) => {
     query.children = { $in: studentIdsInSchool.map(s => s._id) };
   }
 
-  return await Parent.find(query).populate("children", "fullName matricule classroom");
+  return await Parent.find(query)
+    .populate("children", "fullName matricule classroom")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+/**
+ * Compte le nombre total de parents.
+ */
+const countParents = async (filter = {}) => {
+  let query = {};
+  if (filter.school) {
+    const studentIdsInSchool = await Student.find({ school: filter.school }).select("_id");
+    query.children = { $in: studentIdsInSchool.map(s => s._id) };
+  }
+  return await Parent.countDocuments(query);
 };
 
 /**
@@ -68,6 +84,7 @@ module.exports = {
   getParentChildren, 
   getChildrenAssignments, 
   getAllParents, 
+  countParents,
   getParentById,
   updateParent 
 };

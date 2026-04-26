@@ -1,63 +1,42 @@
-// Import des utilitaires
+const Student = require("./student.model");
+const { createStudent, getAllStudents, countStudents, getStudentDashboardData } = require("./student.service");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-// Import des services
-const { createStudent, getAllStudents, getStudentDashboardData, countStudents } = require("./student.service");
+const ROLES = require("../../constants/roles");
 
-// Créer un élève
 const create = asyncHandler(async (req, res) => {
-  // On appelle le service de création
   const student = await createStudent(req.body);
-  // Réponse de succès
   return apiResponse(res, 201, "Élève créé avec succès.", student);
 });
 
-/**
- * Récupère la liste des étudiants, filtrée par école pour les directeurs.
- * Supporte la pagination via les query params 'page' et 'limit'.
- */
 const getStudents = asyncHandler(async (req, res) => {
   const filter = {};
   
-  // Si ce n'est pas un Super Admin, on filtre par école
-  if (req.user.role !== "super_admin") {
+  // HERO ADMIN et SUPER ADMIN voient tout. Les autres sont filtrés par école.
+  if (![ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN].includes(req.user.role)) {
     filter.school = req.user.school;
   }
 
-  // Paramètres de pagination
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
   const skip = (page - 1) * limit;
+  const search = req.query.search || "";
 
-  // On récupère les élèves paginés et le total
   const [students, total] = await Promise.all([
-    getAllStudents(filter, skip, limit),
-    countStudents(filter)
+    getAllStudents(filter, skip, limit, search),
+    countStudents(filter, search)
   ]);
 
-  // Réponse enrichie avec métadonnées de pagination
-  return apiResponse(res, 200, "Liste des élèves récupérée avec succès.", {
+  return apiResponse(res, 200, "Liste des élèves récupérée.", {
     students,
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    }
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
   });
 });
 
-// Récupérer le dashboard d'un élève
 const getDashboard = asyncHandler(async (req, res) => {
-  // L'id de l'élève est dans req.user.id
   const data = await getStudentDashboardData(req.user.id);
   if (!data) return apiResponse(res, 404, "Élève non trouvé.");
-  return apiResponse(res, 200, "Données du dashboard récupérées.", data);
+  return apiResponse(res, 200, "Données récupérées.", data);
 });
 
-// Export
-module.exports = {
-  create,
-  getStudents,
-  getDashboard
-};
+module.exports = { create, getStudents, getDashboard };

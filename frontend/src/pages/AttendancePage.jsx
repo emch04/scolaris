@@ -45,8 +45,8 @@ function AttendancePage() {
         .then(res => setHistory(res?.data || []))
         .finally(() => setLoading(false));
     } else {
-      getClassroomsRequest()
-        .then(res => setClassrooms(res?.data || []))
+      getClassroomsRequest(1, 100) // On récupère jusqu'à 100 classes
+        .then(res => setClassrooms(res?.data?.classrooms || res?.data || []))
         .finally(() => setLoading(false));
     }
   }, [studentId]);
@@ -65,8 +65,10 @@ function AttendancePage() {
 
     setLoading(true);
     try {
-      const resStudents = await getStudentsRequest();
-      const filtered = resStudents?.data?.filter(s => s.classroom?._id === classId || s.classroom === classId) || [];
+      // Pour l'appel, on récupère une liste complète (ex: 100 élèves)
+      const resStudents = await getStudentsRequest(1, 100);
+      const allStudents = resStudents?.data?.students || resStudents?.data || [];
+      const filtered = allStudents.filter(s => (s.classroom?._id || s.classroom) === classId) || [];
       setStudents(filtered);
 
       const resAttendance = await getClassroomAttendanceRequest(classId, date);

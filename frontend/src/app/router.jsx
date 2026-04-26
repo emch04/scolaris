@@ -30,10 +30,19 @@ import TermsPage from "../pages/TermsPage";
 import SchoolRegistrationPage from "../pages/SchoolRegistrationPage";
 import AboutPage from "../pages/AboutPage";
 import GuidePage from "../pages/GuidePage";
+import LogsPage from "../pages/LogsPage";
+import SettingsPage from "../pages/SettingsPage";
+import RegistrationStatsPage from "../pages/RegistrationStatsPage";
+import TreasuryPage from "../pages/TreasuryPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRouter() {
-  const STAFF = ["super_admin", "admin", "director", "teacher"];
+  // Tout le personnel (y compris secrétaire)
+  const STAFF = ["hero_admin", "super_admin", "admin", "director", "teacher", "secretary"];
+  // Personnel administratif (ceux qui gèrent les classes, parents, etc.)
+  const ADMIN_STAFF = ["hero_admin", "super_admin", "admin", "director", "secretary"];
+  // Uniquement la haute direction
+  const HIGHER_STAFF = ["hero_admin", "super_admin", "admin", "director"];
 
   return (
     <Routes>
@@ -45,7 +54,6 @@ function AppRouter() {
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       
-      {/* Pages réservées au Staff (Écoles, Classes, Élèves, Devoirs prof) */}
       <Route path="/dashboard" element={<ProtectedRoute allowedRoles={STAFF}><DashboardPage /></ProtectedRoute>} />
       <Route path="/students" element={<ProtectedRoute allowedRoles={STAFF}><StudentsPage /></ProtectedRoute>} />
       <Route path="/attendance" element={<ProtectedRoute allowedRoles={STAFF}><AttendancePage /></ProtectedRoute>} />
@@ -59,10 +67,20 @@ function AppRouter() {
       <Route path="/course-plans" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><CoursePlanPage /></ProtectedRoute>} />
       <Route path="/course-plans/:classroomId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><CoursePlanPage /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><MessagesPage /></ProtectedRoute>} />
-      <Route path="/parents" element={<ProtectedRoute allowedRoles={["super_admin", "admin", "director"]}><ParentsPage /></ProtectedRoute>} />
-      <Route path="/teachers" element={<ProtectedRoute allowedRoles={["super_admin", "admin", "director"]}><TeachersPage /></ProtectedRoute>} />
-      <Route path="/classrooms" element={<ProtectedRoute allowedRoles={["super_admin", "admin", "director"]}><ClassroomsPage /></ProtectedRoute>} />
-      <Route path="/schools" element={<ProtectedRoute allowedRoles={["super_admin"]}><SchoolsPage /></ProtectedRoute>} />
+      
+      {/* CORRECTION : On utilise ADMIN_STAFF (inclut Secretary) au lieu de HIGHER_STAFF */}
+      <Route path="/parents" element={<ProtectedRoute allowedRoles={ADMIN_STAFF}><ParentsPage /></ProtectedRoute>} />
+      <Route path="/teachers" element={<ProtectedRoute allowedRoles={HIGHER_STAFF}><TeachersPage /></ProtectedRoute>} />
+      <Route path="/classrooms" element={<ProtectedRoute allowedRoles={ADMIN_STAFF}><ClassroomsPage /></ProtectedRoute>} />
+      
+      <Route path="/schools" element={<ProtectedRoute allowedRoles={["hero_admin", "super_admin"]}><SchoolsPage /></ProtectedRoute>} />
+      
+      <Route path="/logs" element={<ProtectedRoute allowedRoles={["hero_admin"]}><LogsPage /></ProtectedRoute>} />
+      <Route path="/system-settings" element={<ProtectedRoute allowedRoles={["hero_admin"]}><SettingsPage /></ProtectedRoute>} />
+      <Route path="/registration-stats" element={<ProtectedRoute allowedRoles={HIGHER_STAFF}><RegistrationStatsPage /></ProtectedRoute>} />
+      
+      <Route path="/treasury" element={<ProtectedRoute allowedRoles={ADMIN_STAFF}><TreasuryPage /></ProtectedRoute>} />
+      
       <Route path="/assignments" element={<ProtectedRoute allowedRoles={STAFF}><AssignmentsPage /></ProtectedRoute>} />
       <Route path="/assignment/:assignmentId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><AssignmentDetailPage /></ProtectedRoute>} />
       <Route path="/communications" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><CommunicationsPage /></ProtectedRoute>} />
@@ -70,13 +88,8 @@ function AppRouter() {
       <Route path="/bulletin/:studentId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><ReportCardPage /></ProtectedRoute>} />
       <Route path="/notes/:studentId" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><GradesPage /></ProtectedRoute>} />
       
-      {/* Page réservée aux Parents */}
       <Route path="/parent/dashboard" element={<ProtectedRoute allowedRoles={["parent"]}><ParentDashboardPage /></ProtectedRoute>} />
-      
-      {/* Page réservée aux Élèves */}
       <Route path="/student/dashboard" element={<ProtectedRoute allowedRoles={["student"]}><StudentDashboardPage /></ProtectedRoute>} />
-      
-      {/* Pages réservées aux utilisateurs connectés */}
       <Route path="/devoirs" element={<ProtectedRoute allowedRoles={[...STAFF, "parent", "student"]}><ViewDevoirPage /></ProtectedRoute>} />
       <Route path="/contact" element={<ContactPage />} />
     </Routes>

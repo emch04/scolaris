@@ -8,23 +8,28 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getParentsRequest, updateParentRequest } from "../services/parent.api";
 import { getStudentsRequest } from "../services/student.api";
+import { useToast } from "../context/ToastContext";
 
 function ParentsPage() {
   const [parents, setParents] = useState([]);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState({});
+  const [pagination, setPagination] = useState({ total: 0 });
+  const { showToast } = useToast();
 
   const fetchData = async () => {
     try {
       const [resParents, resStudents] = await Promise.all([
-        getParentsRequest(),
-        getStudentsRequest()
+        getParentsRequest(1, 100),
+        getStudentsRequest(1, 100)
       ]);
-      setParents(resParents?.data || []);
-      setStudents(resStudents?.data || []);
+      const parentsData = resParents?.data?.parents || resParents?.data || [];
+      setParents(parentsData);
+      setPagination({ total: resParents?.data?.pagination?.total || parentsData.length });
+      setStudents(resStudents?.data?.students || resStudents?.data || []);
     } catch (err) {
-      console.error("Erreur de chargement");
+      showToast("Erreur de chargement.", "error");
     } finally {
       setLoading(false);
     }
@@ -38,20 +43,20 @@ function ParentsPage() {
 
   const handleAddChild = async (parentId) => {
     const studentId = selectedStudent[parentId];
-    if (!studentId) return alert("Veuillez sélectionner un élève.");
+    if (!studentId) return showToast("Veuillez sélectionner un élève.", "info");
 
     const parent = parents.find(p => p._id === parentId);
     if (parent.children.some(c => c._id === studentId)) {
-      return alert("Cet enfant est déjà rattaché à ce parent.");
+      return showToast("Cet enfant est déjà rattaché à ce parent.", "info");
     }
 
     try {
       const updatedChildren = [...parent.children.map(c => c._id), studentId];
       await updateParentRequest(parentId, { children: updatedChildren });
-      alert("Enfant rattaché avec succès !");
+      showToast("Enfant rattaché avec succès !");
       fetchData();
     } catch (err) {
-      alert("Erreur lors du rattachement.");
+      showToast("Erreur lors du rattachement.", "error");
     }
   };
 
@@ -78,7 +83,7 @@ function ParentsPage() {
             alignItems: "center",
             gap: "12px"
           }}>
-            <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "#F9AB00" }}>{parents.length}</div>
+            <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "#F9AB00" }}>{pagination.total}</div>
             <div style={{ textAlign: "left" }}>
               <div style={{ fontSize: "0.75rem", fontWeight: "bold", textTransform: "uppercase", opacity: 0.8, color: "#F9AB00" }}>Parents</div>
               <div style={{ fontSize: "0.65rem", opacity: 0.5 }}>Inscrits au réseau</div>
@@ -104,11 +109,11 @@ function ParentsPage() {
 
                   <div style={{ marginBottom: "1.2rem" }}>
                     <h4 style={{ fontSize: "0.85rem", marginBottom: "0.8rem", color: "var(--primary)", fontWeight: "bold" }}>Enfants rattachés :</h4>
-                    {p.children.length === 0 ? (
+                    {p.children?.length === 0 ? (
                       <p style={{ fontSize: "0.75rem", opacity: 0.4 }}>Aucun lien.</p>
                     ) : (
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                        {p.children.map(c => (
+                        {p.children?.map(c => (
                           <div key={c._id} style={{ fontSize: "0.85rem", padding: "6px 10px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                             <span style={{ flex: 1, fontWeight: "500" }}>{c.fullName}</span>
@@ -121,7 +126,7 @@ function ParentsPage() {
                 </div>
 
                 <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "1.2rem" }}>
-                  <label style={{ fontSize: "0.7rem", opacity: 0.5, marginBottom: "8px", display: "block", textTransform: "uppercase", fontWeight: "bold" }}>Rattacher un élève</label>
+                  <label style={{ fontSize: "0.75rem", opacity: 0.5, marginBottom: "8px", display: "block", textTransform: "uppercase", fontWeight: "bold" }}>Rattacher un élève</label>
                   <div style={{ display: "flex", gap: "8px", flexDirection: "column" }}>
                     <select 
                       value={selectedStudent[p._id] || ""} 

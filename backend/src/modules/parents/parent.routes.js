@@ -5,33 +5,33 @@ const authMiddleware = require("../../middlewares/auth.middleware");
 const { authorizeRoles } = require("../../middlewares/auth.middleware");
 const ROLES = require("../../constants/roles");
 
-// 1. D'abord les routes spécifiques (prioritaires)
+// 1. D'abord les routes spécifiques
 router.get(
   "/dashboard",
   authMiddleware,
-  authorizeRoles(ROLES.PARENT, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
+  authorizeRoles(ROLES.HERO_ADMIN, ROLES.PARENT, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
   getMyDashboard
 );
 
-// 2. Ensuite les routes générales
+// 2. Ensuite les routes générales (Ajout SECRETARY)
 router.get(
   "/",
   authMiddleware,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.TEACHER),
+  authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.TEACHER, ROLES.SECRETARY),
   getParents
 );
 
 router.get(
   "/:id",
   authMiddleware,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
+  authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.SECRETARY),
   getOneParent
 );
 
 router.put(
   "/:id",
   authMiddleware,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR),
+  authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.SECRETARY),
   update
 );
 

@@ -63,5 +63,9 @@ const schoolSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+schoolSchema.index({ status: 1 });
+schoolSchema.index({ createdAt: -1 });
+
 // Export
 module.exports = mongoose.model("School", schoolSchema);

@@ -23,7 +23,7 @@ export const ToastProvider = ({ children }) => {
    * @param {string} [type="success"] - Le type de notification (success, error, info).
    */
   const showToast = useCallback((message, type = "success") => {
-    const id = Date.now();
+    const id = `${Date.now()}-${Math.random()}`;
     setToasts((prev) => [...prev, { id, message, type }]);
     
     // Auto-suppression après 4 secondes

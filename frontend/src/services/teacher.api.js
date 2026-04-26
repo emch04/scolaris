@@ -2,9 +2,12 @@ import apiClient from "./apiClient";
 
 /**
  * Récupère la liste des enseignants de l'école.
- * @returns {Promise<Array>} Liste des enseignants.
+ * @param {number} page - Numéro de page.
+ * @param {number} limit - Éléments par page.
+ * @param {string} search - Terme de recherche.
+ * @returns {Promise<Object>} Liste paginée des enseignants.
  */
-export const getTeachersRequest = async () => (await apiClient.get("/teachers")).data;
+export const getTeachersRequest = async (page = 1, limit = 20, search = "") => (await apiClient.get(`/teachers?page=${page}&limit=${limit}&search=${search}`)).data;
 
 /**
  * Crée un nouvel enseignant.

@@ -34,10 +34,11 @@ function AssignmentsPage() {
     try {
       const [resAssign, resClass] = await Promise.all([
         getAssignmentsRequest(),
-        getClassroomsRequest()
+        getClassroomsRequest(1, 100) // On récupère jusqu'à 100 classes
       ]);
       setAssignments(resAssign?.data || []);
-      setClassrooms(resClass?.data || []);
+      // Extraction correcte du tableau des classes
+      setClassrooms(resClass?.data?.classrooms || resClass?.data || []);
     } catch (err) {
       showToast("Erreur de chargement.", "error");
     } finally {

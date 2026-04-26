@@ -1,15 +1,31 @@
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-const { getAllSchools, getSchoolById, createSchool, updateSchoolStatus } = require("./school.service");
+const { getAllSchools, countSchools, getSchoolById, createSchool, updateSchoolStatus, bulkUpdateSchoolStatus } = require("./school.service");
 
-// Lister les écoles
+// Lister les écoles (pagination + recherche)
 const getSchools = asyncHandler(async (req, res) => {
-  const { status } = req.query;
+  const { status, search } = req.query;
   const filter = {};
   if (status) filter.status = status;
   
-  const schools = await getAllSchools(filter);
-  return apiResponse(res, 200, "Liste des écoles récupérée.", schools);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  const [schools, total] = await Promise.all([
+    getAllSchools(filter, skip, limit, search || ""),
+    countSchools(filter, search || "")
+  ]);
+
+  return apiResponse(res, 200, "Liste des écoles récupérée.", {
+    schools,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  });
 });
 
 /**
@@ -42,4 +58,17 @@ const validateSchool = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, `L'école a été ${status === "approved" ? "approuvée" : "rejetée"}.`, school);
 });
 
-module.exports = { getSchools, getOne, create, validateSchool };
+// Valider ou rejeter toutes les écoles en attente (Super Admin uniquement)
+const validateAllSchools = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+
+  if (!["approved", "rejected"].includes(status)) {
+    return apiResponse(res, 400, "Statut invalide.");
+  }
+
+  const result = await bulkUpdateSchoolStatus(status);
+  
+  return apiResponse(res, 200, `${result.modifiedCount} école(s) ont été ${status === "approved" ? "approuvée(s)" : "rejetée(s)"}.`, { count: result.modifiedCount });
+});
+
+module.exports = { getSchools, getOne, create, validateSchool, validateAllSchools };

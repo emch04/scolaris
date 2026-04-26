@@ -14,10 +14,10 @@ const seed = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connecté à MongoDB pour le seed...");
 
-    // Nettoyage
+    // Nettoyage intelligent (on garde ton compte personnel)
     await Promise.all([
       School.deleteMany({}),
-      Teacher.deleteMany({}),
+      Teacher.deleteMany({ email: { $ne: "emchkongo@gmail.com" } }),
       Student.deleteMany({}),
       Parent.deleteMany({}),
       Classroom.deleteMany({}),
@@ -25,7 +25,22 @@ const seed = async () => {
       Communication.deleteMany({})
     ]);
 
-    // 1. Super Admin
+    // 1. Gestion du compte personnel (Immuable)
+    let myAccount = await Teacher.findOne({ email: "emchkongo@gmail.com" });
+    if (!myAccount) {
+      myAccount = await Teacher.create({
+        fullName: "Emmanouch Kongo Bola",
+        email: "emchkongo@gmail.com",
+        password: "2004emch",
+        role: "super_admin",
+        phone: "000000000"
+      });
+      console.log("💎 Compte personnel créé : emchkongo@gmail.com");
+    } else {
+      console.log("💎 Compte personnel préservé : emchkongo@gmail.com");
+    }
+
+    // 1bis. Super Admin de test (Optionnel)
     const superAdmin = await Teacher.create({
       fullName: "Super Admin Scolaris",
       email: "admin@scolaris.cd",

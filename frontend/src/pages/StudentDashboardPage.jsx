@@ -34,22 +34,28 @@ function StudentDashboardPage() {
   }, []);
 
   const fetchDashboardData = () => {
-    if (!navigator.onLine && data) return;
-    
     setLoading(true);
     getStudentDashboardRequest()
       .then(res => {
         if (res?.data) {
           setData(res.data);
           localStorage.setItem(`student_cache_${user?.id}`, JSON.stringify(res.data));
+          setIsOnline(true);
         }
       })
-      .catch(err => console.error("Erreur dashboard"))
+      .catch(err => {
+        console.error("Erreur dashboard", err);
+        if (!err.response) {
+          setIsOnline(false);
+        }
+      })
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 30000); // Polling 30s
+    return () => clearInterval(interval);
   }, []);
 
   if (loading && !data) return <><Navbar /><Loader /></>;

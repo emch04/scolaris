@@ -1,13 +1,16 @@
 import apiClient from "./apiClient";
 
 /**
- * Récupère la liste de toutes les classes.
+ * Récupère la liste de toutes les classes (paginée + recherche).
  * 
+ * @param {number} page - Numéro de page.
+ * @param {number} limit - Éléments par page.
+ * @param {string} search - Terme de recherche.
  * @returns {Promise<Object>} La liste des classes.
  * @method GET
  * @url /classrooms
  */
-export const getClassroomsRequest = async () => (await apiClient.get("/classrooms")).data;
+export const getClassroomsRequest = async (page = 1, limit = 20, search = "") => (await apiClient.get(`/classrooms?page=${page}&limit=${limit}&search=${search}`)).data;
 
 /**
  * Crée une nouvelle classe.

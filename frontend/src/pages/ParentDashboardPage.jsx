@@ -36,19 +36,22 @@ function ParentDashboardPage() {
   }, []);
 
   const fetchParentData = async () => {
-    if (!navigator.onLine && data.children.length > 0) return;
-    
     setLoading(true);
     try {
       const response = await getParentDashboardRequest();
       if (response?.success) {
         setData(response.data);
         localStorage.setItem(`parent_cache_${user?.id}`, JSON.stringify(response.data));
+        setError("");
+        setIsOnline(true);
       } else {
         setError("Impossible de charger vos données.");
       }
     } catch (err) {
       console.error("Erreur détaillée:", err);
+      if (!err.response) {
+        setIsOnline(false);
+      }
       if (!data.children.length) {
         const msg = err.response?.data?.message || "Erreur de connexion.";
         setError(msg);
@@ -60,6 +63,8 @@ function ParentDashboardPage() {
 
   useEffect(() => {
     fetchParentData();
+    const interval = setInterval(fetchParentData, 30000); // Polling toutes les 30s
+    return () => clearInterval(interval);
   }, []);
 
   return (

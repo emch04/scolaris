@@ -5,7 +5,7 @@
 
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
-const { createClassroom, getAllClassrooms } = require("./classroom.service");
+const { createClassroom, getAllClassrooms, countClassrooms } = require("./classroom.service");
 
 /**
  * Crée une nouvelle classe.
@@ -22,6 +22,7 @@ const create = asyncHandler(async (req, res) => {
 
 /**
  * Récupère la liste des classes, filtrée par école si l'utilisateur n'est pas super-admin.
+ * Inclut la pagination et la recherche.
  * @async
  * @function getClassrooms
  * @param {import('express').Request} req - Requête Express.
@@ -30,12 +31,31 @@ const create = asyncHandler(async (req, res) => {
  */
 const getClassrooms = asyncHandler(async (req, res) => {
   const filter = {};
-  if (req.user.role !== "super_admin") {
+  if (!["hero_admin", "super_admin"].includes(req.user.role)) {
     filter.school = req.user.school;
   }
 
-  const classrooms = await getAllClassrooms(filter);
-  return apiResponse(res, 200, "Liste des classes récupérée avec succès.", classrooms);
+  // Paramètres de pagination et recherche
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  // Récupération des données et du total en parallèle
+  const [classrooms, total] = await Promise.all([
+    getAllClassrooms(filter, skip, limit, search),
+    countClassrooms(filter, search)
+  ]);
+
+  return apiResponse(res, 200, "Liste des classes récupérée avec succès.", {
+    classrooms,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  });
 });
 
 module.exports = {

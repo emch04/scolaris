@@ -36,9 +36,10 @@ function TimetablePage() {
   });
 
   useEffect(() => {
-    getClassroomsRequest()
+    getClassroomsRequest(1, 100) // On récupère jusqu'à 100 classes
       .then(res => {
-        setClassrooms(res?.data || []);
+        const classList = res?.data?.classrooms || res?.data || [];
+        setClassrooms(classList);
         if (classroomId) fetchTimetable(classroomId);
       })
       .finally(() => setLoading(false));

@@ -46,6 +46,24 @@ Ce document contient tous les identifiants et IDs générés pour les tests en e
 
 ---
 
+## 🚀 Comptes de Test Massifs (SaaS)
+
+50 écoles supplémentaires ont été générées pour tester les performances.
+
+### 🏫 Directeurs d'Écoles (1 à 50)
+- **Email** : `directorX@test.com` (remplacez X par un chiffre de 1 à 50)
+- **Mot de passe** : `password123`
+
+### 👨‍🏫 Enseignants (1 à 50)
+- **Email** : `teacherX@test.com`
+- **Mot de passe** : `password123`
+
+### 🎓 Élèves (1 à 100)
+- **Email** : `studentX@test.com` (1 à 100)
+- **Mot de passe** : `password123`
+
+---
+
 ## 💡 Notes pour les tests
 - Pour tester le **Tableau de Bord Parent**, connectez-vous avec `parent@demo.cd`. Vous verrez automatiquement les notes de `Emma Kongo Jr`.
 - Pour tester le **Chat de classe**, connectez-vous avec le Directeur ou l'Élève et allez dans la classe `6ème A`.

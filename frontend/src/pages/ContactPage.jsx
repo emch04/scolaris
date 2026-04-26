@@ -26,7 +26,7 @@ function ContactPage() {
             const parentData = await getParentDashboardRequest();
             if (parentData?.data?.children?.length > 0) {
               // On récupère l'école de l'enfant
-              schoolId = parentData.data.children[0].school?._id;
+              schoolId = parentData.data.children[0].school?._id || parentData.data.children[0].school;
             }
           } else {
             schoolId = user?.school;
@@ -37,11 +37,13 @@ function ContactPage() {
           const res = await getSchoolByIdRequest(schoolId);
           setSchool(res?.data);
         } else {
-          const res = await getSchoolsRequest();
-          if (res?.data?.length > 0) setSchool(res.data[0]);
+          // Correction de l'extraction des données paginées
+          const res = await getSchoolsRequest(1, 1);
+          const schoolList = res?.data?.schools || res?.data || [];
+          if (schoolList.length > 0) setSchool(schoolList[0]);
         }
       } catch (err) {
-        console.error("Erreur chargement école");
+        console.error("Erreur chargement école", err);
       } finally {
         setLoading(false);
       }

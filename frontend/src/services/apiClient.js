@@ -32,4 +32,32 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Si l'erreur est 401 et qu'on n'a pas déjà tenté de rafraîchir
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Tentative de rafraîchissement du token via le cookie refreshToken
+        await axios.post(`${baseURL}/auth/refresh`, {}, { withCredentials: true });
+        
+        // Si le rafraîchissement réussit, on relance la requête initiale
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Si le rafraîchissement échoue (refresh token expiré ou absent)
+        console.warn("Échec du rafraîchissement automatique de la session.");
+        
+        // On ne redirige pas brutalement ici, on laisse le contexte d'auth gérer
+        return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;

@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import AppRouter from "./app/router.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import axios from "axios";
 
 function App() {
@@ -45,10 +46,10 @@ function App() {
   }, []);
 
   return (
-    <>
+    <ErrorBoundary>
       <ScrollToTop />
       <AppRouter />
-    </>
+    </ErrorBoundary>
   );
 }
 

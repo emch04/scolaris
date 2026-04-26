@@ -46,24 +46,26 @@ function CommunicationsPage() {
       setCommunications(resComm?.data || []);
 
       if (["teacher", "admin", "director", "super_admin"].includes(user?.role)) {
+        // Pour les listes de sélection, on récupère une large plage (ex: 100 éléments)
         const fetchPromises = [
-          getClassroomsRequest(),
-          getStudentsRequest(),
-          getTeachersRequest()
+          getClassroomsRequest(1, 100),
+          getStudentsRequest(1, 100),
+          getTeachersRequest(1, 100)
         ];
 
         if (user.role === "super_admin") {
-          fetchPromises.push(getSchoolsRequest());
+          fetchPromises.push(getSchoolsRequest(1, 100));
         }
 
         const results = await Promise.all(fetchPromises);
         
-        setClassrooms(results[0]?.data || []);
+        // Correction de l'extraction des données paginées
+        setClassrooms(results[0]?.data?.classrooms || results[0]?.data || []);
         setStudents(results[1]?.data?.students || results[1]?.data || []);
-        setTeachers(results[2]?.data || []);
+        setTeachers(results[2]?.data?.teachers || results[2]?.data || []);
         
         if (user.role === "super_admin" && results[3]) {
-          setSchools(results[3]?.data || []);
+          setSchools(results[3]?.data?.schools || results[3]?.data || []);
         }
       }
     } catch (err) {

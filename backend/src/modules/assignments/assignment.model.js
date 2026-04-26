@@ -54,4 +54,7 @@ const assignmentSchema = new mongoose.Schema(
   }
 );
 
+assignmentSchema.index({ classroom: 1 });
+assignmentSchema.index({ teacher: 1 });
+
 module.exports = mongoose.model("Assignment", assignmentSchema);

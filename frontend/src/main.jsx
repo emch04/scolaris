@@ -1,6 +1,6 @@
 /**
  * @file main.jsx
- * @description Point d'entrée de l'application React. Initialise le rendu DOM et configure les différents contextes (Auth, Toast, Theme).
+ * @description Point d'entrée de l'application React. Configuration des Providers avec l'ordre correct.
  */
 
 import React from "react";
@@ -26,13 +26,13 @@ if (!rootElement) {
     <React.StrictMode>
       <HelmetProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AuthProvider>
-            <ToastProvider>
+          <ToastProvider>
+            <AuthProvider>
               <ThemeProvider>
                 <App />
               </ThemeProvider>
-            </ToastProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </ToastProvider>
         </BrowserRouter>
       </HelmetProvider>
     </React.StrictMode>

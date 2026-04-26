@@ -10,7 +10,7 @@ import { getStudentsRequest, createStudentRequest } from "../services/student.ap
 import { getSchoolsRequest } from "../services/school.api";
 import { getClassroomsRequest } from "../services/classroom.api";
 import { addStudentResultRequest } from "../services/result.api";
-import formatDate from "../utils/formatDate";
+import { useToast } from "../context/ToastContext";
 import useAuth from "../hooks/useAuth";
 
 /**
@@ -28,6 +28,8 @@ function StudentsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const { showToast } = useToast();
 
   // États pour la pagination
   const [page, setPage] = useState(1);
@@ -62,12 +64,12 @@ function StudentsPage() {
    * fetchData
    * Logique : Charge les données paginées.
    */
-  const fetchData = async (pageNum = 1) => {
+  const fetchData = async (pageNum = 1, search = searchTerm) => {
     try {
       const [resStudents, resSchools, resClassrooms] = await Promise.all([
-        getStudentsRequest(pageNum, 20),
-        getSchoolsRequest(),
-        getClassroomsRequest()
+        getStudentsRequest(pageNum, 20, search),
+        getSchoolsRequest(1, 100),
+        getClassroomsRequest(1, 100)
       ]);
       
       const studentsData = resStudents?.data?.students || [];
@@ -75,10 +77,12 @@ function StudentsPage() {
       
       setStudents(studentsData);
       setPagination(pagin);
-      setSchools(resSchools?.data || []);
-      setClassrooms(resClassrooms?.data || []);
+      setSchools(resSchools?.data?.schools || []);
+      
+      // Correction ici : l'API renvoie { classrooms, pagination }
+      setClassrooms(resClassrooms?.data?.classrooms || resClassrooms?.data || []);
     } catch (err) {
-      setError("Erreur lors du chargement des données.");
+      showToast("Erreur lors du chargement des données.", "error");
     } finally {
       setLoading(false);
     }
@@ -87,6 +91,16 @@ function StudentsPage() {
   useEffect(() => {
     fetchData(page);
   }, [page]);
+
+  /**
+   * handleSearch
+   */
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    setLoading(true);
+    fetchData(1, searchTerm);
+  };
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
@@ -109,6 +123,7 @@ function StudentsPage() {
     setError("");
     try {
       await createStudentRequest(formData);
+      showToast("Élève inscrit avec succès.");
       setFormData({
         fullName: "",
         gender: "M",
@@ -120,7 +135,7 @@ function StudentsPage() {
       });
       fetchData(1);
     } catch (err) {
-      setError(err?.response?.data?.message || "Erreur lors de la création.");
+      showToast(err?.response?.data?.message || "Erreur lors de la création.", "error");
     } finally {
       setSaving(false);
     }
@@ -138,11 +153,11 @@ function StudentsPage() {
         student: studentId,
         teacher: user.id
       });
-      alert("Note ajoutée avec succès !");
+      showToast("Note ajoutée avec succès !");
       setShowScoreForm(null);
       setScoreForm({ subject: "", score: "", maxScore: 20, appreciation: "", period: "Trimestre 1" });
     } catch (err) {
-      alert("Erreur lors de l'ajout de la note.");
+      showToast("Erreur lors de l'ajout de la note.", "error");
     }
   };
 
@@ -172,10 +187,40 @@ function StudentsPage() {
             <div style={{ fontSize: "2rem", fontWeight: "900", color: "#34A853" }}>{pagination.total}</div>
             <div style={{ textAlign: "left" }}>
               <div style={{ fontSize: "0.8rem", fontWeight: "bold", textTransform: "uppercase", opacity: 0.7 }}>Élèves</div>
-              <div style={{ fontSize: "0.7rem", opacity: 0.5 }}>Effectif total actuel</div>
+              <div style={{ fontSize: "0.7rem", opacity: 0.5 }}>{searchTerm ? "Résultats trouvés" : "Effectif total actuel"}</div>
             </div>
           </div>
         </div>
+
+        {/* Barre de Recherche */}
+        <form onSubmit={handleSearch} style={{ 
+          display: "flex", 
+          maxWidth: "600px", 
+          margin: "0 auto 3rem auto", 
+          gap: "10px",
+          background: "rgba(255,255,255,0.03)",
+          padding: "8px",
+          borderRadius: "15px",
+          border: "1px solid rgba(255,255,255,0.1)"
+        }}>
+          <input 
+            type="text" 
+            placeholder="Rechercher par nom ou matricule..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ 
+              flex: 1, 
+              background: "transparent", 
+              border: "none", 
+              color: "white", 
+              padding: "10px 15px", 
+              outline: "none" 
+            }}
+          />
+          <button type="submit" className="btn btn-primary" style={{ padding: "10px 20px", borderRadius: "10px" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </form>
 
         {/* Formulaire d'inscription (Réservé Admin / Directeur) */}
         {["admin", "director"].includes(user?.role) && (
@@ -227,7 +272,6 @@ function StudentsPage() {
                   </select>
                 </div>
               </div>
-              {error && <p style={{ color: "#ff5252", fontSize: "0.85rem" }}>{error}</p>}
               <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-end", padding: "0.6rem 1.5rem", fontSize: "0.9rem" }} disabled={saving}>
                 {saving ? "Enregistrement..." : "Inscrire l'élève"}
               </button>
@@ -246,7 +290,7 @@ function StudentsPage() {
           <>
             <div className="grid">
               {students.length === 0 ? (
-                <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "2rem", opacity: 0.5 }}>Aucun élève trouvé.</p>
+                <p style={{ textAlign: "center", gridColumn: "1/-1", padding: "3rem", opacity: 0.5 }}>Aucun résultat trouvé.</p>
               ) : (
                 students.map(s => (
                   <div key={s._id} style={{ 

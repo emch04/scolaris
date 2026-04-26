@@ -7,13 +7,35 @@ const generateMatricule = require("../../utils/generateMatricule");
 
 // Créer un élève
 const createStudent = async (payload) => {
-  // On génère un matricule
-  const matricule = generateMatricule();
-  // On crée l'élève
-  const student = await Student.create({
-    ...payload,
-    matricule
-  });
+  let student;
+  let attempts = 0;
+  const maxAttempts = 3;
+
+  while (attempts < maxAttempts) {
+    try {
+      // On génère un matricule
+      const matricule = generateMatricule();
+      // On crée l'élève
+      student = await Student.create({
+        ...payload,
+        matricule
+      });
+      break; // Succès, on quitte la boucle
+    } catch (error) {
+      // 11000 = Code MongoDB pour doublon d'index unique
+      if (error.code === 11000 && error.keyPattern && error.keyPattern.matricule) {
+        attempts++;
+        console.warn(`⚠️ [Anti-Collision] Matricule en double détecté ! Génération d'un nouveau matricule (Tentative ${attempts}/${maxAttempts})...`);
+        if (attempts >= maxAttempts) {
+          throw new Error("Impossible de générer un matricule unique après plusieurs tentatives.");
+        }
+      } else {
+        // Autre erreur, on la propage
+        throw error;
+      }
+    }
+  }
+  
   // On retourne l'élève créé
   return student;
 };

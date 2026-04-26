@@ -12,17 +12,13 @@ const { authorizeRoles } = require("../../middlewares/auth.middleware");
 const ROLES = require("../../constants/roles");
 
 /**
- * @route GET /api/classrooms
- * @desc Récupérer toutes les classes
- * @access Private
+ * Accès liste (Tout le staff y compris SECRETARY)
  */
 router.get("/", authMiddleware, getClassrooms);
 
 /**
- * @route POST /api/classrooms
- * @desc Créer une nouvelle classe
- * @access Private (Admin, Super Admin, Director)
+ * Création (Ajout SECRETARY)
  */
-router.post("/", authMiddleware, authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR), create);
+router.post("/", authMiddleware, authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.SECRETARY), create);
 
 module.exports = router;

@@ -5,7 +5,7 @@ const authMiddleware = require("../../middlewares/auth.middleware");
 const { authorizeRoles } = require("../../middlewares/auth.middleware");
 const ROLES = require("../../constants/roles");
 
-router.get("/global", authMiddleware, authorizeRoles(ROLES.SUPER_ADMIN), getGlobalStats);
-router.get("/teacher", authMiddleware, authorizeRoles("teacher", "admin", "director"), getTeacherStats);
+router.get("/global", authMiddleware, authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN), getGlobalStats);
+router.get("/teacher", authMiddleware, authorizeRoles(ROLES.HERO_ADMIN, "teacher", "admin", "director", "secretary"), getTeacherStats);
 
 module.exports = router;

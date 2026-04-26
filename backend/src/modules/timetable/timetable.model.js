@@ -29,4 +29,6 @@ const timetableSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+timetableSchema.index({ classroom: 1 });
+
 module.exports = mongoose.model("Timetable", timetableSchema);

@@ -1,87 +1,57 @@
-const Submission = require("../submissions/submission.model");
-const asyncHandler = require("../../utils/asyncHandler");
-const apiResponse = require("../../utils/apiResponse");
+const Parent = require("./parent.model");
+const Student = require("../students/student.model");
 const { 
   getParentChildren, 
-  getChildrenAssignments,
-  getAllParents,
+  getChildrenAssignments, 
+  getAllParents, 
+  countParents,
   getParentById,
-  updateParent
+  updateParent 
 } = require("./parent.service");
+const asyncHandler = require("../../utils/asyncHandler");
+const apiResponse = require("../../utils/apiResponse");
+const ROLES = require("../../constants/roles");
 
-/**
- * Récupère la liste de tous les parents (Admin/Directeur)
- */
 const getParents = asyncHandler(async (req, res) => {
   const userRole = req.user.role;
-  
-  // 1. RÈGLE : Le Super Admin ne voit PAS la liste détaillée (uniquement stats)
-  if (userRole === "super_admin") {
-    return res.status(403).json({ 
-      success: false, 
-      message: "Le Super Admin n'a accès qu'aux statistiques globales, pas au détail des comptes parents." 
-    });
-  }
-
   const filter = {};
-  if (userRole !== "super_admin") {
-    // On s'assure de ne voir que les parents de son école
-    // (Le service getAllParents utilise déjà le filtre par école via les enfants)
+  
+  // HERO ADMIN et SUPER ADMIN voient tout. Les autres sont filtrés par école.
+  if (![ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN].includes(userRole)) {
     filter.school = req.user.school;
   }
 
-  const parents = await getAllParents(filter);
-  return apiResponse(res, 200, "Liste des parents récupérée.", parents);
-});
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
 
-/**
- * Récupère un parent par son ID (Admin/Directeur)
- */
-const getOneParent = asyncHandler(async (req, res) => {
-  const parent = await getParentById(req.params.id);
-  if (!parent) {
-    return apiResponse(res, 404, "Parent non trouvé.");
-  }
-  return apiResponse(res, 200, "Détails du parent récupérés.", parent);
-});
+  const [parents, total] = await Promise.all([
+    getAllParents(filter, skip, limit),
+    countParents(filter)
+  ]);
 
-/**
- * Récupère les données du tableau de bord d'un parent.
- * Inclut ses enfants, leurs devoirs et les statistiques de signature.
- */
-const getMyDashboard = asyncHandler(async (req, res) => {
-  const children = await getParentChildren(req.user.id);
-  const childIds = children.map(c => c._id);
-  const assignments = await getChildrenAssignments(childIds);
-
-  // Récupérer les IDs des devoirs déjà signés par ce parent
-  const signedSubmissions = await Submission.find({ parent: req.user.id }).select("assignment");
-  const signedAssignmentIds = signedSubmissions.map(s => s.assignment.toString());
-
-  // Calculer le nombre de devoirs non signés
-  const pendingAssignmentsCount = assignments.filter(a => !signedAssignmentIds.includes(a._id.toString())).length;
-
-  return apiResponse(res, 200, "Données parent récupérées.", {
-    children,
-    assignments,
-    stats: {
-      totalChildren: children.length,
-      totalAssignments: assignments.length,
-      pendingAssignments: pendingAssignmentsCount
-    },
-    signedAssignmentIds
+  return apiResponse(res, 200, "Liste des parents récupérée.", {
+    parents,
+    pagination: { total, page, limit, totalPages: Math.ceil(total / limit) }
   });
 });
 
-/**
- * Met à jour un parent (Admin/Directeur)
- */
+const getMyDashboard = asyncHandler(async (req, res) => {
+  const children = await getParentChildren(req.user.id);
+  const assignments = await getChildrenAssignments(children.map(c => c._id));
+  return apiResponse(res, 200, "Dashboard parent récupéré.", { children, assignments });
+});
+
+const getOneParent = asyncHandler(async (req, res) => {
+  const parent = await getParentById(req.params.id);
+  if (!parent) return apiResponse(res, 404, "Parent non trouvé.");
+  return apiResponse(res, 200, "Détails du parent récupérés.", parent);
+});
+
 const update = asyncHandler(async (req, res) => {
   const parent = await updateParent(req.params.id, req.body);
-  if (!parent) {
-    return apiResponse(res, 404, "Parent non trouvé.");
-  }
-  return apiResponse(res, 200, "Parent mis à jour avec succès.", parent);
+  if (!parent) return apiResponse(res, 404, "Parent non trouvé.");
+  return apiResponse(res, 200, "Parent mis à jour.", parent);
 });
 
 module.exports = { getMyDashboard, getParents, getOneParent, update };

@@ -4,13 +4,14 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getStudentBulletinRequest } from "../services/result.api";
 import { getStudentsRequest } from "../services/student.api";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useToast } from "../context/ToastContext";
 
 function ReportCardPage() {
   const { studentId } = useParams();
@@ -20,6 +21,7 @@ function ReportCardPage() {
   const [printing, setPrinting] = useState(false);
   const [activePeriod, setActivePeriod] = useState("Trimestre 1");
   const reportRef = useRef();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,11 +35,13 @@ function ReportCardPage() {
           setStudent(data[0].student);
         } else {
           // Si pas de notes, on essaie quand même de charger l'élève
-          const studentRes = await getStudentsRequest();
-          setStudent(studentRes?.data?.find(s => s._id === studentId));
+          // Correction de l'extraction des données paginées
+          const studentRes = await getStudentsRequest(1, 100);
+          const studentList = studentRes?.data?.students || studentRes?.data || [];
+          setStudent(studentList.find(s => s._id === studentId));
         }
       } catch (err) {
-        console.error("Erreur de chargement du bulletin");
+        showToast("Erreur de chargement du bulletin", "error");
       } finally {
         setLoading(false);
       }
@@ -78,7 +82,7 @@ function ReportCardPage() {
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
         pdf.save(`Bulletin_${student?.fullName.replace(/\s+/g, '_')}_${activePeriod}.pdf`);
       } catch (err) {
-        console.error("Erreur PDF:", err);
+        showToast("Erreur lors de la génération du PDF.", "error");
       } finally {
         setPrinting(false);
       }
@@ -229,7 +233,7 @@ function ReportCardPage() {
               marginTop: "2rem",
               overflowX: "auto", 
               paddingBottom: "10px",
-              borderBottom: "1px solid rgba(255,255,255,0.1)"
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
               {periods.map(p => (
                 <button 

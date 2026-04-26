@@ -30,8 +30,8 @@ function CoursePlanPage() {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    getClassroomsRequest()
-      .then(res => setClassrooms(res?.data || []))
+    getClassroomsRequest(1, 100) // On récupère jusqu'à 100 classes
+      .then(res => setClassrooms(res?.data?.classrooms || res?.data || []))
       .finally(() => setLoading(false));
   }, []);
 

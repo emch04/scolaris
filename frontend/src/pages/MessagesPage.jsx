@@ -49,7 +49,7 @@ function MessagesPage() {
 
       const [resMsg, resTeachers] = await Promise.all([
         getMyMessagesRequest().catch(e => { console.error("Err Messages:", e); return { data: [] }; }),
-        getTeachersRequest().catch(e => { console.error("Err Teachers:", e); return { data: [] }; })
+        getTeachersRequest(1, 100).catch(e => { console.error("Err Teachers:", e); return { data: [] }; })
       ]);
       
       setMessages(resMsg?.data || []);
@@ -69,15 +69,17 @@ function MessagesPage() {
         }
       } else if (isAdminOrDirector || isTeacher) {
         try {
-          const resParents = await getParentsRequest();
-          parentsList = resParents?.data || [];
+          const resParents = await getParentsRequest(1, 100);
+          parentsList = resParents?.data?.parents || resParents?.data || [];
         } catch (e) {
           console.error("Err Parents List:", e);
         }
       }
 
+      const teachersData = resTeachers?.data?.teachers || resTeachers?.data || [];
+
       const list = [
-        ...(resTeachers?.data || []).map(t => ({ 
+        ...teachersData.map(t => ({ 
           id: t._id, 
           name: t.fullName, 
           role: t.role,
@@ -171,11 +173,6 @@ function MessagesPage() {
       console.error(err);
     }
   };
-
-  const filteredRecipients = recipients.filter(r => {
-    // Pour le staff, on montre tout le monde
-    return true;
-  });
 
   // Pour l'affichage du nom du destinataire auto-sélectionné (Parent uniquement)
   const getAutoRecipientName = () => {

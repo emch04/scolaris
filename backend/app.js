@@ -1,10 +1,11 @@
 /**
  * @file app.js
- * @description Configuration principale de l'application Express, incluant les middlewares, les routes et la gestion des erreurs.
+ * @description Configuration principale de l'application Express avec sécurité renforcée.
  */
 
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet"); // Protection des headers
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
@@ -29,6 +30,9 @@ const statsRoutes = require("./src/modules/stats/stats.routes");
 const resourceRoutes = require("./src/modules/resources/resource.routes");
 const calendarRoutes = require("./src/modules/calendar/calendar.routes");
 const coursePlanRoutes = require("./src/modules/courseplan/courseplan.routes");
+const logRoutes = require("./src/modules/logs/log.routes");
+const configRoutes = require("./src/modules/config/config.routes");
+const financeRoutes = require("./src/modules/finance/finance.routes");
 
 // Middlewares
 const notFoundMiddleware = require("./src/middlewares/notFound.middleware");
@@ -36,7 +40,12 @@ const errorMiddleware = require("./src/middlewares/error.middleware");
 
 const app = express();
 
-// 1. CONFIGURATION CORS (Doit être en premier)
+// 1. SÉCURITÉ : HELMET
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+// 2. CONFIGURATION CORS
 app.use(cors({
   origin: [
     "http://localhost:5173",
@@ -49,26 +58,17 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Cookie"]
 }));
 
-// 2. AUTRES MIDDLEWARES
 app.use(compression());
-app.use(mongoSanitize());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(mongoSanitize()); // Protection contre les injections NoSQL
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-// Fichiers statiques
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-const mongoose = require("mongoose");
-
 app.get("/", (req, res) => {
-  const dbStatus = mongoose.connection.readyState === 1 ? "Connectée" : "Déconnectée";
-  res.json({ 
-    success: true, 
-    message: "API Scolaris Online",
-    database: dbStatus 
-  });
+  res.json({ success: true, message: "API Scolaris Fortifiée" });
 });
 
 // Routes API
@@ -89,6 +89,9 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/course-plans", coursePlanRoutes);
+app.use("/api/logs", logRoutes);
+app.use("/api/system-config", configRoutes);
+app.use("/api/finance", financeRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

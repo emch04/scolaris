@@ -57,11 +57,12 @@ export default defineConfig({
             },
           },
           {
-            // API : Stratégie StaleWhileRevalidate + Background Sync (pour les données métier)
-            urlPattern: /^https:\/\/scolaris-fucv\.onrender\.com\/api\/.*/i,
-            handler: 'StaleWhileRevalidate',
+            // API : Stratégie NetworkFirst (pour localhost ET production)
+            urlPattern: /\/api\/.*/i,
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'api-data-cache',
+              networkTimeoutSeconds: 5, // Retourne au cache si le réseau est lent (5 secondes)
               expiration: {
                 maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 7,

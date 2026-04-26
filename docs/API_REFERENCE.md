@@ -1,60 +1,22 @@
-# Référence API Scolaris 🚀
+# Référence de l'API Scolaris
 
-Toutes les requêtes commencent par `/api`. 
+## 🔐 Authentification
+- `POST /api/auth/register` : Inscription d'une école.
+- `POST /api/auth/login` : Connexion (JWT).
+- `POST /api/auth/logout` : Déconnexion.
 
-## 🔐 Authentification & Sécurité
-Scolaris utilise un système de cookies **HTTP-Only**. Vous n'avez plus besoin d'envoyer le header `Authorization` manuellement, le navigateur gère les tokens automatiquement.
+## 💰 Finance & Trésorerie
+- `GET /api/finance/treasury` : Statistiques de caisse.
+- `GET /api/finance/payments` : Historique des encaissements.
+- `POST /api/finance/fees` : Création d'un type de frais.
+- `POST /api/finance/payments` : Enregistrement d'un versement parent.
 
-- `POST /auth/login` : Connexion. Définit les cookies `token` et `refreshToken`.
-- `POST /auth/logout` : Déconnexion. Efface les cookies et révoque la session.
-- `POST /auth/refresh` : Renouvelle l'Access Token de manière invisible.
-- `GET /auth/me` 🔒 : Récupère le profil de l'utilisateur connecté via sa session active.
-
-## 🏫 Écoles & Classes
-- `GET /schools` : Liste des écoles (Public).
-- `POST /schools` 🔒 : Création école (**Super Admin**).
-- `GET /classrooms` 🔒 : Liste des classes (**Admin/Director**).
-- `POST /classrooms` 🔒 : Création d'une classe (**Admin/Director**).
-
-## 🎓 Élèves & Parents
-- `GET /students` 🔒 : Liste des élèves (**Admin/Director/Teacher**).
-- `POST /students` 🔒 : Inscription nouvel élève (**Réservé Admin/Director**).
-- `GET /parents/dashboard` 🔒 : Espace personnel du parent (Statistiques de signature).
-
-## 📅 Emploi du Temps (Timetable)
-- `GET /timetable/classroom/:classroomId` 🔒 : Consulter l'emploi du temps.
-- `POST /timetable` 🔒 : Ajouter un cours (**Admin/Director/Teacher**).
-- `DELETE /timetable/:id` 🔒 : Supprimer un cours.
+## ⚙️ Administration Suprême (Hero Admin)
+- `GET /api/logs` : Liste des crashs système.
+- `DELETE /api/logs/clear` : Vidage du journal.
+- `GET /api/system-config` : État des interrupteurs système.
+- `PATCH /api/system-config/:key` : Activer/Désactiver un module ou un rôle.
 
 ## 📈 Statistiques
-- `GET /stats/global` 🔒 : Statistiques du réseau (**Super Admin**).
-- `GET /stats/teacher` 🔒 : Moyenne et réussite de classe (**Teacher**).
-
-## 📖 Plans de Cours & Bibliothèque
-- `POST /course-plans` 🔒 : Publier un programme avec fichiers joints (Cloudinary).
-- `GET /resources` 🔒 : Accès aux livres et exercices numériques.
-
-## 📝 Résultats & Bulletins
-- `POST /results` 🔒 : Saisie des notes par période.
-- `GET /results/student/:studentId` 🔒 : Génération du bulletin numérique.
-
-## ✍️ Signatures Numériques
-- `POST /submissions` 🔒 : Signature parentale sécurisée par code OTP.
-
----
-
-## 🛠️ Comment tester (Local)
-
-### 1. Se connecter (Login)
-```bash
-curl -X POST http://localhost:5001/api/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"email": "admin@scolaris.cd", "password": "superadmin123"}'
-```
-
-### 👥 Comptes de test (après seed)
-| Rôle | Identifiant | Password |
-| :--- | :--- | :--- |
-| **Super Admin** | `admin@scolaris.cd` | `superadmin123` |
-| **Enseignant** | `prof@scolaris.cd` | `prof123` |
-| **Parent** | `parent@demo.cd` | `parent123` |
+- `GET /api/stats/global` : Statistiques réseau sur 12 mois.
+- `GET /api/stats/teacher` : Statistiques d'établissement sur 12 mois.

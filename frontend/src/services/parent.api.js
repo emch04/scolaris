@@ -12,11 +12,13 @@ export const getParentDashboardRequest = async () => (await apiClient.get("/pare
 /**
  * Récupère la liste de tous les parents (pour administration).
  * 
- * @returns {Promise<Object>} La liste des parents.
+ * @param {number} page - Numéro de page.
+ * @param {number} limit - Éléments par page.
+ * @returns {Promise<Object>} La liste paginée des parents.
  * @method GET
  * @url /parents
  */
-export const getParentsRequest = async () => (await apiClient.get("/parents")).data;
+export const getParentsRequest = async (page = 1, limit = 20) => (await apiClient.get(`/parents?page=${page}&limit=${limit}`)).data;
 
 /**
  * Met à jour les informations d'un parent.

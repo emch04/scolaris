@@ -9,13 +9,14 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getStudentsRequest } from "../services/student.api";
 import { getParentDashboardRequest } from "../services/parent.api";
-import { getCommunicationsRequest } from "../services/communication.api"; // Optionnel
 import useAuth from "../hooks/useAuth";
+import { useToast } from "../context/ToastContext";
 
 function BulletinsListPage() {
   const { user } = useAuth();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
   const isStaff = user?.role !== "parent";
 
   useEffect(() => {
@@ -25,11 +26,12 @@ function BulletinsListPage() {
           const res = await getParentDashboardRequest();
           setStudents(res?.data?.children || []);
         } else {
-          const res = await getStudentsRequest();
-          setStudents(res?.data || []);
+          // Correction de l'extraction des données paginées
+          const res = await getStudentsRequest(1, 100);
+          setStudents(res?.data?.students || res?.data || []);
         }
       } catch (err) {
-        console.error("Erreur chargement");
+        showToast("Erreur lors du chargement des élèves.", "error");
       } finally {
         setLoading(false);
       }
@@ -56,60 +58,68 @@ function BulletinsListPage() {
             {isStaff ? (
               /* VUE STAFF : Grille de cartes au lieu de tableau */
               <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
-                {students.map(s => (
-                  <div key={s._id} style={{ 
-                    background: "rgba(255,255,255,0.02)", 
-                    padding: "1.2rem", 
-                    borderRadius: "16px", 
-                    border: "1px solid rgba(255, 255, 255, 0.08)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px"
-                  }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div>
-                        <h3 style={{ margin: 0, fontSize: "1.1rem" }}>{s.fullName}</h3>
-                        <p style={{ margin: "2px 0 0", fontSize: "0.7rem", opacity: 0.5, fontWeight: "bold" }}>{s.matricule}</p>
+                {students.length === 0 ? (
+                  <p style={{ textAlign: "center", gridColumn: "1/-1", opacity: 0.5 }}>Aucun élève trouvé.</p>
+                ) : (
+                  students.map(s => (
+                    <div key={s._id} style={{ 
+                      background: "rgba(255,255,255,0.02)", 
+                      padding: "1.2rem", 
+                      borderRadius: "16px", 
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px"
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <div>
+                          <h3 style={{ margin: 0, fontSize: "1.1rem" }}>{s.fullName}</h3>
+                          <p style={{ margin: "2px 0 0", fontSize: "0.7rem", opacity: 0.5, fontWeight: "bold" }}>{s.matricule}</p>
+                        </div>
+                        <div style={{ background: "rgba(26, 115, 232, 0.1)", color: "var(--primary)", padding: "4px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold" }}>
+                          {s.classroom?.name}
+                        </div>
                       </div>
-                      <div style={{ background: "rgba(26, 115, 232, 0.1)", color: "var(--primary)", padding: "4px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "bold" }}>
-                        {s.classroom?.name}
+                      
+                      <div style={{ fontSize: "0.85rem", opacity: 0.7, padding: "8px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                        <p style={{ margin: 0 }}><strong>Parent:</strong> {s.parentName}</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "0.8rem" }}>{s.parentPhone}</p>
                       </div>
-                    </div>
-                    
-                    <div style={{ fontSize: "0.85rem", opacity: 0.7, padding: "8px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                      <p style={{ margin: 0 }}><strong>Parent:</strong> {s.parentName}</p>
-                      <p style={{ margin: "2px 0 0", fontSize: "0.8rem" }}>{s.parentPhone}</p>
-                    </div>
 
-                    <Link to={`/bulletin/${s._id}`} className="btn btn-primary" style={{ width: "100%", textAlign: "center", padding: "10px", fontSize: "0.85rem" }}>
-                      Ouvrir Bulletin →
-                    </Link>
-                  </div>
-                ))}
+                      <Link to={`/bulletin/${s._id}`} className="btn btn-primary" style={{ width: "100%", textAlign: "center", padding: "10px", fontSize: "0.85rem" }}>
+                        Ouvrir Bulletin →
+                      </Link>
+                    </div>
+                  ))
+                )}
               </div>
             ) : (
               /* VUE PARENT : Cartes optimisées */
               <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.2rem" }}>
-                {students.map(s => (
-                  <div key={s._id} style={{ 
-                    background: "rgba(255,255,255,0.02)", 
-                    padding: "1.5rem", 
-                    borderRadius: "20px", 
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    textAlign: "center"
-                  }}>
-                    <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
-                      <div style={{ width: "60px", height: "60px", background: "rgba(26, 115, 232, 0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--primary)" }}>
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                {students.length === 0 ? (
+                  <p style={{ textAlign: "center", gridColumn: "1/-1", opacity: 0.5 }}>Aucun enfant rattaché.</p>
+                ) : (
+                  students.map(s => (
+                    <div key={s._id} style={{ 
+                      background: "rgba(255,255,255,0.02)", 
+                      padding: "1.5rem", 
+                      borderRadius: "20px", 
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      textAlign: "center"
+                    }}>
+                      <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
+                        <div style={{ width: "60px", height: "60px", background: "rgba(26, 115, 232, 0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--primary)" }}>
+                          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
                       </div>
+                      <h3 style={{ margin: "0 0 5px 0" }}>{s.fullName}</h3>
+                      <p style={{ opacity: 0.5, fontSize: "0.85rem", marginBottom: "1.5rem" }}>{s.matricule}</p>
+                      <Link to={`/bulletin/${s._id}`} className="btn btn-primary" style={{ width: "100%", display: "block" }}>
+                        Voir le Bulletin
+                      </Link>
                     </div>
-                    <h3 style={{ margin: "0 0 5px 0" }}>{s.fullName}</h3>
-                    <p style={{ opacity: 0.5, fontSize: "0.85rem", marginBottom: "1.5rem" }}>{s.matricule}</p>
-                    <Link to={`/bulletin/${s._id}`} className="btn btn-primary" style={{ width: "100%", display: "block" }}>
-                      Voir le Bulletin
-                    </Link>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             )}
           </div>

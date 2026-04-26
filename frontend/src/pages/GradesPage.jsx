@@ -9,12 +9,14 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getStudentBulletinRequest } from "../services/result.api";
 import { getStudentsRequest } from "../services/student.api";
+import { useToast } from "../context/ToastContext";
 
 function GradesPage() {
   const { studentId } = useParams();
   const [results, setResults] = useState([]);
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,11 +28,13 @@ function GradesPage() {
         if (data.length > 0 && data[0].student) {
           setStudent(data[0].student);
         } else {
-          const studentRes = await getStudentsRequest();
-          setStudent(studentRes?.data?.find(s => s._id === studentId));
+          // Correction de l'extraction des données paginées
+          const studentRes = await getStudentsRequest(1, 100);
+          const studentList = studentRes?.data?.students || studentRes?.data || [];
+          setStudent(studentList.find(s => s._id === studentId));
         }
       } catch (err) {
-        console.error("Erreur de chargement");
+        showToast("Erreur de chargement des notes.", "error");
       } finally {
         setLoading(false);
       }
@@ -145,12 +149,12 @@ function GradesPage() {
 
         <div style={{ marginTop: "2rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem" }}>
           <div style={{ background: "rgba(52, 168, 83, 0.1)", padding: "1.5rem", borderRadius: "15px", border: "1px solid rgba(52, 168, 83, 0.2)" }}>
-            <p style={{ fontSize: "0.8rem", opacity: 0.7, margin: 0 }}>Meilleure Matière</p>
-            <h3 style={{ margin: "0.5rem 0 0", color: "#34A853" }}>Mathématiques</h3>
+            <p style={{ fontSize: "0.8rem", opacity: 0.7, margin: 0 }}>Statut Général</p>
+            <h3 style={{ margin: "0.5rem 0 0", color: "#34A853" }}>{results.length > 0 ? "Évalué" : "En attente"}</h3>
           </div>
           <div style={{ background: "rgba(26, 115, 232, 0.1)", padding: "1.5rem", borderRadius: "15px", border: "1px solid rgba(26, 115, 232, 0.2)" }}>
             <p style={{ fontSize: "0.8rem", opacity: 0.7, margin: 0 }}>Assiduité</p>
-            <h3 style={{ margin: "0.5rem 0 0", color: "#1A73E8" }}>Excellente</h3>
+            <h3 style={{ margin: "0.5rem 0 0", color: "#1A73E8" }}>Suivie</h3>
           </div>
         </div>
       </main>

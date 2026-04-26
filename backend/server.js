@@ -1,45 +1,23 @@
 /**
  * @file server.js
- * @description Point d'entrée principal du serveur Node.js. Initialise la connexion à la base de données et démarre le serveur Express.
+ * @description Point d'entrée du serveur backend Scolaris.
  */
 
-// On charge les variables d'environnement depuis le fichier .env
 require("dotenv").config();
-
-// On importe l'application Express configurée dans app.js
 const app = require("./app");
-
-// On importe la fonction de connexion à MongoDB
 const connectDB = require("./src/config/db");
-const { initCache } = require("./src/utils/cache.service");
+const runBootstrap = require("./src/utils/bootstrap");
 
-// On récupère le port depuis les variables d'environnement
+// Connexion à la base de données
+connectDB().then(() => {
+  console.log("🔥 Base de données connectée");
+  
+  // Exécution de l'auto-configuration (Hero Admin + Feature Flags)
+  runBootstrap();
+});
+
 const PORT = process.env.PORT || 5001;
 
-// On lance une fonction asynchrone immédiatement
-(async () => {
-  try {
-    // Vérification des variables d'environnement cruciales
-    if (!process.env.JWT_SECRET) {
-      throw new Error("La variable JWT_SECRET est manquante dans le fichier .env");
-    }
-
-    // On se connecte d'abord à la base de données
-    await connectDB();
-
-    // Initialisation du cache
-    await initCache();
-
-    // Une fois MongoDB connecté, on démarre le serveur HTTP
-    app.listen(PORT, () => {
-      // Message console pour confirmer que le serveur fonctionne
-      console.log(`Serveur lancé sur le port ${PORT}`);
-    });
-  } catch (error) {
-    // Si une erreur survient au démarrage, on l'affiche
-    console.error("Erreur au démarrage du serveur :", error.message);
-
-    // On arrête le processus car l'application ne peut pas continuer proprement
-    process.exit(1);
-  }
-})();
+app.listen(PORT, () => {
+  console.log(`🚀 Serveur Scolaris lancé sur le port ${PORT}`);
+});

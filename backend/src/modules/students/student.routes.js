@@ -8,10 +8,13 @@ const validateMiddleware = require("../../middlewares/validate.middleware");
 const { createStudentValidator } = require("./student.validator");
 const ROLES = require("../../constants/roles");
 
+/**
+ * Création d'élève (Hero, Admin, Directeur et maintenant Secrétaire)
+ */
 router.post(
   "/",
   authMiddleware,
-  authorizeRoles(ROLES.ADMIN, ROLES.DIRECTOR),
+  authorizeRoles(ROLES.HERO_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.SECRETARY),
   createStudentValidator,
   validateMiddleware,
   create
@@ -24,10 +27,13 @@ router.get(
   getDashboard
 );
 
+/**
+ * Lecture de la liste (Ajout du rôle SECRETARY)
+ */
 router.get(
   "/",
   authMiddleware,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.TEACHER, ROLES.PARENT),
+  authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DIRECTOR, ROLES.TEACHER, ROLES.PARENT, ROLES.SECRETARY),
   getStudents
 );
 

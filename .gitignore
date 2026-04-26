@@ -1,100 +1,37 @@
 # Dependencies
 node_modules/
-backend/node_modules/
-frontend/node_modules/
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-docs/EVOLUTION.md
+.pnp
+.pnp.js
 
-# Environment and secrets
+# Testing
+coverage/
+
+# Production
+dist/
+build/
+
+# Environment Variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-backend/.env
-frontend/.env
-frontend/.env.local
-
-# Build and compilation
-dist/
-frontend/dist/
-build/
-out/
-.next/
-.serverless/
-bin/
-obj/
 
 # Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+backend/logs/*.log
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
 
-# System and IDE
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# IDE / Editors
 .vscode/
-!.vscode/extensions.json
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.swp
-*.bak
-*.tmp
-*.temp
+*.swo
+.DS_Store
 
-# Testing and Coverage
-coverage/
-.nyc_output/
-.jest/
-cypress/videos/
-cypress/screenshots/
-
-# Temporary and Cache
-.temp/
-.cache/
-.qodo/
-.eslintcache
-.stylelintcache
-.parcel-cache
-.turbo/
-
-# Uploads and Assets
-backend/uploads/*
-!backend/uploads/.gitkeep
-public/uploads/*
-
-# Logs
-backend/logs/
-frontend/logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Test and debug scripts
-Icon?
-desktop.ini
-
-# Test and debug scripts
-backend/bot_simulation.js
-backend/check_admin.js
-backend/check_schools.js
-backend/check_student.js
-backend/db_status.js
-backend/debug_login.js
-backend/massive_test.js
-backend/restore_admin.js
-backend/simulate_life.js
-backend/test_admin_hash.js
-backend/test_hash.js
+# Temporary files
+/Users/emchkongo/.gemini/tmp/
+tmp/
+temp/

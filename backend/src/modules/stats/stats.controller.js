@@ -1,122 +1,94 @@
+const mongoose = require("mongoose");
 const School = require("../schools/school.model");
 const Student = require("../students/student.model");
 const Parent = require("../parents/parent.model");
 const Teacher = require("../teachers/teacher.model");
-const Assignment = require("../assignments/assignment.model");
 const Classroom = require("../classrooms/classroom.model");
-const Result = require("../results/result.model");
+const Payment = require("../finance/payment.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { getCache, setCache } = require("../../utils/cache.service");
+const ROLES = require("../../constants/roles");
 
+/**
+ * Statistiques Globales (Hero Admin / Super Admin)
+ */
 const getGlobalStats = asyncHandler(async (req, res) => {
-  const cacheKey = "global_stats";
-  const cachedData = await getCache(cacheKey);
+  const cacheKey = "global_stats_final_v10";
+  const cached = await getCache(cacheKey);
+  if (cached) return apiResponse(res, 200, "Stats récupérées.", cached);
 
-  if (cachedData) {
-    return apiResponse(res, 200, "Statistiques globales récupérées (cache).", cachedData);
-  }
+  const treasury = await Payment.aggregate([
+    { $match: { status: "validé" } },
+    { $group: { _id: null, total: { $sum: "$amountPaid" } } }
+  ]);
 
-  const [
-    totalSchools,
-    totalStudents,
-    totalParents,
-    totalTeachers,
-    totalAssignments,
-    totalClassrooms
-  ] = await Promise.all([
-    School.countDocuments(),
+  const [students, parents, teachers, schools, classrooms] = await Promise.all([
     Student.countDocuments(),
     Parent.countDocuments(),
     Teacher.countDocuments(),
-    Assignment.countDocuments(),
+    School.countDocuments(),
     Classroom.countDocuments()
   ]);
 
-  const months = [];
-  const trendPromises = [];
-  
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date();
-    d.setMonth(d.getMonth() - i);
-    const monthLabel = d.toLocaleString('fr-FR', { month: 'short' });
-    months.push(monthLabel);
-    
-    const startOfMonth = new Date(d.getFullYear(), d.getMonth(), 1);
-    const endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
-    
-    trendPromises.push(Student.countDocuments({
-      createdAt: { $gte: startOfMonth, $lte: endOfMonth }
-    }));
-  }
-
-  const enrollmentTrend = await Promise.all(trendPromises);
-
   const statsData = {
-    counts: {
-      schools: totalSchools,
-      students: totalStudents,
-      parents: totalParents,
-      teachers: totalTeachers,
-      assignments: totalAssignments,
-      classrooms: totalClassrooms
-    },
-    trend: {
-      labels: months,
-      data: enrollmentTrend
+    counts: { 
+      schools, students, parents, teachers, classrooms,
+      totalCaisse: treasury[0]?.total || 0 
     }
   };
 
-  // Mise en cache pour 15 minutes (900 secondes)
-  await setCache(cacheKey, statsData, 900);
-
-  return apiResponse(res, 200, "Statistiques globales récupérées.", statsData);
+  await setCache(cacheKey, statsData, 60);
+  return apiResponse(res, 200, "Statistiques globales.", statsData);
 });
 
 /**
- * Récupère les statistiques de performance d'un enseignant spécifique.
- * Calcule la moyenne des notes données et le taux de réussite des élèves.
+ * Statistiques École / Secrétaire / Admin
  */
 const getTeacherStats = asyncHandler(async (req, res) => {
-  const teacherId = req.user.id;
-  const cacheKey = `teacher_stats_${teacherId}`;
-  
-  const cachedData = await getCache(cacheKey);
-  if (cachedData) {
-    return apiResponse(res, 200, "Statistiques enseignant récupérées (cache).", cachedData);
+  const { role, id, school } = req.user;
+  const schoolId = school;
+
+  // Si aucune école n'est associée, on renvoie des comptes à zéro au lieu d'une erreur 400
+  if (!schoolId && role !== ROLES.HERO_ADMIN) {
+    return apiResponse(res, 200, "Aucune école associée. Stats à zéro.", {
+      counts: { students: 0, teachers: 0, classrooms: 0, totalCaisse: 0 }
+    });
   }
 
-  // Récupérer tous les résultats saisis par ce professeur
-  const results = await Result.find({ teacher: teacherId });
-
-  if (!results || results.length === 0) {
-    const emptyStats = {
-      average: 0,
-      successRate: 0,
-      totalGrades: 0
-    };
-    await setCache(cacheKey, emptyStats, 300);
-    return apiResponse(res, 200, "Aucune donnée disponible pour ce professeur.", emptyStats);
+  let treasuryFilter = { status: "validé" };
+  if (role === ROLES.SECRETARY) {
+    treasuryFilter.receivedBy = new mongoose.Types.ObjectId(id);
+  } else if (schoolId) {
+    treasuryFilter.school = new mongoose.Types.ObjectId(schoolId);
   }
 
-  // Calculer la moyenne globale (ramenée sur 20)
-  const totalPoints = results.reduce((acc, curr) => acc + (curr.score / curr.maxScore) * 20, 0);
-  const average = (totalPoints / results.length).toFixed(1);
+  let treasuryTotal = 0;
+  if (schoolId || role === ROLES.SECRETARY) {
+    const treasury = await Payment.aggregate([
+      { $match: treasuryFilter },
+      { $group: { _id: null, total: { $sum: "$amountPaid" } } }
+    ]);
+    treasuryTotal = treasury[0]?.total || 0;
+  }
 
-  // Calculer le taux de réussite (score >= 50%)
-  const successCount = results.filter(r => (r.score / r.maxScore) >= 0.5).length;
-  const successRate = ((successCount / results.length) * 100).toFixed(0);
+  const filter = schoolId ? { school: schoolId } : { _id: null };
+  const [studentCount, teacherCount, classroomCount] = await Promise.all([
+    Student.countDocuments(filter),
+    Teacher.countDocuments(filter),
+    Classroom.countDocuments(filter)
+  ]);
 
   const statsData = {
-    average: parseFloat(average),
-    successRate: parseInt(successRate),
-    totalGrades: results.length
+    counts: { 
+      students: studentCount, 
+      teachers: teacherCount, 
+      classrooms: classroomCount,
+      totalCaisse: treasuryTotal
+    }
   };
 
-  // Mise en cache pour 5 minutes (300 secondes)
-  await setCache(cacheKey, statsData, 300);
-
-  return apiResponse(res, 200, "Statistiques enseignant récupérées.", statsData);
+  return apiResponse(res, 200, "Statistiques récupérées.", statsData);
 });
 
 module.exports = { getGlobalStats, getTeacherStats };

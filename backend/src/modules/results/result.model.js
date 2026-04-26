@@ -43,4 +43,7 @@ const resultSchema = new mongoose.Schema({
   }
 );
 
+resultSchema.index({ student: 1 });
+resultSchema.index({ teacher: 1 });
+
 module.exports = mongoose.model("Result", resultSchema);

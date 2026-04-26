@@ -12,8 +12,8 @@ const ROLES = require("../../constants/roles");
 // Route protégée
 router.get("/", authMiddleware, getTeachers);
 router.get("/:id", authMiddleware, getTeacher);
-router.put("/:id", authMiddleware, authorizeRoles(ROLES.SUPER_ADMIN, ROLES.DIRECTOR), updateTeacher);
-router.delete("/:id", authMiddleware, authorizeRoles(ROLES.SUPER_ADMIN, ROLES.DIRECTOR), deleteTeacher);
+router.put("/:id", authMiddleware, authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.DIRECTOR), updateTeacher);
+router.delete("/:id", authMiddleware, authorizeRoles(ROLES.HERO_ADMIN, ROLES.SUPER_ADMIN, ROLES.DIRECTOR), deleteTeacher);
 
 // Export
 module.exports = router;
