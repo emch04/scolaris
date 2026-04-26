@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import useAuth from "../hooks/useAuth";
 import { useToast } from "../context/ToastContext";
@@ -134,13 +135,21 @@ function LoginPage() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          {view === "login" ? "Connexion - Scolaris" : 
+           view === "register_type" || view === "register_form" ? "Inscription - Scolaris" : 
+           view === "forgot" || view === "reset" ? "Récupération - Scolaris" : 
+           "Scolaris - Gestion Scolaire"}
+        </title>
+      </Helmet>
       <Navbar />
       <main className="container" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "85vh", padding: "clamp(1.5rem, 5vw, 2.5rem) 1rem" }}>
         <div style={{ width: "100%", maxWidth: "450px" }}>
           
           <div style={{ textAlign: "center", marginBottom: "clamp(1.5rem, 5vw, 2.5rem)" }}>
             <div style={{ background: "white", width: "clamp(70px, 15vw, 90px)", height: "clamp(70px, 15vw, 90px)", borderRadius: "20px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", border: "2px solid white", boxShadow: "0 10px 25px rgba(0,0,0,0.2)", overflow: "hidden" }}>
-              <img src="/assets/image.jpg" alt="Scolaris" style={{ width: "80%", height: "85%", objectFit: "contain" }} />
+              <img src="/assets/android-chrome-512x512.png" alt="Scolaris" style={{ width: "80%", height: "85%", objectFit: "contain", borderRadius: "10px" }} />
             </div>
             <h1 style={{ fontSize: "clamp(1.4rem, 5vw, 1.8rem)", marginBottom: "0.4rem", fontWeight: "800" }}>
               {view === "login" ? "Connexion" : view === "register_type" ? "Créer un compte" : "Scolaris"}

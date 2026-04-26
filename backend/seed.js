@@ -1,118 +1,98 @@
-/**
- * @file seed.js
- * @description Script de peuplement (seeding) de la base de données avec des données initiales de test pour le projet Scolaris.
- */
-
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 require("dotenv").config();
-
+const User = require("./src/modules/auth/token.model"); // Non utilisé ici mais bon à avoir
 const School = require("./src/modules/schools/school.model");
 const Teacher = require("./src/modules/teachers/teacher.model");
-const Classroom = require("./src/modules/classrooms/classroom.model");
 const Student = require("./src/modules/students/student.model");
 const Parent = require("./src/modules/parents/parent.model");
-const Result = require("./src/modules/results/result.model");
+const Classroom = require("./src/modules/classrooms/classroom.model");
 const Assignment = require("./src/modules/assignments/assignment.model");
 const Communication = require("./src/modules/communications/communication.model");
-const ROLES = require("./src/constants/roles");
 
 const seed = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connecté à MongoDB pour le seed...");
 
-    // Nettoyage complet
-    await School.deleteMany({});
-    await Teacher.deleteMany({});
-    await Classroom.deleteMany({});
-    await Student.deleteMany({});
-    await Parent.deleteMany({});
-    await Result.deleteMany({});
-    await Assignment.deleteMany({});
-    await Communication.deleteMany({});
+    // Nettoyage
+    await Promise.all([
+      School.deleteMany({}),
+      Teacher.deleteMany({}),
+      Student.deleteMany({}),
+      Parent.deleteMany({}),
+      Classroom.deleteMany({}),
+      Assignment.deleteMany({}),
+      Communication.deleteMany({})
+    ]);
 
-    // 1. Création d'un Super Admin (Global)
-    const hashedSuperAdminPassword = await bcrypt.hash("superadmin123", 10);
+    // 1. Super Admin
     const superAdmin = await Teacher.create({
-      fullName: "Super Administrateur",
+      fullName: "Super Admin Scolaris",
       email: "admin@scolaris.cd",
-      password: hashedSuperAdminPassword,
-      role: ROLES.SUPER_ADMIN
+      password: "password123",
+      role: "super_admin",
+      phone: "000000000"
     });
-    console.log("Super Admin créé :", superAdmin.email);
+    console.log("Super Admin créé : admin@scolaris.cd");
 
-    // 2. Création d'une école
+    // 2. École
     const school = await School.create({
       name: "École Primaire de la Tshangu",
-      code: "EPS-001",
-      address: "Quartier Kingasani",
-      commune: "N'djili",
-      description: "Un établissement d'excellence engagé dans la formation intégrale de la jeunesse congolaise depuis 1995.",
-      principalName: "M. Dieudonné Kabeya",
-      phone: "+243 81 234 56 78",
-      email: "contact@ecole-tshangu.cd"
+      address: "Bvd Lumumba, Masina",
+      commune: "Masina",
+      email: "tshangu@ecole.cd",
+      phone: "0810000001",
+      code: "TSH001",
+      principalName: "M. Kambale"
     });
-    console.log("École créée :", school.name);
+    console.log("École créée : " + school.name);
 
-    // 3. Création d'un administrateur d'école (Directeur)
-    const hashedAdminPassword = await bcrypt.hash("admin123", 10);
+    // 3. Admin d'école (Directeur)
     const schoolAdmin = await Teacher.create({
-      fullName: "Directeur Démo",
+      fullName: "Directeur Jean",
       email: "demo@ecole.cd",
-      password: hashedAdminPassword,
-      role: ROLES.ADMIN,
-      school: school._id
+      password: "password123",
+      role: "director",
+      school: school._id,
+      phone: "0810000002"
     });
-    console.log("Admin d'école créé :", schoolAdmin.email);
+    console.log("Admin d'école créé : demo@ecole.cd");
 
-    // 4. Création d'une classe
+    // 4. Classe
     const classroom = await Classroom.create({
       name: "6ème Primaire A",
-      level: "6",
+      level: "Primaire",
       school: school._id,
       titularTeacher: schoolAdmin._id
     });
-    console.log("Classe créée :", classroom.name);
+    console.log("Classe créée : " + classroom.name);
 
-    // 5. Création d'un élève
-    const hashedStudentPassword = await bcrypt.hash("scolaris123", 10);
+    // 5. Élève
     const student = await Student.create({
-      matricule: "TEDP-2026-123456",
       fullName: "Emma Kongo Jr",
-      gender: "M",
-      birthDate: new Date("2014-05-12"),
+      email: "student@demo.cd",
+      password: "password123",
+      role: "student",
       school: school._id,
       classroom: classroom._id,
-      password: hashedStudentPassword
+      matricule: "2024MSN001"
     });
-    console.log("Élève créé :", student.fullName);
+    console.log("Élève créé : " + student.fullName);
 
-    // 6. Création d'un parent
-    const hashedParentPassword = await bcrypt.hash("parent123", 10);
+    // 6. Parent
     const parent = await Parent.create({
-      fullName: "Parent Kongo",
+      fullName: "M. Kongo Senior",
       email: "parent@demo.cd",
-      password: hashedParentPassword,
-      phone: "+33603698748",
-      role: ROLES.PARENT,
+      password: "password123",
+      role: "parent",
+      phone: "0810000003",
       children: [student._id]
     });
-    console.log("Parent créé :", parent.email);
+    console.log("Parent créé : parent@demo.cd");
 
-    // 7. Création de notes
-    const subjects = ["Mathématiques", "Français", "Sciences"];
-    for (const subject of subjects) {
-      await Result.create({
-        student: student._id,
-        subject: subject,
-        score: 15,
-        maxScore: 20,
-        appreciation: "Très bien",
-        period: "Trimestre 1",
-        teacher: schoolAdmin._id
-      });
-    }
+    // 7. Mise à jour de l'élève avec son parent
+    student.parent = parent._id;
+    await student.save();
 
     // 8. Création de devoirs
     await Assignment.create([
@@ -143,22 +123,24 @@ const seed = async () => {
         type: "communique",
         school: school._id,
         classroom: classroom._id,
-        author: schoolAdmin._id
+        author: schoolAdmin._id,
+        authorModel: "Teacher"
       },
       {
         title: "Congé de Pâques",
         content: "Les cours s'arrêteront le jeudi 17 avril pour les vacances de Pâques.",
         type: "communique",
         school: school._id,
-        author: schoolAdmin._id
+        author: schoolAdmin._id,
+        authorModel: "Teacher"
       }
     ]);
     console.log("Communications créées.");
 
     console.log("Seed terminé avec succès !");
     process.exit();
-  } catch (error) {
-    console.error("Erreur pendant le seed :", error);
+  } catch (err) {
+    console.error("Erreur pendant le seed :", err);
     process.exit(1);
   }
 };

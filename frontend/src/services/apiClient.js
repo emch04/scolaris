@@ -2,6 +2,7 @@ import axios from "axios";
 import { getToken } from "../utils/storage";
 
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+// Utilisation du port 5001 pour le backend local
 const baseURL = isLocal ? "http://localhost:5001/api" : "https://scolaris-fucv.onrender.com/api";
 
 const apiClient = axios.create({

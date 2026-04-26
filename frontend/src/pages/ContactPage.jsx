@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { getSchoolByIdRequest, getSchoolsRequest } from "../services/school.api";
@@ -50,6 +51,9 @@ function ContactPage() {
 
   return (
     <>
+      <Helmet>
+        <title>Contact - Scolaris</title>
+      </Helmet>
       <Navbar />
       <main className="container" style={{ padding: "clamp(2rem, 8vw, 4rem) 1.5rem" }}>
         {loading ? <Loader /> : school ? (

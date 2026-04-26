@@ -10,6 +10,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ToastProvider } from "./context/ToastContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { HelmetProvider } from "react-helmet-async";
 import "./styles/globals.css";
 import { registerSW } from 'virtual:pwa-register';
 
@@ -23,15 +24,17 @@ if (!rootElement) {
 } else {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <ToastProvider>
-            <ThemeProvider>
-              <App />
-            </ThemeProvider>
-          </ToastProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <AuthProvider>
+            <ToastProvider>
+              <ThemeProvider>
+                <App />
+              </ThemeProvider>
+            </ToastProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </HelmetProvider>
     </React.StrictMode>
   );
 }

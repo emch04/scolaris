@@ -42,7 +42,7 @@ function Navbar() {
         {/* Brand / Logo */}
         <Link to="/" className="brand" onClick={closeMenu} style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
           <div style={{ background: "white", width: "40px", height: "40px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-            <img src="/assets/image.jpg" alt="S" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
+            <img src="/assets/android-chrome-512x512.png" alt="S" style={{ width: "80%", height: "80%", objectFit: "contain", borderRadius: "4px" }} />
           </div>
           <span className="brand-text" style={{ fontSize: "1.3rem", fontWeight: "900" }}>Scolaris</span>
         </Link>
@@ -156,7 +156,7 @@ function Navbar() {
               </div>
             </>
           ) : (
-            <div style={{ marginTop: "auto", padding: "1rem 1.5rem" }}>
+            <div style={{ padding: "1rem 1.5rem" }}>
               <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: "12px" }}>Se connecter</Link>
             </div>
           )}

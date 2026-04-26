@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import useAuth from "../hooks/useAuth";
 import { getGlobalStatsRequest, getTeacherStatsRequest } from "../services/stats.api";
@@ -25,17 +26,14 @@ function DashboardPage() {
   });
   
   const [loading, setLoading] = useState(!statsData);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(true); // Par défaut on assume en ligne
   const [fetchError, setFetchError] = useState(null);
 
   /**
    * fetchStats
-   * Logique : Récupère les statistiques depuis l'API selon le rôle (Global pour Super Admin vs Spécifique).
-   * Met à jour le cache local après chaque récupération réussie.
+   * Logique : Récupère les statistiques depuis l'API selon le rôle.
    */
   const fetchStats = () => {
-    if (!navigator.onLine) return;
-    
     setLoading(true);
     const request = user?.role === "super_admin" ? getGlobalStatsRequest() : getTeacherStatsRequest();
     
@@ -45,10 +43,15 @@ function DashboardPage() {
           setStatsData(res.data);
           localStorage.setItem(`stats_cache_${user?.id}`, JSON.stringify(res.data));
           setFetchError(null);
+          setIsOnline(true); // Succès = En ligne
         }
       })
       .catch(err => {
         console.error("Erreur stats:", err);
+        // Si on a une erreur de connexion (pas de réponse du serveur)
+        if (!err.response) {
+          setIsOnline(false);
+        }
         if (!statsData) {
           setFetchError("Connexion impossible au serveur");
         }
@@ -65,18 +68,11 @@ function DashboardPage() {
   useEffect(() => {
     fetchStats();
     
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
+    // On ne se fie plus aux événements window.online/offline qui sont instables
     const interval = setInterval(fetchStats, 30000); // Polling toutes les 30 secondes
     
     return () => {
       clearInterval(interval);
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
     };
   }, [user]);
 
@@ -128,6 +124,9 @@ function DashboardPage() {
 
   return (
     <>
+      <Helmet>
+        <title>Tableau de Bord - Scolaris</title>
+      </Helmet>
       <Navbar />
       <main className="container" style={{ 
         display: "flex", 

@@ -5,11 +5,33 @@
 
 import { useState, useEffect } from "react";
 import AppRouter from "./app/router.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
+import axios from "axios";
 
 function App() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
+    // Vérification réelle de la connexion au démarrage
+    const checkConnection = async () => {
+      try {
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const pingURL = isLocal ? "http://localhost:5001/" : "/";
+        // On tente de joindre la racine du serveur
+        await axios.get(pingURL, { timeout: 3000 });
+        setIsOnline(true);
+      } catch (err) {
+        // Si on reçoit n'importe quelle réponse (même une erreur 404), on est en ligne
+        if (err.response || err.request) {
+          setIsOnline(true);
+        } else {
+          setIsOnline(false);
+        }
+      }
+    };
+
+    checkConnection();
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
@@ -24,24 +46,7 @@ function App() {
 
   return (
     <>
-      {!isOnline && (
-        <div style={{ 
-          background: "#D93025", 
-          color: "white", 
-          textAlign: "center", 
-          padding: "8px", 
-          fontSize: "0.85rem", 
-          fontWeight: "bold",
-          position: "fixed",
-          bottom: 0, /* Déplacé en bas */
-          left: 0,
-          right: 0,
-          zIndex: 9999,
-          boxShadow: "0 -2px 10px rgba(0,0,0,0.3)"
-        }}>
-          Mode hors-ligne : les données affichées peuvent ne pas être à jour.
-        </div>
-      )}
+      <ScrollToTop />
       <AppRouter />
     </>
   );

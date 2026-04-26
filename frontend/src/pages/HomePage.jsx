@@ -4,6 +4,7 @@
  */
 
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -41,6 +42,9 @@ function HomePage() {
 
   return (
     <>
+      <Helmet>
+        <title>Scolaris - Réinventons l'éducation</title>
+      </Helmet>
       <Navbar />
       
       {/* Hero Section */}
@@ -66,7 +70,7 @@ function HomePage() {
           boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
           transform: "rotate(-5deg)"
         }}>
-          <img src="/assets/image.jpg" alt="Scolaris Logo" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
+          <img src="/assets/android-chrome-512x512.png" alt="Scolaris Logo" style={{ width: "80%", height: "80%", objectFit: "contain", borderRadius: "15px" }} />
         </div>
         
         <h1 style={{ 

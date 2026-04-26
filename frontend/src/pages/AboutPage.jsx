@@ -3,6 +3,7 @@
  * @description Page de présentation "À propos" du projet Scolaris.
  */
 
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -27,6 +28,9 @@ function AboutPage() {
 
   return (
     <>
+      <Helmet>
+        <title>À propos de Scolaris - Notre Mission</title>
+      </Helmet>
       <Navbar />
       <main className="container" style={{ padding: "clamp(2rem, 8vw, 4rem) 1.5rem" }}>
         

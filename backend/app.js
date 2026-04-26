@@ -60,8 +60,15 @@ app.use(morgan("dev"));
 // Fichiers statiques
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+const mongoose = require("mongoose");
+
 app.get("/", (req, res) => {
-  res.json({ success: true, message: "API Scolaris Online" });
+  const dbStatus = mongoose.connection.readyState === 1 ? "Connectée" : "Déconnectée";
+  res.json({ 
+    success: true, 
+    message: "API Scolaris Online",
+    database: dbStatus 
+  });
 });
 
 // Routes API
