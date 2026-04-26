@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://scolaris.vercel.app/sitemap.xml
+Sitemap: https://scolaris2.vercel.app/sitemap.xml
