@@ -31,6 +31,7 @@ import SchoolRegistrationPage from "../pages/SchoolRegistrationPage";
 import AboutPage from "../pages/AboutPage";
 import GuidePage from "../pages/GuidePage";
 import LogsPage from "../pages/LogsPage";
+import BlackBoxPage from "../pages/BlackBoxPage";
 import SettingsPage from "../pages/SettingsPage";
 import RegistrationStatsPage from "../pages/RegistrationStatsPage";
 import TreasuryPage from "../pages/TreasuryPage";
@@ -76,6 +77,7 @@ function AppRouter() {
       <Route path="/schools" element={<ProtectedRoute allowedRoles={["hero_admin", "super_admin"]}><SchoolsPage /></ProtectedRoute>} />
       
       <Route path="/logs" element={<ProtectedRoute allowedRoles={["hero_admin"]}><LogsPage /></ProtectedRoute>} />
+      <Route path="/blackbox" element={<ProtectedRoute allowedRoles={["hero_admin"]}><BlackBoxPage /></ProtectedRoute>} />
       <Route path="/system-settings" element={<ProtectedRoute allowedRoles={["hero_admin"]}><SettingsPage /></ProtectedRoute>} />
       <Route path="/registration-stats" element={<ProtectedRoute allowedRoles={HIGHER_STAFF}><RegistrationStatsPage /></ProtectedRoute>} />
       

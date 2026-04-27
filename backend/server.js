@@ -18,6 +18,13 @@ connectDB().then(() => {
   
   // Démarrage de l'IA Prédictive 24/7
   startPredictiveMonitoring();
+
+  // Snapshot IA quotidien (Toutes les 24h)
+  const blackBox = require("./src/utils/blackbox.service");
+  setInterval(() => {
+    console.log("🤖 IA : Prise de snapshot quotidien en cours...");
+    blackBox.takeSnapshot();
+  }, 24 * 60 * 60 * 1000);
 });
 
 const PORT = process.env.PORT || 5001;

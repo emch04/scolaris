@@ -43,7 +43,12 @@ const runBootstrap = async () => {
 
     // 3. CONFIGURATIONS ET RÔLES
     const defaultConfigs = [
-      { key: "public_registration", label: "Inscriptions Publiques", category: "Modules" },
+      { key: "maintenance_mode", label: "Mode Maintenance", category: "Système", description: "Bloque l'accès aux utilisateurs pour maintenance." },
+      { key: "ai_oracle_enabled", label: "Scolaris IA (Oracle)", category: "Intelligence", description: "Active les fonctions avancées de l'IA Gemini." },
+      { key: "security_auto_audit", label: "Audit Sécurité Auto", category: "Système", description: "L'IA surveille les accès suspects 24/7." },
+      { key: "public_registration", label: "Inscriptions Publiques", category: "Modules", description: "Permet aux nouvelles écoles de s'inscrire." },
+      { key: "parent_grades_visibility", label: "Notes visibles (Parents)", category: "Pédagogie", description: "Affiche les notes aux parents en temps réel." },
+      { key: "payment_blocking", label: "Blocage Non-Paiement", category: "Finance", description: "Restreint l'accès si les frais ne sont pas payés." },
       { key: "messaging", label: "Messagerie Interne", category: "Modules" },
       { key: "score_input", label: "Saisie des Notes", category: "Modules" },
       { key: "library_access", label: "Accès Bibliothèque", category: "Modules" },

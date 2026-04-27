@@ -32,7 +32,10 @@ scripts/blackbox_daemon.sh.tmp
 *.swo
 .DS_Store
 
-# Temporary files
+# Temporary and Test files
 /Users/emchkongo/.gemini/tmp/
 tmp/
 temp/
+backend/test_gemini.js
+backend/check_connections.js
+backend/test_100k.js

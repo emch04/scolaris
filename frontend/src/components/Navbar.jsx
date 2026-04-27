@@ -58,7 +58,12 @@ function Navbar() {
           {isAuthenticated && (
             <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "1rem" }}>
               <div style={{ fontSize: "0.7rem", opacity: 0.5, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>Espace Scolaris</div>
-              <div style={{ fontWeight: "bold", fontSize: "1.1rem", color: role === 'hero_admin' ? '#ff5252' : 'white' }}>{user?.fullName} {role === 'hero_admin' ? '👑' : ''}</div>
+              <div style={{ fontWeight: "bold", fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "8px" }}>
+                {user?.fullName} 
+                {role === 'hero_admin' && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff5252" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path><path d="M19 16v3a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3"></path></svg>
+                )}
+              </div>
               <div style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: "bold" }}>{role?.replace('_', ' ')}</div>
             </div>
           )}
@@ -83,6 +88,10 @@ function Navbar() {
               
               {role === "hero_admin" && (
                 <>
+                  <Link to="/blackbox" onClick={closeMenu} style={{ color: "#00C851", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path></svg>
+                    Centre IA
+                  </Link>
                   <Link to="/logs" onClick={closeMenu} style={{ color: "#ff5252" }}>🚨 Surveillance</Link>
                   <Link to="/system-settings" onClick={closeMenu}>Paramètres</Link>
                 </>

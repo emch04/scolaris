@@ -26,4 +26,6 @@ const logSchema = new mongoose.Schema(
 
 logSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
-module.exports = mongoose.model("Log", logSchema);
+// Utilisation de la connexion dédiée aux logs si disponible, sinon connexion par défaut
+const connection = mongoose.logConnection || mongoose;
+module.exports = connection.model("Log", logSchema);

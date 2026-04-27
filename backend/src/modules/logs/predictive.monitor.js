@@ -1,7 +1,6 @@
 /**
  * @file predictive.monitor.js
  * @description Analyse prédictive 24/7 du système Backend.
- * Détecte les surcharges CPU, RAM, ou latence Base de Données avant qu'un crash ne survienne.
  */
 
 const os = require('os');
@@ -11,88 +10,68 @@ const { logError } = require('./log.controller');
 let isMonitoring = false;
 let highCpuCount = 0;
 let consecutiveSlowDb = 0;
+let lastCriticalAlert = null; // Mémoire de l'alerte active
 
 const startPredictiveMonitoring = () => {
   if (isMonitoring) return;
   isMonitoring = true;
-  console.log("🤖 IA Prédictive (Boîte Noire) activée : Analyse système 24/7 en cours...");
+  console.log("🤖 IA Prédictive activée : Surveillance active.");
 
   setInterval(async () => {
     try {
       const issues = [];
       let level = 'WARN';
 
-      // 1. Analyse de la RAM (Alerte si > 90% d'utilisation réelle)
+      // 1. Analyse RAM
       const totalMem = os.totalmem();
       const freeMem = os.freemem();
-      // Sur macOS, freeMem est souvent bas, on check plutôt si c'est vraiment critique
       const usedMemPercentage = ((totalMem - freeMem) / totalMem) * 100;
-      
-      if (usedMemPercentage > 95) {
-        // Tentative de forcer la libération de mémoire si Node est lancé avec --expose-gc
-        if (global.gc) {
-          console.log("🧹 IA : Déclenchement du Garbage Collection forcé...");
-          global.gc();
-        }
-        issues.push(`Alerte RAM critique (${usedMemPercentage.toFixed(1)}% occupés). Fermez les applications inutiles.`);
-      }
+      if (usedMemPercentage > 95) issues.push(`Surcharge RAM (${usedMemPercentage.toFixed(1)}%)`);
 
-      // 2. Analyse CPU (Simplifiée via Load Average 1min par rapport au nb de coeurs)
+      // 2. Analyse CPU
       const cpus = os.cpus().length;
-      const loadAvg = os.loadavg()[0]; // Charge sur 1 minute
-      const cpuLoadPercentage = (loadAvg / cpus) * 100;
+      const cpuLoad = (os.loadavg()[0] / cpus) * 100;
+      if (cpuLoad > 90) issues.push(`Surcharge CPU (${cpuLoad.toFixed(1)}%)`);
 
-      if (cpuLoadPercentage > 90) {
-        highCpuCount++;
-        if (highCpuCount >= 3) {
-          issues.push(`Surcharge CPU détectée sur 3 cycles (${cpuLoadPercentage.toFixed(1)}% de charge)`);
-          level = 'FATAL'; // Danger critique de gel du serveur
-        }
-      } else {
-        highCpuCount = 0;
-      }
-
-      // 3. Analyse de la connexion Base de Données
+      // 3. Base de données
       const dbState = mongoose.connection.readyState;
-      if (dbState !== 1) { // 1 = connected
-        consecutiveSlowDb++;
-        issues.push(`Perte de stabilité de la Base de Données (État Mongoose: ${dbState})`);
+      if (dbState !== 1) {
+        issues.push("Base de données déconnectée");
         level = 'FATAL';
       } else {
-        // Test de latence DB (Ping)
-        const startPing = Date.now();
-        await mongoose.connection.db.admin().ping();
-        const latency = Date.now() - startPing;
-        
-        if (latency > 1500) { // > 1.5s pour un ping c'est énorme
-          consecutiveSlowDb++;
-          if (consecutiveSlowDb >= 2) {
-            issues.push(`Latence critique Base de Données détectée (${latency}ms). Risque de timeout global.`);
-          }
-        } else {
-          consecutiveSlowDb = 0;
+        const stats = await mongoose.connection.db.stats();
+        const totalWorkingSet = (stats.indexSize + stats.dataSize) / 1024 / 1024;
+        if (totalWorkingSet > 450) {
+            issues.push(`Saturation Cache DB (${totalWorkingSet.toFixed(0)}MB)`);
+            level = 'FATAL';
         }
       }
 
-      // Si des anomalies sont détectées, on informe la Boîte Noire PROACTIVEMENT
+      // Gestion de l'alerte
       if (issues.length > 0) {
-        const message = "🔮 [PRÉDICTION IA] " + issues.join(" | ");
-        console.log("\x1b[31m%s\x1b[0m", message);
+        const message = "🚨 ALERTE SYSTÈME : " + issues.join(" | ");
+        lastCriticalAlert = { message, level, time: new Date() };
         
         await logError({
-          message: message,
-          level: level,
-          url: 'System/PredictiveCore',
-          user: { role: 'AI_Monitor', id: 'system' },
-          userAgent: `Node.js ${process.version} / ${os.type()}`,
-          ip: '127.0.0.1'
+          message: message, level, url: 'System/PredictiveCore',
+          user: { role: 'AI_Monitor', id: 'system' }
         });
+      } else {
+        // On efface l'alerte si tout est redevenu normal
+        lastCriticalAlert = null;
       }
 
-    } catch (err) {
-      console.error("Erreur de l'IA Prédictive :", err.message);
-    }
-  }, 30000); // Check toutes les 30 secondes
+    } catch (err) { console.error("Monitor Error:", err.message); }
+  }, 30000);
 };
 
-module.exports = { startPredictiveMonitoring };
+module.exports = { 
+  startPredictiveMonitoring,
+  getLastAlert: () => {
+    // L'alerte est valide si elle a moins de 2 minutes
+    if (lastCriticalAlert && (Date.now() - lastCriticalAlert.time < 120000)) {
+        return lastCriticalAlert;
+    }
+    return null;
+  }
+};

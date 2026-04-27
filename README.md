@@ -1,42 +1,68 @@
-# Scolaris - Système de Gestion Scolaire Connecté
+# Scolaris 🇨🇩🚀
 
-Scolaris est une plateforme moderne de gestion éducative conçue pour les réseaux d'écoles et les établissements indépendants. Elle offre une vision à 360° sur la pédagogie, l'administration et les finances.
+**Scolaris** est la plateforme de gestion scolaire de nouvelle génération conçue pour la République Démocratique du Congo. Alliant puissance administrative et intelligence artificielle, elle permet de gérer des millions d'élèves avec une fluidité totale.
 
-## 🚀 Fonctionnalités Clés
+---
 
-- **Gestion Pédagogique** : Classes, élèves, personnel enseignant, emploi du temps et plans de cours annuels.
-- **Suivi des Résultats** : Saisie des notes par période et génération automatique de bulletins officiels.
-- **Module de Finance** : Trésorerie en temps réel, encaissement des frais scolaires et génération de reçus PDF certifiés.1
-- **Stabilité PWA** : Mode hors-ligne intelligent avec reconnexion automatique forcée et réveil du backend.
-- **Surveillance & Sécurité** : Chiffrement des données sensibles (AES-256) et audit de code automatisé.
-- **Communication** : Messagerie interne privée et flux de communiqués officiels.
+## 🧠 Scolaris IA : L'Oracle Stratégique (v3.5)
 
-## 👑 Hiérarchie des Rôles
+Au cœur de Scolaris bat une intelligence artificielle hybride, connectée à **Gemini 2.5 Flash**, capable de raisonnement contextuel et de surveillance proactive.
 
-1.  **Hero Admin** : Le supérieur ultime (invisible). Contrôle total, surveillance technique et gestion des interrupteurs système.
-2.  **Super Admin** : Administrateur du réseau (écoles, personnel global).
-3.  **Directeur** : Chef d'établissement (gestion complète de son école).
-4.  **Secrétaire** : Gestion administrative et financière (caisse, inscriptions).
-5.  **Enseignant** : Pédagogie (devoirs, notes, présences).
-6.  **Parent & Élève** : Suivi de la scolarité et accès aux ressources.
+### Fonctionnalités Clés de l'IA :
+*   **Conscience du Système** : L'IA connaît en temps réel l'effectif total, le taux de réussite national et la santé technique des serveurs.
+*   **Surveillance Prédictive (24/7)** : Un moniteur passif analyse la RAM, le CPU et la latence DB pour prévenir les pannes avant qu'elles ne surviennent.
+*   **Interface Organique** : Un avatar vivant ("L'Orbe") qui réagit visuellement à l'état du système.
+*   **Mémoire Persistante** : Historique complet des conversations sauvegardé en base de données (MongoDB).
+*   **Scolaris Shield** : Anonymisation automatique des données sensibles (élèves, écoles) avant traitement par les IA externes.
 
-## 🛠️ Installation Technique
+---
 
-### Backend
-1. `cd backend`
-2. `npm install`
-3. Configurer le `.env` (voir `.env.example`)
-4. `npm run dev`
+## 🏗️ Architecture "Hyper-Scale"
 
-### Frontend
-1. `cd frontend`
-2. `npm install`
-3. `npm run dev`
+Scolaris est bâti sur une architecture **Multi-Bases de Données** pour une stabilité industrielle :
 
-## 🛡️ Maintenance
-Lancer l'audit de code :
-```bash
-node scripts/audit.js
+1.  **Cluster CORE (Principal)** : Gère les données vitales (Élèves, Écoles, Notes, Finances).
+2.  **Cluster ORACLE (Logs & IA)** : Cluster MongoDB séparé gérant l'historique, les snapshots quotidiens et les conversations de l'IA.
+
+*Avantage : Zéro impact sur les performances utilisateurs lors des analyses lourdes de l'IA.*
+
+---
+
+## 🚀 Installation & Déploiement
+
+### Pré-requis
+*   Node.js (v18+)
+*   MongoDB Atlas (2 Clusters recommandés)
+*   Google Gemini API Key
+
+### Configuration `.env` (Backend)
+```env
+PORT=5001
+MONGODB_URI=ton_lien_base_principale
+MONGODB_LOGS_URI=ton_lien_base_ia_logs
+JWT_SECRET=ton_secret
+GEMINI_API_KEY=ta_cle_gemini
 ```
 
-© 2026 Scolaris - L'excellence par la technologie.
+### Lancement Rapide
+```bash
+# Backend
+cd backend && npm install && npm start
+
+# Frontend
+cd frontend && npm install && npm run dev
+```
+
+---
+
+## 🛠️ Commandes Scolaris IA
+| Commande | Usage |
+| :--- | :--- |
+| **"Statut santé"** | Diagnostic complet (Technique + Académique) |
+| **"RAM base"** | Analyse précise de la mémoire DB |
+| **"Rapport"** | Résumé stratégique des effectifs |
+| **"Prédiction"** | Estimation de la croissance à 6 mois |
+| **"Nettoie"** | Optimisation du stockage |
+
+---
+*Développé avec passion pour l'éducation en RDC par **Emch**.*

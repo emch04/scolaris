@@ -1,33 +1,32 @@
-/**
- * @fileoverview Configuration et connexion à la base de données MongoDB via Mongoose.
- */
-
-// On importe mongoose pour se connecter à MongoDB
 const mongoose = require("mongoose");
 
 /**
- * Fonction asynchrone pour établir la connexion à la base de données MongoDB.
- * 
- * @async
- * @function connectDB
- * @throws {Error} Si la variable d'environnement MONGODB_URI est manquante.
- * @returns {Promise<void>} Résout quand la connexion est établie.
+ * Gestionnaire de Connexions Multi-Bases
+ * - Connection Principale : Scolaris Core (Élèves, Écoles, etc.)
+ * - Connection Secondaire : Scolaris Logs (Audit, BlackBox, Erreurs)
  */
+
 const connectDB = async () => {
-  // On récupère l'URL MongoDB depuis les variables d'environnement
-  const mongoURI = process.env.MONGODB_URI;
+  try {
+    // 1. Connexion à la base principale
+    const mainConn = await mongoose.connect(process.env.MONGODB_URI);
+    console.log(`🔥 Base Principale Connectée : ${mainConn.connection.host}`);
 
-  // Si l'URL n'existe pas, on stoppe tout avec une erreur claire
-  if (!mongoURI) {
-    throw new Error("La variable MONGODB_URI est manquante.");
+    // 2. Connexion à la base de logs (optionnelle ou identique par défaut)
+    const logsURI = process.env.MONGODB_LOGS_URI || process.env.MONGODB_URI;
+    const logConn = mongoose.createConnection(logsURI);
+    
+    logConn.on('connected', () => {
+      console.log(`📡 Base de Logs Connectée : ${logConn.host}`);
+    });
+
+    // On attache la connexion de logs à mongoose pour l'utiliser dans les modèles
+    mongoose.logConnection = logConn;
+
+  } catch (error) {
+    console.error(`❌ Erreur de connexion : ${error.message}`);
+    process.exit(1);
   }
-
-  // Tentative de connexion à MongoDB
-  await mongoose.connect(mongoURI);
-
-  // Message de confirmation
-  console.log("MongoDB connecté avec succès");
 };
 
-// On exporte la fonction
 module.exports = connectDB;

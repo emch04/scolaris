@@ -71,6 +71,11 @@ app.get("/", (req, res) => {
   res.json({ success: true, message: "API Scolaris Fortifiée" });
 });
 
+// Route de santé pour la PWA et la Boîte Noire
+app.get("/api/status", (req, res) => {
+  res.json({ success: true, status: "stable", timestamp: new Date() });
+});
+
 // Routes API
 app.use("/api/auth", authRoutes);
 app.use("/api/schools", schoolRoutes);

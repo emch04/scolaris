@@ -141,8 +141,12 @@ function DashboardPage() {
         {/* En-tête */}
         <div className="dashboard-header">
           <h1 className="dashboard-title">Tableau de Bord</h1>
-          <p className="dashboard-welcome">
-            Bienvenue {user?.role === 'hero_admin' ? 'Majesté' : ''}, <strong>{user?.fullName}</strong>.
+          <p className="dashboard-welcome" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            Bienvenue 
+            {user?.role === 'hero_admin' && (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff5252" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path><path d="M19 16v3a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3"></path></svg>
+            )} 
+            <strong>{user?.fullName}</strong>
           </p>
           
           <div className="status-container">
@@ -179,7 +183,10 @@ function DashboardPage() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                   Flux Inscriptions
                 </h3>
-                <span className="chart-link-text">Analyse →</span>
+                <span className="chart-link-text" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  Analyse 
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </span>
               </div>
               
               <div className="chart-mini-viewport">
