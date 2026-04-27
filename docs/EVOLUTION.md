@@ -11,6 +11,8 @@ Ce document recense les améliorations stratégiques et techniques à implément
 - [x] **Dashboard Parent & Enseignant** : Statistiques, taux de réussite et suivi des signatures.
 - [x] **Optimisation Assets** : Réduction du poids des images de 80%.
 - [x] **Polissage Design** : Vitrine "Grand Public", Footer pro et réseaux sociaux (WA, IG).
+- [x] **IA Prédictive (Boîte Noire)** : Surveillance système 24/7 (RAM/CPU/Disk) avec alertes macOS natives.
+- [x] **Réveil Intelligent PWA** : Système de reconnexion automatique forcée et détection active du Backend.
 
 ## 🏗️ Architecture Backend & Performance (Prochainement)
 - [ ] **Pagination Globalisée** : Support pour des milliers d'élèves.

@@ -22,6 +22,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 backend/logs/*.log
+scripts/blackbox_daemon.sh.tmp
 *.log
 
 # IDE / Editors

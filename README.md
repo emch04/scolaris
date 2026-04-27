@@ -6,8 +6,9 @@ Scolaris est une plateforme moderne de gestion éducative conçue pour les rése
 
 - **Gestion Pédagogique** : Classes, élèves, personnel enseignant, emploi du temps et plans de cours annuels.
 - **Suivi des Résultats** : Saisie des notes par période et génération automatique de bulletins officiels.
-- **Module de Finance** : Trésorerie en temps réel, encaissement des frais scolaires et génération de reçus PDF certifiés.
-- **Surveillance & Sécurité** : Chiffrement des données sensibles (AES-256) et système de "boîte noire" pour le traçage des erreurs.
+- **Module de Finance** : Trésorerie en temps réel, encaissement des frais scolaires et génération de reçus PDF certifiés.1
+- **Stabilité PWA** : Mode hors-ligne intelligent avec reconnexion automatique forcée et réveil du backend.
+- **Surveillance & Sécurité** : Chiffrement des données sensibles (AES-256) et audit de code automatisé.
 - **Communication** : Messagerie interne privée et flux de communiqués officiels.
 
 ## 👑 Hiérarchie des Rôles

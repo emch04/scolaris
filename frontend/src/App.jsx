@@ -38,11 +38,12 @@ function App() {
     const checkConnection = async () => {
       try {
         const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        const pingURL = isLocal ? "http://localhost:5001/" : "/";
-        await axios.get(pingURL, { timeout: 3000 });
+        const pingURL = isLocal ? "http://localhost:5001/api/status" : "/api/status";
+        await axios.get(pingURL, { timeout: 5000 });
         setIsOnline(true);
       } catch (err) {
-        if (err.response || err.request) {
+        // Si on reçoit une réponse (même 404), on est en ligne
+        if (err.response) {
           setIsOnline(true);
         } else {
           setIsOnline(false);
@@ -52,7 +53,13 @@ function App() {
 
     checkConnection();
 
-    const handleOnline = () => setIsOnline(true);
+    const handleOnline = () => {
+      setIsOnline(true);
+      // Réveil du Service Worker pour sortir du mode offline
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(reg => reg.update());
+      }
+    };
     const handleOffline = () => setIsOnline(false);
 
     window.addEventListener("online", handleOnline);
@@ -67,6 +74,16 @@ function App() {
   return (
     <ErrorBoundary>
       <ScrollToTop />
+      {!isOnline && (
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, 
+          backgroundColor: '#ff4b2b', color: 'white', textAlign: 'center', 
+          padding: '10px', zIndex: 9999, fontWeight: 'bold',
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
+        }}>
+          ⚠️ Vous êtes actuellement hors connexion. Certaines fonctionnalités sont limitées.
+        </div>
+      )}
       <AppRouter />
     </ErrorBoundary>
   );
