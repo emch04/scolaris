@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
-import { getLogsRequest, clearLogsRequest } from "../services/log.api";
+import { getLogsRequest, clearLogsRequest, resolveLogRequest } from "../services/log.api";
 import { useToast } from "../context/ToastContext";
 import formatDate from "../utils/formatDate";
 
@@ -29,6 +29,16 @@ function LogsPage() {
   useEffect(() => {
     fetchLogs();
   }, []);
+
+  const handleResolve = async (id) => {
+    try {
+      await resolveLogRequest(id);
+      showToast("Incident marqué comme résolu.");
+      fetchLogs();
+    } catch (err) {
+      showToast("Erreur lors de la résolution.", "error");
+    }
+  };
 
   const handleClear = async () => {
     if (!window.confirm("Voulez-vous vraiment vider tout le journal d'incidents ?")) return;
@@ -70,46 +80,88 @@ function LogsPage() {
             ) : (
               logs.map(log => (
                 <div key={log._id} style={{ 
-                  background: "rgba(255,255,255,0.02)", 
+                  background: log.resolved ? "rgba(52, 168, 83, 0.03)" : "rgba(255,255,255,0.02)", 
                   padding: "1.5rem", 
                   borderRadius: "15px", 
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  position: "relative"
+                  border: log.resolved ? "1px solid rgba(52, 168, 83, 0.3)" : "1px solid rgba(255,255,255,0.08)",
+                  position: "relative",
+                  opacity: log.resolved ? 0.8 : 1
                 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
-                    <div>
-                      <span style={{ 
-                        fontSize: "0.6rem", 
-                        padding: "3px 8px", 
-                        borderRadius: "50px", 
-                        background: log.level === "FATAL" ? "#ff5252" : "#F9AB00", 
-                        fontWeight: "900",
-                        marginRight: "10px"
-                      }}>
-                        {log.level}
-                      </span>
-                      <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>{formatDate(log.createdAt)}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "1rem" }}>
+                    <span style={{ 
+                      fontSize: "0.65rem", 
+                      padding: "4px 12px", 
+                      borderRadius: "50px", 
+                      background: log.resolved ? "#34A853" : (log.level === "FATAL" ? "#ff5252" : "#F9AB00"), 
+                      fontWeight: "900",
+                      letterSpacing: "1px"
+                    }}>
+                      {log.resolved ? "SITUATION RÉSOLUE" : `ALERTE ${log.level}`}
+                    </span>
+                    <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                      <div style={{ fontSize: "0.7rem", opacity: 0.4 }}>IP: {log.ip || "N/A"}</div>
+                      {!log.resolved && (
+                        <button 
+                          onClick={() => handleResolve(log._id)}
+                          style={{ 
+                            background: "#34A853", 
+                            border: "none", 
+                            color: "white", 
+                            fontSize: "0.65rem", 
+                            padding: "5px 12px", 
+                            borderRadius: "8px", 
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            boxShadow: "0 4px 10px rgba(52, 168, 83, 0.3)"
+                          }}
+                        >
+                          RÉSOUDRE MAINTENANT
+                        </button>
+                      )}
                     </div>
-                    <div style={{ fontSize: "0.7rem", opacity: 0.4 }}>IP: {log.ip || "N/A"}</div>
                   </div>
 
-                  <h3 style={{ fontSize: "1.1rem", marginBottom: "0.8rem", color: "#ff5252" }}>{log.message}</h3>
+                  <h3 style={{ fontSize: "1.1rem", marginBottom: "0.8rem", color: log.resolved ? "#34A853" : "#ff5252" }}>
+                    {log.message} {log.resolved && "✅"}
+                  </h3>
                   
                   <div style={{ fontSize: "0.85rem", background: "rgba(0,0,0,0.2)", padding: "12px", borderRadius: "10px", marginBottom: "1rem" }}>
                     <p style={{ margin: "0 0 5px 0", color: "var(--primary)", fontWeight: "bold" }}>URL du crash :</p>
                     <code style={{ fontSize: "0.75rem", wordBreak: "break-all" }}>{log.url}</code>
                   </div>
 
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", fontSize: "0.8rem", marginBottom: "1rem" }}>
+                    <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px", borderRadius: "10px", borderLeft: "4px solid #ff5252" }}>
+                      <p style={{ opacity: 0.5, margin: "0 0 5px 0", fontSize: "0.65rem", textTransform: "uppercase" }}>🕒 Heure de l'incident</p>
+                      <p style={{ margin: 0, fontWeight: "900", fontSize: "0.9rem" }}>{new Date(log.createdAt).toLocaleString('fr-FR')}</p>
+                    </div>
+
+                    <div style={{ background: "rgba(0,0,0,0.15)", padding: "10px", borderRadius: "10px", borderLeft: "4px solid var(--primary)" }}>
+                      <p style={{ opacity: 0.5, margin: "0 0 5px 0", fontSize: "0.65rem", textTransform: "uppercase" }}>👤 Compte Impacté</p>
+                      <p style={{ margin: 0, fontWeight: "900", fontSize: "0.9rem" }}>
+                        {typeof log.user === 'object' ? (log.user.email || log.user.role || "Inconnu") : log.user}
+                      </p>
+                      <span style={{ fontSize: "0.65rem", opacity: 0.5 }}>ID: {log.user?.id || "N/A"}</span>
+                    </div>
+
+                    {log.resolved && (
+                      <div style={{ background: "rgba(52, 168, 83, 0.1)", padding: "10px", borderRadius: "10px", borderLeft: "4px solid #34A853" }}>
+                        <p style={{ opacity: 0.5, margin: "0 0 5px 0", fontSize: "0.65rem", textTransform: "uppercase", color: "#34A853" }}>✅ Heure de résolution</p>
+                        <p style={{ margin: 0, fontWeight: "900", fontSize: "0.9rem", color: "#34A853" }}>{new Date(log.resolvedAt).toLocaleString('fr-FR')}</p>
+                      </div>
+                    )}
+                  </div>
+
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", fontSize: "0.8rem" }}>
                     <div>
-                      <p style={{ opacity: 0.5, margin: "0 0 3px 0" }}>Utilisateur</p>
-                      <pre style={{ margin: 0, background: "rgba(255,255,255,0.03)", padding: "5px", borderRadius: "5px" }}>
+                      <p style={{ opacity: 0.5, margin: "0 0 3px 0" }}>Navigateur / Appareil</p>
+                      <p style={{ margin: 0, fontSize: "0.7rem", opacity: 0.8 }}>{log.userAgent}</p>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <p style={{ opacity: 0.5, margin: "0 0 3px 0" }}>Détails techniques</p>
+                      <pre style={{ margin: 0, background: "rgba(255,255,255,0.03)", padding: "5px", borderRadius: "5px", fontSize: "0.6rem", textAlign: "left" }}>
                         {JSON.stringify(log.user, null, 2)}
                       </pre>
-                    </div>
-                    <div>
-                      <p style={{ opacity: 0.5, margin: "0 0 3px 0" }}>Appareil / Navigateur</p>
-                      <p style={{ margin: 0, fontSize: "0.7rem", opacity: 0.8 }}>{log.userAgent}</p>
                     </div>
                   </div>
 

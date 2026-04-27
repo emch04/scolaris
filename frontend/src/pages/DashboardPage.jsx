@@ -11,12 +11,18 @@ import useAuth from "../hooks/useAuth";
 import { getGlobalStatsRequest, getTeacherStatsRequest } from "../services/stats.api";
 
 function DashboardPage() {
-  const { user } = useAuth();
+  const { user, autoResolvedCount, setAutoResolvedCount } = useAuth();
+  const [shouldCrash, setShouldCrash] = useState(false);
   
   const [statsData, setStatsData] = useState(() => {
     const cached = localStorage.getItem(`stats_cache_${user?.id}`);
     return cached ? JSON.parse(cached) : null;
   });
+
+  // Simulation de crash capturable par la Boîte Noire
+  if (shouldCrash) {
+    throw new Error("🔥 TEST CRASH BOÎTE NOIRE : Simulation d'un incident critique par Emch.");
+  }
   
   const [loading, setLoading] = useState(!statsData);
   const [isOnline, setIsOnline] = useState(true);
@@ -40,6 +46,17 @@ function DashboardPage() {
   useEffect(() => {
     if (user) fetchStats();
   }, [user]);
+
+  // Notification IA Black Box
+  useEffect(() => {
+    if (autoResolvedCount > 0) {
+      const timer = setTimeout(() => {
+        setAutoResolvedCount(0);
+        sessionStorage.removeItem("ia_stabilized_count");
+      }, 15000); // 15 secondes pour bien le voir
+      return () => clearTimeout(timer);
+    }
+  }, [autoResolvedCount, setAutoResolvedCount]);
 
   const getStatsConfig = () => {
     const role = user?.role;
@@ -96,59 +113,165 @@ function DashboardPage() {
     <>
       <Helmet><title>Tableau de Bord - Scolaris</title></Helmet>
       <Navbar />
-      <main className="container" style={{ paddingTop: "5vh", textAlign: "center" }}>
-        <div style={{ marginBottom: "3rem" }}>
-          <h1 style={{ fontSize: "2.8rem", fontWeight: "900", marginBottom: "0.5rem" }}>Tableau de Bord</h1>
-          <p style={{ opacity: 0.6, fontSize: "1.1rem" }}>Bienvenue {user?.role === 'hero_admin' ? 'Majesté' : ''}, <strong>{user?.fullName}</strong>. Voici vos outils.</p>
+      <main className="container dashboard-main">
+        
+        {/* Notification IA Black Box */}
+        {autoResolvedCount > 0 && (
+          <div style={{ 
+            background: "linear-gradient(to right, #34A853, #1abc9c)", 
+            color: "white", 
+            padding: "1rem", 
+            borderRadius: "16px", 
+            marginBottom: "2rem", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            gap: "12px",
+            animation: "slideDown 0.5s ease-out",
+            boxShadow: "0 10px 20px rgba(52, 168, 83, 0.2)"
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <div style={{ textAlign: "left" }}>
+              <p style={{ margin: 0, fontWeight: "900", fontSize: "0.9rem" }}>SÉCURITÉ IA : SYSTÈME STABILISÉ</p>
+              <p style={{ margin: 0, fontSize: "0.75rem", opacity: 0.9 }}>La Boîte Noire a détecté et résolu {autoResolvedCount} incident(s) technique(s) automatiquement.</p>
+            </div>
+          </div>
+        )}
+
+        {/* En-tête */}
+        <div className="dashboard-header">
+          <h1 className="dashboard-title">Tableau de Bord</h1>
+          <p className="dashboard-welcome">
+            Bienvenue {user?.role === 'hero_admin' ? 'Majesté' : ''}, <strong>{user?.fullName}</strong>.
+          </p>
           
-          <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "1rem", alignItems: "center" }}>
-            <span style={{ padding: "5px 12px", borderRadius: "20px", fontSize: "0.8rem", background: isOnline ? "rgba(52, 168, 83, 0.1)" : "rgba(234, 67, 53, 0.1)", color: isOnline ? "#34A853" : "#EA4335", border: `1px solid ${isOnline ? "#34A85340" : "#EA433540"}`, display: "flex", alignItems: "center", gap: "6px" }}>
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: isOnline ? "#34A853" : "#EA4335" }}></div>
+          <div className="status-container">
+            <span className={`status-badge ${isOnline ? 'online' : 'offline'}`}>
+              <div className="status-dot"></div>
               {isOnline ? "En ligne" : "Hors-ligne"}
             </span>
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem", width: "100%", maxWidth: "1200px", margin: "0 auto 4rem" }}>
+        {/* Grille d'Outils */}
+        <div className="tools-grid">
           {stats.map((s, i) => (
-            <Link key={i} to={s.path} style={{ textDecoration: "none", color: "inherit" }}>
-              <div style={{ background: `${s.color}15`, padding: "1.5rem 1rem", borderRadius: "20px", border: `2px solid ${s.color}40`, textAlign: "left", display: "flex", flexDirection: "column", gap: "10px", transition: "all 0.3s ease", cursor: "pointer", height: "100%" }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                <div style={{ background: s.color, color: "white", width: "45px", height: "45px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 10px ${s.color}40` }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon}></path></svg>
+            <Link key={i} to={s.path} className="tool-card-link">
+              <div className="tool-card" style={{ background: `${s.color}10`, borderColor: `${s.color}30` }}>
+                <div className="tool-icon" style={{ background: s.color }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={s.icon}></path></svg>
                 </div>
-                <div>
-                  <h4 style={{ fontSize: "0.75rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px", color: s.color }}>{s.label}</h4>
-                  <p style={{ fontSize: "1.5rem", fontWeight: "900", marginTop: "2px" }}>{s.value}</p>
+                <div className="tool-info">
+                  <h4 className="tool-label" style={{ color: s.color }}>{s.label}</h4>
+                  <p className="tool-value">{s.value}</p>
                 </div>
               </div>
             </Link>
           ))}
         </div>
 
+        {/* Section Graphique */}
         {["hero_admin", "super_admin", "admin", "director"].includes(user?.role) && statsData && (
-          <Link to="/registration-stats" style={{ width: "100%", maxWidth: "1200px", textDecoration: "none", color: "inherit", display: "block", margin: "0 auto" }}>
-            <div style={{ background: "rgba(255,255,255,0.03)", padding: "2rem", borderRadius: "30px", border: "1px solid rgba(255,255,255,0.08)", textAlign: "left", transition: "transform 0.2s" }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.01)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-                <h3 style={{ fontSize: "1.2rem", display: "flex", alignItems: "center", gap: "10px", margin: 0 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                  Flux des Inscriptions (12 derniers mois)
+          <Link to="/registration-stats" className="chart-section-link">
+            <div className="chart-summary-card">
+              <div className="chart-card-header">
+                <h3 className="chart-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  Flux Inscriptions
                 </h3>
-                <span style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: "bold" }}>Analyse détaillée →</span>
+                <span className="chart-link-text">Analyse →</span>
               </div>
               
-              <div style={{ height: "180px", width: "100%", display: "flex", alignItems: "flex-end", gap: "10px", paddingBottom: "10px" }}>
+              <div className="chart-mini-viewport">
                 {trendData.length > 0 ? trendData.map((h, i) => (
-                  <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", height: "100%", justifyContent: "flex-end" }}>
-                    <div style={{ width: "100%", height: `${Math.max((h/Math.max(...trendData, 1))*100, 5)}%`, background: "linear-gradient(to top, var(--primary), #4c8bf5)", borderRadius: "4px 4px 0 0", opacity: 0.5 + (i/24) }}></div>
-                    <span style={{ fontSize: "0.5rem", opacity: 0.4, fontWeight: "bold", whiteSpace: "nowrap" }}>{trendLabels[i]}</span>
+                  <div key={i} className="chart-mini-col">
+                    <div className="chart-mini-bar" style={{ height: `${Math.max((h/Math.max(...trendData, 1))*100, 8)}%`, opacity: 0.4 + (i/24) }}></div>
+                    <span className="chart-mini-label">{trendLabels[i]}</span>
                   </div>
                 )) : (
-                  <p style={{ opacity: 0.3, width: "100%", textAlign: "center" }}>Chargement des données historiques...</p>
+                  <p className="chart-loading">Chargement des données...</p>
                 )}
               </div>
             </div>
           </Link>
         )}
+
+        <style dangerouslySetInnerHTML={{ __html: `
+          .dashboard-main { padding: 1.5rem 1rem; text-align: center; }
+          .dashboard-header { margin-bottom: 2rem; }
+          .dashboard-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+          .dashboard-welcome { opacity: 0.6; font-size: 0.95rem; line-height: 1.4; }
+          
+          .status-container { display: flex; justify-content: center; gap: 10px; margin-top: 1rem; }
+          .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid transparent; }
+          .status-badge.online { background: rgba(52, 168, 83, 0.1); color: #34A853; border-color: rgba(52, 168, 83, 0.2); }
+          .status-badge.offline { background: rgba(234, 67, 53, 0.1); color: #EA4335; border-color: rgba(234, 67, 53, 0.2); }
+          .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+          .online .status-dot { background: #34A853; }
+          .offline .status-dot { background: #EA4335; }
+
+          .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; width: 100%; max-width: 1200px; margin: 0 auto 2rem; }
+          .tool-card-link { text-decoration: none; color: inherit; }
+          .tool-card { 
+            padding: 1.2rem 1rem; 
+            border-radius: 24px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            text-align: left; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            height: 100%;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+          }
+          .tool-icon { 
+            width: 42px; 
+            height: 42px; 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+          }
+          .tool-icon svg {
+            width: 22px;
+            height: 22px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+          }
+          .tool-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin: 0; opacity: 0.8; }
+          .tool-value { font-size: 1.3rem; font-weight: 900; margin-top: 2px; letter-spacing: -0.5px; }
+
+          .chart-section-link { text-decoration: none; color: inherit; display: block; max-width: 1200px; margin: 0 auto; }
+          .chart-summary-card { background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.06); text-align: left; }
+          .chart-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+          .chart-card-title { font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0; }
+          .chart-link-text { font-size: 0.7rem; color: var(--primary); font-weight: 800; }
+          
+          .chart-mini-viewport { height: 100px; width: 100%; display: flex; align-items: flex-end; gap: 4px; padding-bottom: 5px; }
+          .chart-mini-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+          .chart-mini-bar { width: 100%; background: var(--primary); border-radius: 3px 3px 0 0; }
+          .chart-mini-label { font-size: 0.45rem; opacity: 0.3; font-weight: 700; margin-top: 4px; }
+          .chart-loading { opacity: 0.3; width: 100%; text-align: center; font-size: 0.8rem; }
+
+          @media (min-width: 769px) {
+            .dashboard-main { padding-top: 5vh; }
+            .dashboard-title { font-size: 2.8rem; }
+            .dashboard-welcome { font-size: 1.1rem; }
+            .tools-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+            .tool-card { padding: 1.8rem; gap: 18px; border-radius: 30px; }
+            .tool-icon { width: 52px; height: 52px; border-radius: 16px; }
+            .tool-icon svg { width: 26px; height: 26px; }
+            .tool-label { font-size: 0.75rem; }
+            .tool-value { font-size: 1.6rem; }
+            .chart-summary-card { padding: 2rem; border-radius: 30px; }
+            .chart-card-title { font-size: 1.2rem; }
+            .chart-mini-viewport { height: 180px; gap: 10px; }
+            .chart-mini-label { font-size: 0.55rem; }
+          }
+        `}} />
       </main>
     </>
   );

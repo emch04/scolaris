@@ -8,6 +8,13 @@ import { AuthContext } from "../context/AuthContext";
  * 
  * @returns {Object} La valeur du contexte AuthContext.
  */
-const useAuth = () => useContext(AuthContext);
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  // Sécurité : Si le contexte est introuvable, on renvoie un état par défaut non connecté
+  if (!context) {
+    return { user: null, isAuthenticated: false, loading: true };
+  }
+  return context;
+};
 
 export default useAuth;

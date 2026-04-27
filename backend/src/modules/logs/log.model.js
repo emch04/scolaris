@@ -17,7 +17,9 @@ const logSchema = new mongoose.Schema(
       type: String,
       set: v => encrypt(v),
       get: v => decrypt(v)
-    }
+    },
+    resolved: { type: Boolean, default: false },
+    resolvedAt: { type: Date }
   },
   { timestamps: true, toJSON: { getters: true }, toObject: { getters: true } }
 );

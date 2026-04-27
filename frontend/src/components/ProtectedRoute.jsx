@@ -11,10 +11,19 @@ import useAuth from "../hooks/useAuth";
  * @param {Array} allowedRoles - Liste des rôles autorisés (ex: ['admin', 'teacher']).
  */
 function ProtectedRoute({ children, allowedRoles }) {
-  const { user, isAuthenticated, loading } = useAuth();
+  const auth = useAuth();
+  
+  // Sécurité renforcée : On vérifie que auth existe avant de destructurer
+  const { user, isAuthenticated, loading } = auth || { user: null, isAuthenticated: false, loading: true };
 
   // Si l'état d'authentification est en cours de chargement, on affiche un indicateur
-  if (loading) return <p>Chargement...</p>;
+  if (loading) {
+    return (
+      <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#050505" }}>
+        <p style={{ color: "var(--primary)", fontWeight: "bold", letterSpacing: "1px" }}>INITIALISATION SÉCURISÉE...</p>
+      </div>
+    );
+  }
 
   // 1. Cas : Utilisateur non connecté
   // Redirection vers la page de login

@@ -77,4 +77,54 @@ const clearLogs = asyncHandler(async (req, res) => {
   return apiResponse(res, 200, "Journal vidé avec succès.");
 });
 
-module.exports = { reportError, logError, getLogs, clearLogs };
+/**
+ * Marque un incident comme résolu.
+ */
+const resolveLog = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const log = await Log.findByIdAndUpdate(
+    id, 
+    { resolved: true, resolvedAt: new Date(), level: 'INFO' }, 
+    { new: true }
+  );
+
+  if (!log) throw new Error("Incident non trouvé.");
+
+  // On log l'action de résolution dans le fichier système
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] [RESOLVED] Incident ${id} marqué comme résolu.\n` +
+                   `Message: ${log.message}\n` +
+                   `--------------------------------------------------\n`;
+  
+  if (fs.existsSync(path.dirname(LOG_FILE))) {
+    fs.appendFileSync(LOG_FILE, logEntry);
+  }
+
+  return apiResponse(res, 200, "Incident marqué comme résolu.", log);
+});
+
+/**
+ * Marque automatiquement les incidents comme résolus pour un utilisateur ou un motif.
+ */
+const autoResolveLogs = async (criteria) => {
+  try {
+    const query = { resolved: false };
+    if (criteria.userId) query["user.id"] = criteria.userId;
+    if (criteria.messagePattern) query.message = { $regex: criteria.messagePattern, $options: 'i' };
+
+    const result = await Log.updateMany(
+      query,
+      { resolved: true, resolvedAt: new Date(), level: 'INFO' }
+    );
+
+    if (result.modifiedCount > 0) {
+      console.log(`🤖 Boîte Noire : ${result.modifiedCount} incident(s) résolu(s) automatiquement.`);
+    }
+    return result.modifiedCount;
+  } catch (err) {
+    console.error("❌ Échec de l'auto-résolution :", err.message);
+    return 0;
+  }
+};
+
+module.exports = { reportError, logError, getLogs, clearLogs, resolveLog, autoResolveLogs };

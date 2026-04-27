@@ -73,10 +73,15 @@ const login = asyncHandler(async (req, res) => {
   res.cookie("token", result.token, { ...commonOptions, maxAge: 15 * 60 * 1000 }); // 15 min
   res.cookie("refreshToken", result.refreshToken, { ...commonOptions, maxAge: 30 * 24 * 60 * 60 * 1000 }); // 30 jours
 
+  // Auto-résolution intelligente
+  const { autoResolveLogs } = require("../logs/log.controller");
+  const resolvedCount = await autoResolveLogs({ userId: result.user._id });
+
   return apiResponse(res, 200, "Connexion réussie.", {
     user: userData,
     token: result.token,
-    refreshToken: result.refreshToken
+    refreshToken: result.refreshToken,
+    resolvedCount
   });
 });
 
@@ -136,7 +141,7 @@ const refresh = asyncHandler(async (req, res) => {
     maxAge: 15 * 60 * 1000
   });
 
-  return apiResponse(res, 200, "Session renouvelée.");
+  return apiResponse(res, 200, "Session renouvelée.", { token: newToken });
 });
 
 /**
@@ -144,7 +149,16 @@ const refresh = asyncHandler(async (req, res) => {
  * @route GET /api/auth/me
  */
 const getMe = asyncHandler(async (req, res) => {
-  return apiResponse(res, 200, "Session active.", { user: req.user });
+  // Auto-résolution intelligente : Si l'utilisateur arrive ici, c'est que son système est stable
+  const { autoResolveLogs } = require("../logs/log.controller");
+  const resolvedCount = await autoResolveLogs({ 
+    userId: req.user.id 
+  });
+
+  return apiResponse(res, 200, "Session active.", { 
+    user: req.user,
+    resolvedCount
+  });
 });
 
 /**

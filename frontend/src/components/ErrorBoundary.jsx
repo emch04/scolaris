@@ -19,22 +19,40 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error("CRASH SYSTÈME DÉTECTÉ:", error, errorInfo);
 
-    // Envoi du rapport d'erreur au backend
+    // Mémoriser l'URL du crash pour l'auto-guérison future
+    sessionStorage.setItem('last_crashed_url', window.location.href);
+
+    // Tentative de "Silent Recovery" (Récupération Silencieuse)
+    const recoveryCount = parseInt(sessionStorage.getItem('silent_recovery_attempts') || '0');
+    if (recoveryCount < 1) {
+      sessionStorage.setItem('silent_recovery_attempts', '1');
+      console.log("🛠️ Tentative de récupération silencieuse (Auto-Heal)...");
+      // On nettoie les caches potentiellement corrompus sans déconnecter
+      localStorage.removeItem('tedp_user'); 
+      window.location.reload();
+      return;
+    }
+
+    // Si on arrive ici, le Silent Recovery a échoué, on rapporte le crash fatal
     const reportCrash = async () => {
       try {
         const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        // On essaie de détecter le port dynamiquement ou on utilise le port 5001 par défaut pour le backend local
         const baseURL = isLocal ? "http://localhost:5001/api" : "/api";
-        
-        console.log("Envoi du rapport de crash à :", `${baseURL}/logs/report`);
-        
+
+        // Récupération manuelle du token depuis le storage
+        const token = localStorage.getItem("tedp_token");
+
         await axios.post(`${baseURL}/logs/report`, {
           message: error.toString(),
           stack: errorInfo.componentStack,
           url: window.location.href,
           level: 'FATAL'
-        }, { timeout: 5000 });
-        
+        }, { 
+          timeout: 5000,
+          withCredentials: true,
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+
         console.log("Rapport de crash envoyé avec succès.");
       } catch (err) {
         console.error("Échec de l'envoi du rapport de crash au serveur:", err.message);

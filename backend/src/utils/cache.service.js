@@ -7,6 +7,20 @@ const { createClient } = require('redis');
 
 let redisClient = null;
 const localCache = new Map();
+const MAX_CACHE_SIZE = 100; // Limite le nombre d'objets pour économiser la RAM
+
+// Nettoyage automatique du cache expiré toutes les 60 secondes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of localCache.entries()) {
+    if (now > value.expireAt) localCache.delete(key);
+  }
+  // Si le cache est trop gros, on vide les plus vieux
+  if (localCache.size > MAX_CACHE_SIZE) {
+    const oldestKey = localCache.keys().next().value;
+    localCache.delete(oldestKey);
+  }
+}, 60000);
 
 /**
  * Initialise la connexion Redis si possible.

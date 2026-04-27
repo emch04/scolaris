@@ -7,6 +7,7 @@ require("dotenv").config();
 const app = require("./app");
 const connectDB = require("./src/config/db");
 const runBootstrap = require("./src/utils/bootstrap");
+const { startPredictiveMonitoring } = require("./src/modules/logs/predictive.monitor");
 
 // Connexion à la base de données
 connectDB().then(() => {
@@ -14,6 +15,9 @@ connectDB().then(() => {
   
   // Exécution de l'auto-configuration (Hero Admin + Feature Flags)
   runBootstrap();
+  
+  // Démarrage de l'IA Prédictive 24/7
+  startPredictiveMonitoring();
 });
 
 const PORT = process.env.PORT || 5001;
