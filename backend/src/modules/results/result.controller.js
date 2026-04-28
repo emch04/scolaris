@@ -1,3 +1,7 @@
+/**
+ * @file result.controller.js
+ * @description Contrôleur gérant les requêtes relatives aux résultats académiques.
+ */
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { addResult, getStudentResults } = require("./result.service");

@@ -31,4 +31,11 @@ const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
   console.log(`🚀 Serveur Scolaris lancé sur le port ${PORT}`);
+  
+  // Nettoyage forcé de la RAM toutes les 5 minutes si exposé par Node
+  setInterval(() => {
+    if (global.gc) {
+      global.gc();
+    }
+  }, 5 * 60 * 1000);
 });

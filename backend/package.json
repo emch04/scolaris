@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node --max-old-space-size=450 --expose-gc server.js"
   },
   "scripts_info": {
     "dev": "Lance le serveur de développement avec rechargement automatique (nodemon)",

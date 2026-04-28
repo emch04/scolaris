@@ -1,3 +1,7 @@
+/**
+ * @file stats.controller.js
+ * @description Contrôleur calculant les statistiques de performance et d'utilisation.
+ */
 const mongoose = require("mongoose");
 const School = require("../schools/school.model");
 const Student = require("../students/student.model");

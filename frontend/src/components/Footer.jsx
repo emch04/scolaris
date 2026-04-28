@@ -87,7 +87,7 @@ function Footer() {
 
         {/* Colonne 3 : Contact Direct */}
         <div>
-          <h4 style={{ marginBottom: "1.2rem", fontSize: "1rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px", opacity: 0.8 }}>RDC - Kinshasa</h4>
+          <h4 style={{ marginBottom: "1.2rem", fontSize: "1rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px", opacity: 0.8 }}>Scolaris Global - Support</h4>
           <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1rem", fontSize: "0.9rem", opacity: 0.6 }}>
             <li style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: "3px", flexShrink: 0 }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>

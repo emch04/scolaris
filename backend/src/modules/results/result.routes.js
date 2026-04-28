@@ -1,3 +1,7 @@
+/**
+ * @file result.routes.js
+ * @description Routes API pour la gestion des notes et bulletins.
+ */
 const express = require("express");
 const router = express.Router();
 const { create, getBulletin } = require("./result.controller");

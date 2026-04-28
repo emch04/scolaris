@@ -1,3 +1,7 @@
+/**
+ * @file otp.service.js
+ * @description Service de vérification OTP pour la signature des parents sur les devoirs.
+ */
 const Otp = require("../auth/otp.model");
 const Parent = require("../parents/parent.model");
 const asyncHandler = require("../../utils/asyncHandler");

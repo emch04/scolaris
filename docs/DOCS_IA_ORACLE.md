@@ -33,9 +33,17 @@ L'interface a été conçue pour paraître "vivante" :
 ---
 
 ## 📡 Configuration Technique
-*   **Modèle** : `gemini-2.5-flash` (Optimisé pour la vitesse et le coût).
-*   **Fallback** : Si l'API Google est injouable, l'IA bascule sur un mode "Analyses Locales" (statistiques brutes).
+*   **Modèles** : Hybride `gemini-1.5-pro` (Cerveau principal) & `gemini-1.5-flash` (Fallback/Vitesse).
+*   **Intelligence** : Le système tente d'abord d'utiliser le modèle **Pro** pour sa précision. En cas de saturation ou d'erreur, il bascule automatiquement sur **Flash** pour garantir une réponse.
 *   **Bases** : Séparation stricte entre les données métier et les données de l'IA.
+
+---
+
+## 🛠️ Maintenance & Synchronisation des Modèles
+Puisque le service IA partage la base de données avec le Backend, la synchronisation des schémas est vitale.
+
+*   **Audit de Conformité** : Utilisez `node scripts/audit.js` pour vérifier que les modèles IA et Backend sont identiques.
+*   **Synchronisation Automatique** : Utilisez `node scripts/sync-models.js` pour copier instantanément les modèles du Backend vers l'IA en adaptant les chemins d'importation.
 
 ---
 *Fin de la phase de création majeure (v3.5) - Emch 2026.*

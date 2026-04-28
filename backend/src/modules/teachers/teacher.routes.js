@@ -1,3 +1,7 @@
+/**
+ * @file teacher.routes.js
+ * @description Définition des routes API pour la gestion du corps enseignant.
+ */
 // Import Express
 const express = require("express");
 // Création routeur

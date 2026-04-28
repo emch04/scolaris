@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import apiClient from "../services/apiClient";
-import { FaPaperPlane, FaMemory, FaMicrochip, FaDatabase } from "react-icons/fa";
+import { FaPaperPlane, FaMemory, FaMicrochip, FaDatabase, FaImage, FaTimes } from "react-icons/fa";
 
 const ScolarisIA = () => {
   const [logs, setLogs] = useState([]);
   const [health, setHealth] = useState({ ram: 0, cpu: 0, mood: "parfaite", disk: "--" });
   const [command, setCommand] = useState("");
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Chargement de l'historique complet au démarrage
   useEffect(() => {
@@ -57,17 +60,38 @@ const ScolarisIA = () => {
 
   const handleCommand = async (e) => {
     e.preventDefault();
-    if (!command.trim()) return;
+    if (!command.trim() && !image) return;
 
     // Ajout local immédiat pour fluidité
     const time = new Date().toLocaleTimeString();
-    const userMsg = `[${time}] CONSIGNE : ${command}`;
+    const userMsg = `[${time}] CONSIGNE : ${command}${image ? " (IMAGE)" : ""}`;
     setLogs(prev => [...prev, userMsg]);
+    
+    const currentCommand = command;
+    const currentImage = image;
+    const currentPreview = imagePreview;
+
     setCommand("");
+    setImage(null);
+    setImagePreview(null);
     setLoading(true);
 
     try {
-      const res = await apiClient.post('/system-config/blackbox/command', { command });
+      let imageData = null;
+      if (currentImage && currentPreview) {
+        imageData = {
+          inlineData: {
+            data: currentPreview.split(",")[1],
+            mimeType: currentImage.type
+          }
+        };
+      }
+
+      const res = await apiClient.post('/system-config/blackbox/command', { 
+        command: currentCommand || "Analyse cette image", 
+        imageData 
+      });
+
       if (res.data.success) {
         const aiResponse = res.data.data;
         const aiMsg = `[${time}] RÉPONSE IA : ${aiResponse}`;
@@ -79,6 +103,26 @@ const ScolarisIA = () => {
     } finally { 
       setLoading(false); 
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image trop lourde (max 5Mo)");
+        return;
+      }
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const getThemeColor = () => {
@@ -164,6 +208,37 @@ const ScolarisIA = () => {
           align-items: center;
           justify-content: center;
         }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .image-preview-container {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 10px;
+          padding: 10px;
+          background: #f8fafc;
+          border-radius: 12px;
+          border: 1px dashed #cbd5e1;
+        }
+        .preview-img {
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+          border-radius: 8px;
+        }
+        .remove-img-btn {
+          background: #ff5252;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 0.7rem;
+        }
       `}</style>
 
       <div className="ia-identity">
@@ -203,12 +278,35 @@ const ScolarisIA = () => {
         {loading && <div className="bubble bubble-ai" style={{opacity: 0.5}}>...</div>}
       </div>
 
+      {imagePreview && (
+        <div className="image-preview-container">
+          <img src={imagePreview} alt="Preview" className="preview-img" />
+          <span style={{ fontSize: "0.8rem", flex: 1, opacity: 0.7 }}>Image prête pour l'analyse</span>
+          <button onClick={removeImage} className="remove-img-btn"><FaTimes /></button>
+        </div>
+      )}
+
       <form onSubmit={handleCommand} className="input-area">
+        <input 
+          type="file" 
+          hidden 
+          ref={fileInputRef} 
+          accept="image/*" 
+          onChange={handleImageChange} 
+        />
+        <button 
+          type="button" 
+          className="send-btn" 
+          style={{ background: "transparent", color: "#64748b", marginRight: "10px" }}
+          onClick={() => fileInputRef.current.click()}
+        >
+          <FaImage />
+        </button>
         <input 
           className="ia-text-input"
           value={command}
           onChange={(e) => setCommand(e.target.value)}
-          placeholder="Message à Scolaris IA..."
+          placeholder="Message ou document à analyser..."
         />
         <button type="submit" className="send-btn" disabled={loading}>
           <FaPaperPlane />

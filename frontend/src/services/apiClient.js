@@ -3,7 +3,7 @@ import { getToken, setToken } from "../utils/storage";
 
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 // Utilisation du port 5001 pour le backend local
-const baseURL = isLocal ? "http://localhost:5001/api" : "https://scolaris-fucv.onrender.com/api";
+const baseURL = import.meta.env.VITE_API_BASE_URL || (isLocal ? "http://localhost:5001/api" : "/api");
 
 // Variables pour l'IA Prédictive Frontend
 let consecutiveErrors = 0;
@@ -27,7 +27,7 @@ const reportPredictiveIssue = async (message, level = 'WARN') => {
 
 const apiClient = axios.create({
   baseURL: baseURL,
-  timeout: 15000,
+  timeout: 30000,
   withCredentials: true,
 });
 

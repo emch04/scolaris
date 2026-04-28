@@ -5,38 +5,12 @@
 
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet"); // Protection des headers
-const morgan = require("morgan");
+const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
 const mongoSanitize = require("express-mongo-sanitize");
 const path = require("path");
-
-// On importe les routes
-const authRoutes = require("./src/modules/auth/auth.routes");
-const schoolRoutes = require("./src/modules/schools/school.routes");
-const teacherRoutes = require("./src/modules/teachers/teacher.routes");
-const studentRoutes = require("./src/modules/students/student.routes");
-const classroomRoutes = require("./src/modules/classrooms/classroom.routes");
-const assignmentRoutes = require("./src/modules/assignments/assignment.routes");
-const parentRoutes = require("./src/modules/parents/parent.routes");
-const communicationRoutes = require("./src/modules/communications/communication.routes");
-const resultRoutes = require("./src/modules/results/result.routes");
-const submissionRoutes = require("./src/modules/submissions/submission.routes");
-const attendanceRoutes = require("./src/modules/attendance/attendance.routes");
-const timetableRoutes = require("./src/modules/timetable/timetable.routes");
-const messageRoutes = require("./src/modules/messages/message.routes");
-const statsRoutes = require("./src/modules/stats/stats.routes");
-const resourceRoutes = require("./src/modules/resources/resource.routes");
-const calendarRoutes = require("./src/modules/calendar/calendar.routes");
-const coursePlanRoutes = require("./src/modules/courseplan/courseplan.routes");
-const logRoutes = require("./src/modules/logs/log.routes");
-const configRoutes = require("./src/modules/config/config.routes");
-const financeRoutes = require("./src/modules/finance/finance.routes");
-
-// Middlewares
-const notFoundMiddleware = require("./src/middlewares/notFound.middleware");
-const errorMiddleware = require("./src/middlewares/error.middleware");
+const morgan = require("morgan");
 
 const app = express();
 
@@ -50,7 +24,8 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://scolaris-fucv.onrender.com",
+    "http://130.61.178.59",
+    "http://130.61.178.59:5001",
     "https://scolaris2.vercel.app"
   ],
   credentials: true,
@@ -59,16 +34,19 @@ app.use(cors({
 }));
 
 app.use(compression());
-app.use(mongoSanitize()); // Protection contre les injections NoSQL
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(mongoSanitize());
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(cookieParser());
-app.use(morgan("dev"));
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
-  res.json({ success: true, message: "API Scolaris Fortifiée" });
+  res.json({ success: true, message: "API Scolaris Optimisée" });
 });
 
 // Route de santé pour la PWA et la Boîte Noire
@@ -76,27 +54,30 @@ app.get("/api/status", (req, res) => {
   res.json({ success: true, status: "stable", timestamp: new Date() });
 });
 
-// Routes API
-app.use("/api/auth", authRoutes);
-app.use("/api/schools", schoolRoutes);
-app.use("/api/teachers", teacherRoutes);
-app.use("/api/students", studentRoutes);
-app.use("/api/classrooms", classroomRoutes);
-app.use("/api/assignments", assignmentRoutes);
-app.use("/api/parents", parentRoutes);
-app.use("/api/communications", communicationRoutes);
-app.use("/api/results", resultRoutes);
-app.use("/api/submissions", submissionRoutes);
-app.use("/api/attendance", attendanceRoutes);
-app.use("/api/timetable", timetableRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/stats", statsRoutes);
-app.use("/api/resources", resourceRoutes);
-app.use("/api/calendar", calendarRoutes);
-app.use("/api/course-plans", coursePlanRoutes);
-app.use("/api/logs", logRoutes);
-app.use("/api/system-config", configRoutes);
-app.use("/api/finance", financeRoutes);
+// Routes API avec Lazy Loading pour économiser la RAM
+app.use("/api/auth", require("./src/modules/auth/auth.routes"));
+app.use("/api/schools", require("./src/modules/schools/school.routes"));
+app.use("/api/teachers", require("./src/modules/teachers/teacher.routes"));
+app.use("/api/students", require("./src/modules/students/student.routes"));
+app.use("/api/classrooms", require("./src/modules/classrooms/classroom.routes"));
+app.use("/api/assignments", require("./src/modules/assignments/assignment.routes"));
+app.use("/api/parents", require("./src/modules/parents/parent.routes"));
+app.use("/api/communications", require("./src/modules/communications/communication.routes"));
+app.use("/api/results", require("./src/modules/results/result.routes"));
+app.use("/api/submissions", require("./src/modules/submissions/submission.routes"));
+app.use("/api/attendance", require("./src/modules/attendance/attendance.routes"));
+app.use("/api/timetable", require("./src/modules/timetable/timetable.routes"));
+app.use("/api/messages", require("./src/modules/messages/message.routes"));
+app.use("/api/stats", require("./src/modules/stats/stats.routes"));
+app.use("/api/resources", require("./src/modules/resources/resource.routes"));
+app.use("/api/calendar", require("./src/modules/calendar/calendar.routes"));
+app.use("/api/course-plans", require("./src/modules/courseplan/courseplan.routes"));
+app.use("/api/logs", require("./src/modules/logs/log.routes"));
+app.use("/api/system-config", require("./src/modules/config/config.routes"));
+app.use("/api/finance", require("./src/modules/finance/finance.routes"));
+
+const notFoundMiddleware = require("./src/middlewares/notFound.middleware");
+const errorMiddleware = require("./src/middlewares/error.middleware");
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

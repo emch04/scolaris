@@ -1,3 +1,7 @@
+/**
+ * @file resource.routes.js
+ * @description Routes pour la gestion des ressources pédagogiques numériques.
+ */
 const express = require("express");
 const router = express.Router();
 const { addResource, getResources, deleteResource } = require("./resource.controller");

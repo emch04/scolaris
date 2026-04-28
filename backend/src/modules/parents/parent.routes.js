@@ -1,3 +1,7 @@
+/**
+ * @file parent.routes.js
+ * @description Définition des routes API pour la gestion des parents.
+ */
 const express = require("express");
 const router = express.Router();
 const { getMyDashboard, getParents, getOneParent, update } = require("./parent.controller");

@@ -1,3 +1,7 @@
+/**
+ * @file submission.model.js
+ * @description Modèle de données pour les devoirs rendus (soumissions).
+ */
 const mongoose = require("mongoose");
 
 const submissionSchema = new mongoose.Schema(

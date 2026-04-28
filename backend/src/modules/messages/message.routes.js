@@ -1,3 +1,7 @@
+/**
+ * @file message.routes.js
+ * @description Routes pour la messagerie interne entre utilisateurs de Scolaris.
+ */
 const express = require("express");
 const router = express.Router();
 const { sendMessage, getMyMessages, getClassroomMessages, markAsRead } = require("./message.controller");

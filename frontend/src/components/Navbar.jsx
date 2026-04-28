@@ -54,62 +54,78 @@ function Navbar() {
           </button>
         </div>
 
-        <div className={isOpen ? "nav-links active" : "nav-links"} style={{ backdropFilter: "blur(20px)", background: "rgba(10, 10, 10, 0.95)", display: "flex", flexDirection: "column", padding: "2rem 0" }}>
+        <div className={isOpen ? "nav-links active" : "nav-links"} style={{ 
+          backdropFilter: "blur(20px)", 
+          background: "rgba(10, 10, 10, 0.95)", 
+          display: "flex", 
+          flexDirection: "column", 
+          padding: "1.5rem 0",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none"
+        }}>
           {isAuthenticated && (
-            <div style={{ padding: "0 1.5rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "1rem" }}>
-              <div style={{ fontSize: "0.7rem", opacity: 0.5, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>Espace Scolaris</div>
-              <div style={{ fontWeight: "bold", fontSize: "1.1rem", display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ padding: "0 1.5rem 1rem", borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "0.8rem" }}>
+              <div style={{ fontSize: "0.65rem", opacity: 0.5, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "5px" }}>Espace Scolaris</div>
+              <div style={{ fontWeight: "bold", fontSize: "1rem", display: "flex", alignItems: "center", gap: "8px" }}>
                 {user?.fullName} 
                 {role === 'hero_admin' && (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff5252" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path><path d="M19 16v3a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3"></path></svg>
                 )}
               </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: "bold" }}>{role?.replace('_', ' ')}</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: "bold" }}>{role?.replace('_', ' ')}</div>
             </div>
           )}
 
-          <Link to="/" onClick={closeMenu}>Accueil</Link>
-          
-          {isAuthenticated ? (
-            <>
-              <Link to="/dashboard" onClick={closeMenu}>Tableau de Bord</Link>
-              
-              {["hero_admin", "super_admin", "admin", "director", "secretary"].includes(role) && (
-                <>
-                  <Link to="/treasury" onClick={closeMenu} style={{ color: "#34A853", fontWeight: "bold" }}>💰 Trésorerie</Link>
-                  <Link to="/students" onClick={closeMenu}>Élèves</Link>
-                  <Link to="/classrooms" onClick={closeMenu}>Classes</Link>
-                  <Link to="/parents" onClick={closeMenu}>Parents</Link>
-                </>
-              )}
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <Link to="/" onClick={closeMenu}>Accueil</Link>
+            
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" onClick={closeMenu}>Tableau de Bord</Link>
+                
+                {["hero_admin", "super_admin", "admin", "director", "secretary"].includes(role) && (
+                  <>
+                    <div style={{ padding: "10px 1.5rem 5px", fontSize: "0.6rem", opacity: 0.3, textTransform: "uppercase", fontWeight: "bold" }}>Gestion</div>
+                    <Link to="/treasury" onClick={closeMenu} style={{ color: "#34A853", fontWeight: "bold" }}>💰 Trésorerie</Link>
+                    <Link to="/students" onClick={closeMenu}>Élèves</Link>
+                    <Link to="/classrooms" onClick={closeMenu}>Classes</Link>
+                    <Link to="/parents" onClick={closeMenu}>Parents</Link>
+                    <Link to="/blackbox" onClick={closeMenu} style={{ color: "#00C851", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path></svg>
+                      Centre IA
+                    </Link>
+                  </>
+                )}
 
-              {["hero_admin", "super_admin"].includes(role) && <Link to="/schools" onClick={closeMenu}>Écoles</Link>}
-              {["hero_admin", "admin", "director"].includes(role) && <Link to="/teachers" onClick={closeMenu}>Personnel</Link>}
-              
-              {role === "hero_admin" && (
-                <>
-                  <Link to="/blackbox" onClick={closeMenu} style={{ color: "#00C851", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path></svg>
-                    Centre IA
-                  </Link>
-                  <Link to="/logs" onClick={closeMenu} style={{ color: "#ff5252" }}>🚨 Surveillance</Link>
-                  <Link to="/system-settings" onClick={closeMenu}>Paramètres</Link>
-                </>
-              )}
+                {["hero_admin", "super_admin"].includes(role) && <Link to="/schools" onClick={closeMenu}>Écoles</Link>}
+                {["hero_admin", "admin", "director"].includes(role) && <Link to="/teachers" onClick={closeMenu}>Personnel</Link>}
+                
+                {role === "hero_admin" && (
+                  <>
+                    <div style={{ padding: "10px 1.5rem 5px", fontSize: "0.6rem", opacity: 0.3, textTransform: "uppercase", fontWeight: "bold" }}>Système</div>
+                    <Link to="/logs" onClick={closeMenu} style={{ color: "#ff5252" }}>🚨 Surveillance</Link>
+                    <Link to="/system-settings" onClick={closeMenu}>Paramètres</Link>
+                  </>
+                )}
 
-              <Link to="/messages" onClick={closeMenu}>Messagerie</Link>
+                <div style={{ padding: "10px 1.5rem 5px", fontSize: "0.6rem", opacity: 0.3, textTransform: "uppercase", fontWeight: "bold" }}>Communication</div>
+                <Link to="/messages" onClick={closeMenu}>Messagerie</Link>
+                <Link to="/communications" onClick={closeMenu}>Communiqués</Link>
 
-              <div style={{ marginTop: "auto", padding: "1rem 1.5rem" }}>
-                <button onClick={handleLogout} style={{ width: "100%", padding: "12px", borderRadius: "12px", background: "#ff5252", color: "white", border: "none", cursor: "pointer", fontWeight: "bold" }}>
-                  Déconnexion
-                </button>
+                <div style={{ marginTop: "1rem", padding: "1rem 1.5rem" }}>
+                  <button onClick={handleLogout} style={{ width: "100%", padding: "10px", borderRadius: "10px", background: "#ff5252", color: "white", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.9rem" }}>
+                    Déconnexion
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div style={{ padding: "1rem 1.5rem" }}>
+                <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: "12px" }}>Connexion</Link>
               </div>
-            </>
-          ) : (
-            <div style={{ padding: "1rem 1.5rem" }}>
-              <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: "12px" }}>Connexion</Link>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
       {isOpen && <div className="menu-overlay" onClick={closeMenu}></div>}

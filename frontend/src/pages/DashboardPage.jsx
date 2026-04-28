@@ -75,6 +75,7 @@ function DashboardPage() {
         { label: "Personnel", value: counts.teachers || "0", color: "#0066cc", path: "/teachers", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },
         { label: "Classes", value: counts.classrooms || "0", color: "#1abc9c", path: "/classrooms", icon: "M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16" },
         { label: "Élèves", value: counts.students || "0", color: "#e67e22", path: "/students", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },
+        { label: "Oracle IA", value: "Actif", color: "#00C851", path: "/blackbox", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" },
         { label: "Parents", value: "Liste", color: "#95a5a6", path: "/parents", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },
         { label: "Surveillance", value: "Logs", color: "#ff5252", path: "/logs", icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" },
         { label: "Paramètres", value: "Système", color: "#1A73E8", path: "/system-settings", icon: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" }
@@ -85,6 +86,7 @@ function DashboardPage() {
       return [
         ...base,
         { label: "Ma Caisse", value: `${counts.totalCaisse || 0} $`, color: "#34A853", path: "/treasury", icon: "M12 1v22M17 5H9.5a4.5 4.5 0 1 0 0 9h5a4.5 4.5 0 1 1 0 9H6" },
+        { label: "Oracle IA", value: "Analyser", color: "#00C851", path: "/blackbox", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" },
         { label: "Élèves", value: counts.students || "0", color: "#0066cc", path: "/students", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },
         { label: "Classes", value: counts.classrooms || "0", color: "#1abc9c", path: "/classrooms", icon: "M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16" },
         { label: "Parents", value: "Liste", color: "#F9AB00", path: "/parents", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },
@@ -95,6 +97,11 @@ function DashboardPage() {
     if (["admin", "director", "teacher"].includes(role)) {
        const staff = [...base];
        staff.push({ label: "Mes Élèves", value: counts.students || "0", color: "#0066cc", path: "/students", icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" });
+       
+       if (["admin", "director", "hero_admin", "super_admin", "secretary"].includes(role)) {
+         staff.push({ label: "Oracle IA", value: "Analyser", color: "#00C851", path: "/blackbox", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" });
+       }
+
        if (["admin", "director"].includes(role)) {
          staff.push({ label: "Trésorerie", value: `${counts.totalCaisse || 0} $`, color: "#34A853", path: "/treasury", icon: "M12 1v22" });
          staff.push({ label: "Classes", value: counts.classrooms || "0", color: "#1abc9c", path: "/classrooms", icon: "M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16" });

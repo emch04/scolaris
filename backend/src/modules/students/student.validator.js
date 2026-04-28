@@ -1,3 +1,7 @@
+/**
+ * @file student.validator.js
+ * @description Validateurs pour les données des élèves.
+ */
 // Import de body
 const { body } = require("express-validator");
 // Validation création élève

@@ -1,3 +1,7 @@
+/**
+ * @file school.controller.js
+ * @description Contrôleur pour la gestion des écoles et de leurs statuts.
+ */
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { getAllSchools, countSchools, getSchoolById, createSchool, updateSchoolStatus, bulkUpdateSchoolStatus } = require("./school.service");

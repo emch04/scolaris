@@ -1,3 +1,7 @@
+/**
+ * @file communication.service.js
+ * @description Service gérant la diffusion des messages administratifs.
+ */
 const Communication = require("./communication.model");
 
 /**

@@ -1,3 +1,7 @@
+/**
+ * @file timetable.service.js
+ * @description Service gérant la programmation des cours.
+ */
 const Timetable = require("./timetable.model");
 
 const createTimetableEntry = async (data) => {

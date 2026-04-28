@@ -1,3 +1,7 @@
+/**
+ * @file courseplan.controller.js
+ * @description Contrôleur gérant les plans de cours et la progression pédagogique.
+ */
 const CoursePlan = require("./courseplan.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");

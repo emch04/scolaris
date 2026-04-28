@@ -1,3 +1,7 @@
+/**
+ * @file student.controller.js
+ * @description Contrôleur pour la gestion des opérations liées aux élèves.
+ */
 const Student = require("./student.model");
 const { createStudent, getAllStudents, countStudents, getStudentDashboardData } = require("./student.service");
 const asyncHandler = require("../../utils/asyncHandler");

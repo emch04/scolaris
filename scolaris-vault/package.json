@@ -1,0 +1,23 @@
+{
+  "name": "scolaris-vault",
+  "version": "1.0.0",
+  "description": "Pôle Finance & Calculs Lourds - La Forteresse Scolaris",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --max-old-space-size=450 --expose-gc server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "cors": "^2.8.5",
+    "helmet": "^8.1.0",
+    "dotenv": "^16.4.5",
+    "axios": "^1.7.9",
+    "compression": "^1.8.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

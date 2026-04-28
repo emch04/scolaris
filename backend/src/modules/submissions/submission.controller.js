@@ -1,3 +1,7 @@
+/**
+ * @file submission.controller.js
+ * @description Contrôleur pour la gestion des rendus de devoirs par les élèves.
+ */
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { createSubmission, getAssignmentSubmissions, getStudentSubmissions, updateSubmissionById } = require("./submission.service");

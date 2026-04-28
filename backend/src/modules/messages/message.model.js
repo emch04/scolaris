@@ -1,3 +1,7 @@
+/**
+ * @file message.model.js
+ * @description Schéma de données pour les messages échangés dans Scolaris.
+ */
 const mongoose = require("mongoose");
 
 /**

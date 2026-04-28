@@ -1,3 +1,7 @@
+/**
+ * @file student.service.js
+ * @description Service gérant la logique métier relative aux élèves.
+ */
 // Import du modèle Student
 const Student = require("./student.model");
 const Assignment = require("../assignments/assignment.model");

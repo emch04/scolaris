@@ -5,7 +5,7 @@ export const getFileUrl = (path) => {
 
   // Détection automatique de l'environnement
   const isProduction = window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1";
-  const productionBase = "https://scolaris-fucv.onrender.com";
+  const productionBase = ""; // On utilise des chemins relatifs ou l'adresse du serveur actuel
   const localBase = "http://localhost:5001";
 
   const apiBase = import.meta.env.VITE_API_BASE_URL 

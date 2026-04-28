@@ -1,3 +1,7 @@
+/**
+ * @file teacher.model.js
+ * @description Modèle de données pour les enseignants du réseau Scolaris.
+ */
 const mongoose = require("mongoose");
 const ROLES = require("../../constants/roles");
 const { encrypt, decrypt } = require("../../utils/encryption");

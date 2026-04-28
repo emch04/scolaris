@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { encrypt, decrypt } = require("../../utils/encryption");
+const { encrypt, decrypt } = require("../../utils/encryption.js");
 
 const paymentSchema = new mongoose.Schema(
   {

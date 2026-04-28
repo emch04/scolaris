@@ -1,3 +1,7 @@
+/**
+ * @file teacher.controller.js
+ * @description Contrôleur gérant les requêtes HTTP pour le module enseignants.
+ */
 // Import utilitaires
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");

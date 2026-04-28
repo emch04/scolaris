@@ -1,3 +1,7 @@
+/**
+ * @file submission.routes.js
+ * @description Routes API pour le dépôt et la correction des devoirs.
+ */
 const express = require("express");
 const router = express.Router();
 const { submitHomework, getSubmissions, getStudentSubmissionsList, updateSubmission } = require("./submission.controller");

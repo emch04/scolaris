@@ -1,3 +1,7 @@
+/**
+ * @file stats.routes.js
+ * @description Routes pour la consultation des statistiques globales et individuelles.
+ */
 const express = require("express");
 const router = express.Router();
 const { getGlobalStats, getTeacherStats } = require("./stats.controller");

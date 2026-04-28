@@ -1,3 +1,7 @@
+/**
+ * @file parent.service.js
+ * @description Service gérant la logique métier relative aux parents d'élèves dans Scolaris.
+ */
 const Parent = require("./parent.model");
 const Student = require("../students/student.model");
 const Assignment = require("../assignments/assignment.model");

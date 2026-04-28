@@ -1,3 +1,7 @@
+/**
+ * @file parent.model.js
+ * @description Modèle de données pour les parents d'élèves dans le système Scolaris.
+ */
 const mongoose = require("mongoose");
 const ROLES = require("../../constants/roles");
 

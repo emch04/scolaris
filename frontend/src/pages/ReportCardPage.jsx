@@ -258,7 +258,7 @@ function ReportCardPage() {
 
             {/* Footer actions */}
             <div style={{ marginTop: "3rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-              <p style={{ fontSize: "0.8rem", opacity: 0.4 }}>© Scolaris RDC - Système de certification numérique</p>
+              <p style={{ fontSize: "0.8rem", opacity: 0.4 }}>© Scolaris - Système de certification numérique universel</p>
               <button 
                 onClick={handleDownloadPDF} 
                 disabled={printing || filteredResults.length === 0}

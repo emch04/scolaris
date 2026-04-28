@@ -1,3 +1,7 @@
+/**
+ * @file teacher.service.js
+ * @description Service gérant la logique métier relative aux enseignants.
+ */
 // Import du modèle Teacher
 const Teacher = require("./teacher.model");
 const School = require("../schools/school.model");

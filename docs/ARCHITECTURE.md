@@ -21,7 +21,13 @@
 Le système utilise un système de rôles granulaires (`ROLES`) validé par le middleware `authorizeRoles`.
 - **Hero Admin** : Unique utilisateur capable de contourner tous les filtres d'invisibilité.
 
+## ⚙️ Maintenance & Intégrité
+L'architecture étant distribuée (Backend + Sidecar IA), des outils de cohérence sont en place :
+- **Model Sync Engine** (`scripts/sync-models.js`) : Garantit que les schémas Mongoose sont identiques entre le backend et le service IA.
+- **System Auditor** (`scripts/audit.js`) : Analyse globale de la santé du code, détection d'exports manquants et validation de la synchronisation des modèles.
+
 ## 💾 Base de Données
 - **Mongoose / MongoDB Atlas**
+- **Architecture Partagée** : Le service IA accède aux données CORE en lecture seule pour son analyse contextuelle tout en gérant ses propres logs dans un cluster dédié.
 - Utilisation intensive des **Agrégations** pour les statistiques financières et de croissance.
 - **Index TTL** sur les logs pour un nettoyage automatique après 30 jours.

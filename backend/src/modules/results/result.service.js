@@ -1,3 +1,7 @@
+/**
+ * @file result.service.js
+ * @description Service gérant la saisie des notes et le calcul des moyennes.
+ */
 const Result = require("./result.model");
 
 /**

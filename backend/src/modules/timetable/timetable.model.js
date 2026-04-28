@@ -1,3 +1,7 @@
+/**
+ * @file timetable.model.js
+ * @description Modèle de données pour les emplois du temps hebdomadaires.
+ */
 const mongoose = require("mongoose");
 
 const timetableSchema = new mongoose.Schema({

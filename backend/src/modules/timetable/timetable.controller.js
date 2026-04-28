@@ -1,3 +1,7 @@
+/**
+ * @file timetable.controller.js
+ * @description Contrôleur pour la gestion des horaires de cours.
+ */
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { 

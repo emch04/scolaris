@@ -1,3 +1,7 @@
+/**
+ * @file student.model.js
+ * @description Modèle de données pour les élèves inscrits dans Scolaris.
+ */
 // Import de mongoose
 const mongoose = require("mongoose");
 /**

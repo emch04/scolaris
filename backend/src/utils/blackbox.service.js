@@ -25,14 +25,16 @@ class BlackBoxService {
 
   /**
    * Délègue le traitement de la commande au service IA externe
+   * Supporte maintenant la Vision (imageData)
    */
-  async processCommand(command) {
+  async processCommand(command, imageData = null) {
     const timestamp = new Date().toLocaleString();
-    this.logEvent(`[${timestamp}] CONSIGNE (DÉLÉGUÉE) : ${command}`);
+    this.logEvent(`[${timestamp}] CONSIGNE (DÉLÉGUÉE) : ${command} ${imageData ? '(IMAGE)' : ''}`);
 
     try {
       const response = await axios.post(`${this.iaServiceUrl}/api/ia/command`, {
-        command
+        command,
+        imageData
       }, { timeout: 30000 });
 
       const iaResponse = response.data.data;

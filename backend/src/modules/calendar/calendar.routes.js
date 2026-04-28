@@ -1,3 +1,7 @@
+/**
+ * @file calendar.routes.js
+ * @description Routes pour la gestion des événements du calendrier scolaire.
+ */
 const express = require("express");
 const router = express.Router();
 const { addEvent, getCalendar } = require("./calendar.controller");

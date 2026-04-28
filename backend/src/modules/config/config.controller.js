@@ -29,11 +29,11 @@ const toggleFeature = asyncHandler(async (req, res) => {
  * Envoie une consigne directe à l'IA interne de Scolaris.
  */
 const sendBlackBoxCommand = asyncHandler(async (req, res) => {
-  const { command } = req.body;
+  const { command, imageData } = req.body;
   if (!command) return apiResponse(res, 400, "Aucune commande reçue.");
 
-  // L'IA traite la commande instantanément
-  const response = await blackBox.processCommand(command);
+  // L'IA traite la commande instantanément (avec support Vision si imageData est présent)
+  const response = await blackBox.processCommand(command, imageData);
   
   return apiResponse(res, 200, "Commande traitée.", response);
 });

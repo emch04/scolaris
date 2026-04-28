@@ -1,3 +1,7 @@
+/**
+ * @file resource.controller.js
+ * @description Contrôleur gérant les opérations sur les ressources (ajout, suppression, listage).
+ */
 const Resource = require("./resource.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");

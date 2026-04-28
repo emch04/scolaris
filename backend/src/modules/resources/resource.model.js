@@ -1,3 +1,7 @@
+/**
+ * @file resource.model.js
+ * @description Modèle de données pour les ressources de la bibliothèque numérique.
+ */
 const mongoose = require("mongoose");
 
 /**

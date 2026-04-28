@@ -1,3 +1,7 @@
+/**
+ * @file school.service.js
+ * @description Service gérant la logique métier relative aux établissements scolaires.
+ */
 // Import du modèle School
 const School = require("./school.model");
 

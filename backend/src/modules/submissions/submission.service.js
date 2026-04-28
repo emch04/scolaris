@@ -1,3 +1,7 @@
+/**
+ * @file submission.service.js
+ * @description Service gérant la logique métier des soumissions de devoirs.
+ */
 const Submission = require("./submission.model");
 
 const createSubmission = async (payload) => {

@@ -1,3 +1,7 @@
+/**
+ * @file parent.controller.js
+ * @description Contrôleur gérant les interactions API pour le module des parents.
+ */
 const Parent = require("./parent.model");
 const Student = require("../students/student.model");
 const { 

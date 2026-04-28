@@ -1,3 +1,7 @@
+/**
+ * @file communication.routes.js
+ * @description Routes pour l'envoi de communiqués et convocations.
+ */
 const express = require("express");
 const router = express.Router();
 const { create, list } = require("./communication.controller");

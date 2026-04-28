@@ -1,3 +1,7 @@
+/**
+ * @file message.controller.js
+ * @description Contrôleur pour la gestion des messages et des conversations.
+ */
 const Message = require("./message.model");
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");

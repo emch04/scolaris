@@ -1,3 +1,7 @@
+/**
+ * @file student.routes.js
+ * @description Routes API pour la gestion des élèves.
+ */
 const express = require("express");
 const router = express.Router();
 

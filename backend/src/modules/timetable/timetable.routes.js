@@ -1,3 +1,7 @@
+/**
+ * @file timetable.routes.js
+ * @description Routes API pour la consultation et la modification des emplois du temps.
+ */
 const express = require("express");
 const router = express.Router();
 const { 

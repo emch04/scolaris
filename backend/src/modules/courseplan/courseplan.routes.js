@@ -1,3 +1,7 @@
+/**
+ * @file courseplan.routes.js
+ * @description Routes API pour la consultation et la création des plans de cours.
+ */
 const express = require("express");
 const router = express.Router();
 const { addCoursePlan, getCoursePlans } = require("./courseplan.controller");

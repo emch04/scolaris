@@ -1,3 +1,7 @@
+/**
+ * @file communication.controller.js
+ * @description Contrôleur pour la gestion des communications officielles.
+ */
 const asyncHandler = require("../../utils/asyncHandler");
 const apiResponse = require("../../utils/apiResponse");
 const { createCommunication, getCommunications } = require("./communication.service");

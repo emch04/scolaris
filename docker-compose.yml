@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  scolaris-backend:
+    build: ./backend
+    container_name: scolaris-backend
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI}
+      - VAULT_URL=http://scolaris-vault:5003
+      - IA_SERVICE_URL=http://scolaris-ia:5002
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  scolaris-ia:
+    build: ./scolaris-ia-repo
+    container_name: scolaris-ia
+    ports:
+      - "5002:5002"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI}
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  scolaris-vault:
+    build: ./scolaris-vault
+    container_name: scolaris-vault
+    ports:
+      - "5003:5003"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI}
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  scolaris-frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    container_name: scolaris-frontend
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - scolaris-backend
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+networks:
+  default:
+    name: scolaris-network
